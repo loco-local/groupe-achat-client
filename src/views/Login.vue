@@ -124,7 +124,7 @@ export default {
       this.$emit('flow-is-done');
       await this.$nextTick();
       await this.$router.push({
-        name: 'Admin'
+        name: 'Dashboard'
       });
       // this.$recaptchaInstance.hideBadge();
       LoadingFlow.leave();

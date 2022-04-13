@@ -1,6 +1,6 @@
 <template>
   <Page>
-    asdf
+    Administration
   </Page>
 </template>
 
