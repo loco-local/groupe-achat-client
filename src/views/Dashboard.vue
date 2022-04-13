@@ -1,6 +1,6 @@
 <template>
   <Page>
-    Administration
+    Dashboard
   </Page>
 </template>
 

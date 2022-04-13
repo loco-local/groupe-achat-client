@@ -48,6 +48,16 @@
                 {{ $t('app:members') }}
               </v-list-item-content>
             </v-list-item>
+            <v-list-item to="/produits">
+              <v-list-item-action>
+                <v-icon>assignment</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ $t('app:products') }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
             <v-divider v-if="isAdmin"></v-divider>
             <v-divider></v-divider>
             <v-subheader>
@@ -120,12 +130,20 @@
 
 <script>
 
+import I18n from "@/i18n";
+
 export default {
   name: 'App',
 
-  data: () => ({
-    //
-  }),
+  data: () => {
+    I18n.i18next.addResources("fr", "app", {
+      products:"Produits"
+    });
+    I18n.i18next.addResources("en", "app", {
+      products: "Produits"
+    });
+    return {};
+  },
 };
 </script>
 <style>
