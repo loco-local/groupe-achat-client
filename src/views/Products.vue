@@ -2,74 +2,78 @@
   <Page>
     <v-card flat class="pt-8" color="transparent">
       <v-card-title class="text-h4">
-        {{ $t('products:produits') }}
+        {{ $t('products:title') }}
       </v-card-title>
       <v-card-actions>
-        <v-btn >importer</v-btn>
+        <v-btn to="/produits/import">
+          {{ $t('products:import') }}
+        </v-btn>
       </v-card-actions>
     </v-card>
-    <v-data-table
-        :headers="headers"
-        :items="products"
-        disable-pagination
-        :options="tableOptions"
-        :no-data-text="$t('products:noProducts')"
-        hide-default-footer
-        class="elevation-1 mt-8"
-    >
-    </v-data-table>
+    <ProductsTable :products="products"></ProductsTable>
   </Page>
 </template>
 
 <script>
 import ProductService from "@/service/ProductService";
+import I18n from "@/i18n";
 
 export default {
   name: "Products",
   components: {
-    Page: () => import('@/components/Page')
+    Page: () => import('@/components/Page'),
+    ProductsTable: () => import('@/components/ProductsTable'),
   },
   data: function () {
+    I18n.i18next.addResources("fr", "products", {
+      "title": "Produits",
+      "import" : "Importer Produits"
+    });
+    I18n.i18next.addResources("en", "products", {
+      "title": "Produits",
+      "import" : "Importer Produits"
+    });
     return {
-      products: [],
-      tableOptions: {
-        sortBy: ['updatedAt'],
-        sortDesc: [true]
-      },
-      headers: [
-        {
-          text: '#',
-          value: 'id'
-        },
-        {
-          text: this.$t('statements:date'),
-          value: 'createdAt'
-        },
-        {
-          text: this.$t('products:date'),
-          value: 'createdAt'
-        },
-        {
-          text: this.$t('products:name'),
-          value: 'name'
-        },
-        {
-          text: this.$t('products:description'),
-          value: 'description'
-        },
-        {
-          text: this.$t('products:price'),
-          value: 'price'
-        },
-        {
-          text: this.$t('products:isAvailable'),
-          value: 'isAvailable'
-        }
-      ],
+      products: []
     }
   },
   mounted: async function () {
     this.products = await ProductService.list();
+  },
+  methods: {
+    importProducts: function () {
+
+      // Use the javascript reader object to load the contents
+      // of the file in the v-model prop
+
+    }
+  },
+  watch: {
+    productsFile: async function () {
+      this.isProductsFileLoading = true;
+      // console.log(this.productsFile);
+      // const reader = new FileReader();
+      // reader(this.read);
+      // reader.onload = () => {
+      //   this.data = reader.result;
+      // }
+      // const workbook = new ExcelJs.Workbook();
+      // await workbook.xlsx.load(this.productsFile);
+      // const rows = await readXlsFile(this.productsFile)
+      // console.log(workbook);
+      let formData = new FormData();
+      formData.append('file', this.productsFile, this.productsFile.name);
+      this.formData = formData;
+      await ProductService.satau(formData).catch((err) => {
+        console.log(err.response)
+      });
+      // setTimeout(() => {
+      //   this.$set(this.organisation, 'customImage', response.data);
+      //   this.rebuildImageUrl();
+      //   this.isImageLoading = false;
+      // }, 1000);
+      this.isProductsFileLoading = false
+    }
   }
 }
 </script>
