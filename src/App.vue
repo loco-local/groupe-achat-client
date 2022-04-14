@@ -137,13 +137,23 @@ export default {
 
   data: () => {
     I18n.i18next.addResources("fr", "app", {
-      products:"Produits"
+      products: "Produits"
     });
     I18n.i18next.addResources("en", "app", {
       products: "Produits"
     });
     return {};
   },
+  computed: {
+    isAdmin: function () {
+      return false;
+    }
+  },
+  methods:{
+    logout: function(){
+
+    }
+  }
 };
 </script>
 <style>
