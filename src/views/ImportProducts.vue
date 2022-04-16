@@ -8,10 +8,37 @@
         <v-file-input
             truncate-length="15"
             v-model="productsFile"
+            :loading="isProductsFileLoading"
         ></v-file-input>
       </v-card-actions>
     </v-card>
-    <ProductsTable :products="products"></ProductsTable>
+    <v-card class="mb-12 mt-12" v-if="uploadUuid !== null">
+      <v-card-title>
+        {{ $t('import:areDataOk') }}
+      </v-card-title>
+      <v-card-actions>
+        <v-btn color="success" @click="acceptImport()"
+               :loading="acceptUploadLoading"
+               :disabled="acceptUploadLoading">
+          {{ $t('import:yesDataOk') }}
+        </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn color="error" @click="refuseImport()">
+          {{ $t('import:noDataOk') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+    <!--    <v-row justify="center" class="">-->
+    <!--      <v-col cols="12" class="text-center">-->
+    <!--        <v-skeleton-loader-->
+    <!--            width="100%"-->
+    <!--            type="table"-->
+    <!--            color="transparent"-->
+    <!--            v-if="isProductsFileLoading"-->
+    <!--        ></v-skeleton-loader>-->
+    <!--      </v-col>-->
+    <!--    </v-row>-->
+    <ProductsTable :products="products" v-if="productsFile !== null && !isProductsFileLoading" :groupBy="['action']"></ProductsTable>
   </Page>
 </template>
 
@@ -27,23 +54,45 @@ export default {
   },
   data: function () {
     I18n.i18next.addResources("fr", "import", {
-      "title": "Importer Produits"
+      "title": "Importer Produits",
+      areDataOk: "Est-ce que les données semblent correct ?",
+      yesDataOk: "Oui, mettre à jour la base de donnée",
+      noDataOk: "Non, je ne suis pas sûr."
     });
     I18n.i18next.addResources("en", "import", {
-      "title": "Importer Produits"
+      "title": "Importer Produits",
+      areDataOk: "Est-ce que les données semblent correct ?",
+      yesDataOk: "Oui, mettre à jour la base de donnée",
+      noDataOk: "Non, je ne suis pas sûr."
     });
     return {
       products: [],
       productsFile: null,
       isProductsFileLoading: false,
+      uploadUuid: null,
+      acceptUploadLoading: false
     }
   },
   mounted: async function () {
+    // this.uploadUuid = null;
+    // this.acceptUploadLoading = false;
+    // this.isProductsFileLoading = true;
   },
   methods: {
-    enterImportFlow: function () {
-
+    acceptImport: async function () {
+      this.acceptUploadLoading = true;
+      await ProductService.acceptImport(this.uploadUuid);
+      this.uploadUuid = null;
+      this.acceptUploadLoading = false;
+      await this.$router.push({
+        name: 'Products'
+      });
     },
+    refuseImport: async function () {
+      await this.$router.push({
+        name: 'Products'
+      });
+    }
   },
   watch: {
     productsFile: async function () {
@@ -51,7 +100,9 @@ export default {
       let formData = new FormData();
       formData.append('file', this.productsFile, this.productsFile.name);
       this.formData = formData;
-      this.products = await ProductService.uploadSatauProducts(formData);
+      const uploadData = await ProductService.uploadSatauProducts(formData);
+      this.products = uploadData.formattedData;
+      this.uploadUuid = uploadData.uploadUuid;
       this.isProductsFileLoading = false
     }
   }

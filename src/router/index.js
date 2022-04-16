@@ -20,9 +20,9 @@ const routes = [
         component: () => import('../views/Dashboard.vue')
     },
     {
-        path: '/produits',
-        name: 'Produits',
-        component: () => import('../views/Products.vue')
+        path: '/produits/admin',
+        name: 'AdminProducts',
+        component: () => import('../views/AdminProducts.vue')
     },
     {
         path: '/produits/import',

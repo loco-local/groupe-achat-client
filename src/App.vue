@@ -32,7 +32,7 @@
                 v-bind="attrs"
                 v-on="on"
             >
-              <v-icon color="blueTitle">account_circle</v-icon>
+              <v-icon color="blueTitle">menu</v-icon>
             </v-btn>
           </template>
           <v-list>
@@ -48,52 +48,30 @@
                 {{ $t('app:members') }}
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/produits">
+            <v-subheader v-if="isAdmin">
+              {{ $t('app:products') }}
+            </v-subheader>
+            <v-list-item to="/produits/admin">
               <v-list-item-action>
-                <v-icon>assignment</v-icon>
+                <v-icon>list</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
-                  {{ $t('app:products') }}
+                  {{ $t('app:listProducts') }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/produits/import">
+              <v-list-item-action>
+                <v-icon>import_export</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ $t('app:importProducts') }}
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <v-divider v-if="isAdmin"></v-divider>
-            <v-divider></v-divider>
-            <v-subheader>
-              {{ $t('app:agreements') }}
-            </v-subheader>
-            <v-list-item to="/charte">
-              <v-list-item-action>
-                <v-icon>assignment</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ $t('app:charter') }}
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item to="/vie-prive">
-              <v-list-item-action>
-                <v-icon>privacy_tip</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ $t('app:privacy') }}
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-divider></v-divider>
-            <v-list-item to="/partenaires">
-              <v-list-item-action>
-                <v-icon>volunteer_activism</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>
-                  <v-btn text>{{ $t('app:partners') }}</v-btn>
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
             <v-list-item @click="logout">
               <v-list-item-action>
                 <v-icon>exit_to_app</v-icon>
@@ -137,21 +115,29 @@ export default {
 
   data: () => {
     I18n.i18next.addResources("fr", "app", {
-      products: "Produits"
+      products: "Produits",
+      listProducts: "Lister",
+      importProducts: "Importer",
+      logout: "Déconnecter"
     });
     I18n.i18next.addResources("en", "app", {
-      products: "Produits"
+      products: "Produits",
+      listProducts: "Lister",
+      importProducts: "Importer",
+      logout: "Déconnecter"
     });
     return {};
   },
   computed: {
     isAdmin: function () {
-      return false;
+      return this.$store.state.user !== null && this.$store.state.user.status === 'admin';
     }
   },
-  methods:{
-    logout: function(){
-
+  methods: {
+    logout: function () {
+      this.$store.dispatch('setToken', null);
+      this.$store.dispatch('setUser', null);
+      this.$router.push('/connexion');
     }
   }
 };

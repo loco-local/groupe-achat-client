@@ -13,4 +13,8 @@ export default {
         })
         return response.data;
     },
+    acceptImport: async function (uploadId) {
+        const response = await Service.api().post('/products/upload/' + uploadId + "/accept")
+        return response.data;
+    }
 }
