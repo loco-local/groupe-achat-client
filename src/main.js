@@ -5,8 +5,11 @@ import router from './router'
 import store from './store'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import vuetify from './plugins/vuetify'
+import CurrencyFilter from '@/currencyFilter'
 
 Vue.config.productionTip = false
+
+CurrencyFilter.setup();
 
 const vueI18nExt = I18n.setup();
 
