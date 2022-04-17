@@ -25,6 +25,11 @@ const routes = [
         component: () => import('../views/AdminProducts.vue')
     },
     {
+        path: '/produits/admin/deprecated',
+        name: 'AdminProductsDeprecated',
+        component: () => import('../views/AdminProducts.vue')
+    },
+    {
         path: '/produits/import',
         name: 'ImportProducts',
         component: () => import('../views/ImportProducts.vue')

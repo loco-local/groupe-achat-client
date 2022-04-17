@@ -1,8 +1,12 @@
 import Service from "@/service/Service";
 
 export default {
-    list: async function () {
-        const response = await Service.api().get("/products");
+    listPutForward: async function () {
+        const response = await Service.api().get("/products/forward");
+        return response.data;
+    },
+    listDeprecated: async function () {
+        const response = await Service.api().get("/products/deprecated");
         return response.data;
     },
     uploadSatauProducts: async function (formData) {

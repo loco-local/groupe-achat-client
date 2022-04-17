@@ -23,7 +23,7 @@
           {{ $t('import:yesDataOk') }}
         </v-btn>
         <v-spacer></v-spacer>
-        <v-btn color="error" @click="refuseImport()">
+        <v-btn color="error" @click="refuseImport()" :disabled="acceptUploadLoading">
           {{ $t('import:noDataOk') }}
         </v-btn>
       </v-card-actions>
@@ -85,12 +85,12 @@ export default {
       this.uploadUuid = null;
       this.acceptUploadLoading = false;
       await this.$router.push({
-        name: 'Products'
+        name: 'AdminProducts'
       });
     },
     refuseImport: async function () {
       await this.$router.push({
-        name: 'Products'
+        name: 'AdminProducts'
       });
     }
   },

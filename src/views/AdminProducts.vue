@@ -2,10 +2,29 @@
   <Page>
     <v-card flat class="pt-8" color="transparent">
       <v-card-title class="text-h4">
-        {{ $t('products:title') }}
+        {{ $t('productsAdmin:title') }}
       </v-card-title>
     </v-card>
-    <ProductsTable :products="products" :loading="isLoading"></ProductsTable>
+    <v-tabs v-model="tab" grow>
+      <v-tab key="putForward" @click="$router.push('/produits/admin')">
+        {{ $t('productsAdmin:putForward') }}
+      </v-tab>
+      <v-tab key="deprecated" @click="$router.push('/produits/admin/deprecated')">
+        {{ $t('productsAdmin:deprecate') }}
+      </v-tab>
+    </v-tabs>
+    <v-tabs-items v-model="tab">
+      <v-tab-item
+          key="putForward"
+      >
+        <ProductsTable :products="productsPutForward || []" :loading="isLoading"></ProductsTable>
+      </v-tab-item>
+      <v-tab-item
+          key="deprecated"
+      >
+        <ProductsTable :products="productsDeprecated || []" :loading="isLoading"></ProductsTable>
+      </v-tab-item>
+    </v-tabs-items>
   </Page>
 </template>
 
@@ -20,25 +39,44 @@ export default {
     ProductsTable: () => import('@/components/ProductsTable'),
   },
   data: function () {
-    I18n.i18next.addResources("fr", "products", {
+    I18n.i18next.addResources("fr", "productsAdmin", {
       "title": "Produits",
-      "import" : "Importer Produits"
+      "import": "Importer Produits",
+      putForward: "Valorisé",
+      deprecate: "Dévalorisé"
     });
-    I18n.i18next.addResources("en", "products", {
+    I18n.i18next.addResources("en", "productsAdmin", {
       "title": "Produits",
-      "import" : "Importer Produits"
+      "import": "Importer Produits",
+      putForward: "Valorisé",
+      deprecate: "Dévalorisé"
     });
     return {
-      products: [],
-      isLoading: false
+      productsPutForward: null,
+      productsDeprecated: null,
+      isLoading: false,
+      tab: null
     }
   },
   mounted: async function () {
-    this.isLoading = true;
-    this.products = await ProductService.list();
-    this.isLoading = false;
+    if (this.$router.currentRoute.name === 'AdminProductsDeprecated') {
+      this.tab = 1;
+    }
   },
-  methods: {
+  watch: {
+    tab: async function () {
+      this.isLoading = true;
+      if (this.tab === 0) {
+        if (this.productsPutForward === null) {
+          this.productsPutForward = await ProductService.listPutForward();
+        }
+      } else {
+        if (this.productsDeprecated === null) {
+          this.productsDeprecated = await ProductService.listDeprecated();
+        }
+      }
+      this.isLoading = false;
+    }
   }
 }
 </script>
