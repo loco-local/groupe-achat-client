@@ -1,16 +1,28 @@
 <template>
+
   <v-data-table
       :headers="headers"
       :items="products"
-      disable-pagination
       :options="tableOptions"
       :no-data-text="$t('productTable:noProducts')"
-      hide-default-footer
-      class="elevation-1 mt-8"
+      class="elevation-1 mt-8 productsTable"
       :loading="loading"
       :loading-text="$t('productTable:loadingText')"
       :group-by="groupBy"
+      :show-select="showSelect"
+      v-model="selected"
+      :search="search"
   >
+    <template v-slot:top>
+      <v-text-field
+          prepend-inner-icon="search"
+          label="Recherche"
+          single-line
+          hide-details
+          v-model="search"
+          class="mx-4 mb-6"
+      ></v-text-field>
+    </template>
     <template v-slot:item.price="{ item }">
       {{ item.price | currency }}
     </template>
@@ -40,7 +52,11 @@ export default {
         return []
       }
     },
-    loading: Boolean
+    loading: Boolean,
+    showSelect: {
+      type: Boolean,
+      default: false
+    }
   },
   data: function () {
     ProductTranslation.setup();
@@ -59,9 +75,13 @@ export default {
       noProducts: "Pas de produits"
     });
     return {
+      selected: [],
+      search: null,
       tableOptions: {
-        sortBy: ['updatedAt'],
-        sortDesc: [true]
+        sortBy: ['name'],
+        sortDesc: [true],
+        page: 1,
+        itemsPerPage: 50
       },
       headers: [
         {
@@ -98,10 +118,17 @@ export default {
         }
       ],
     }
+  },
+  watch: {
+    selected: async function () {
+      await this.$emit('selectionChanged', this.selected);
+    }
   }
 }
 </script>
 
-<style scoped>
-
+<style>
+.productsTable .v-data-footer__select {
+  display:none;
+}
 </style>

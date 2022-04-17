@@ -15,14 +15,31 @@
     </v-tabs>
     <v-tabs-items v-model="tab">
       <v-tab-item
-          key="putForward"
+          key="putForward"  class="text-left"
       >
-        <ProductsTable :products="productsPutForward || []" :loading="isLoading"></ProductsTable>
+        <v-btn color="primary" class="mt-4 mb-1">
+          {{$t('productsAdmin:deprecatedInfinitive')}}
+        </v-btn>
+        <ProductsTable
+            :products="productsPutForward || []"
+            :loading="isLoading"
+            :showSelect="true"
+            @selectionChanged="updateSelection"
+        ></ProductsTable>
       </v-tab-item>
       <v-tab-item
           key="deprecated"
+          class="text-left"
       >
-        <ProductsTable :products="productsDeprecated || []" :loading="isLoading"></ProductsTable>
+        <v-btn color="primary" class="mt-4 mb-1">
+          {{$t('productsAdmin:putForwardInfinitive')}}
+        </v-btn>
+        <ProductsTable
+            :products="productsDeprecated || []"
+            :loading="isLoading"
+            :showSelect="true"
+            @selectionChanged="updateSelection"
+        ></ProductsTable>
       </v-tab-item>
     </v-tabs-items>
   </Page>
@@ -43,19 +60,24 @@ export default {
       "title": "Produits",
       "import": "Importer Produits",
       putForward: "Valorisé",
-      deprecate: "Dévalorisé"
+      putForwardInfinitive: "Valoriser",
+      deprecate: "Déprécié",
+      deprecatedInfinitive: "Déprécier",
     });
     I18n.i18next.addResources("en", "productsAdmin", {
       "title": "Produits",
       "import": "Importer Produits",
       putForward: "Valorisé",
-      deprecate: "Dévalorisé"
+      putForwardInfinitive: "Valoriser",
+      deprecate: "Déprécié",
+      deprecatedInfinitive: "Déprécier",
     });
     return {
       productsPutForward: null,
       productsDeprecated: null,
       isLoading: false,
-      tab: null
+      tab: null,
+      selection: []
     }
   },
   mounted: async function () {
@@ -63,9 +85,15 @@ export default {
       this.tab = 1;
     }
   },
+  methods: {
+    updateSelection: function (selection) {
+      this.selection = selection;
+    }
+  },
   watch: {
     tab: async function () {
       this.isLoading = true;
+      this.selection = [];
       if (this.tab === 0) {
         if (this.productsPutForward === null) {
           this.productsPutForward = await ProductService.listPutForward();
