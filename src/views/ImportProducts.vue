@@ -28,17 +28,56 @@
         </v-btn>
       </v-card-actions>
     </v-card>
-    <!--    <v-row justify="center" class="">-->
-    <!--      <v-col cols="12" class="text-center">-->
-    <!--        <v-skeleton-loader-->
-    <!--            width="100%"-->
-    <!--            type="table"-->
-    <!--            color="transparent"-->
-    <!--            v-if="isProductsFileLoading"-->
-    <!--        ></v-skeleton-loader>-->
-    <!--      </v-col>-->
-    <!--    </v-row>-->
-    <ProductsTable :products="products" v-if="productsFile !== null && !isProductsFileLoading" :groupBy="['action']"></ProductsTable>
+    <v-expansion-panels>
+      <v-expansion-panel>
+        <v-expansion-panel-header>
+          {{$t('import:productsNotAvailable')}}
+          <strong class="ml-2">{{productsToDisable.length}}</strong>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <ProductsTable
+              :products="productsToDisable"
+              v-if="productsFile !== null && !isProductsFileLoading"
+          ></ProductsTable>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-header>
+          {{$t('import:priceUpdatedProducts')}}
+          <strong class="ml-2">{{updatePriceProducts.length}}</strong>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <ProductsTable
+              :products="updatePriceProducts"
+              v-if="productsFile !== null && !isProductsFileLoading"
+          ></ProductsTable>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-header>
+          {{$t('import:newProducts')}}
+          <strong class="ml-2">{{newProducts.length}}</strong>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <ProductsTable
+              :products="newProducts"
+              v-if="productsFile !== null && !isProductsFileLoading"
+          ></ProductsTable>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-header>
+          {{$t('import:productsNothingChanged')}}
+          <strong class="ml-2">{{doNothingProducts.length}}</strong>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <ProductsTable
+              :products="doNothingProducts"
+              v-if="productsFile !== null && !isProductsFileLoading"
+          ></ProductsTable>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
   </Page>
 </template>
 
@@ -57,7 +96,11 @@ export default {
       "title": "Importer Produits",
       areDataOk: "Est-ce que les données semblent correct ?",
       yesDataOk: "Oui, mettre à jour la base de donnée",
-      noDataOk: "Non, je ne suis pas sûr."
+      noDataOk: "Non, je ne suis pas sûr.",
+      productsNotAvailable: "Indisponibles",
+      newProducts: "Nouveaux",
+      priceUpdatedProducts: "Prix mis à jour",
+      productsNothingChanged: "Rien de changé"
     });
     I18n.i18next.addResources("en", "import", {
       "title": "Importer Produits",
@@ -66,7 +109,10 @@ export default {
       noDataOk: "Non, je ne suis pas sûr."
     });
     return {
-      products: [],
+      newProducts: [],
+      updatePriceProducts: [],
+      productsToDisable: [],
+      doNothingProducts: [],
       productsFile: null,
       isProductsFileLoading: false,
       uploadUuid: null,
@@ -92,6 +138,18 @@ export default {
       await this.$router.push({
         name: 'AdminProducts'
       });
+    },
+    _productArrayForAction: function (action) {
+      switch (action) {
+        case "create":
+          return this.newProducts
+        case "updatePrice":
+          return this.updatePriceProducts
+        case "remove":
+          return this.productsToDisable
+        case "nothing":
+          return this.doNothingProducts
+      }
     }
   },
   watch: {
@@ -101,7 +159,10 @@ export default {
       formData.append('file', this.productsFile, this.productsFile.name);
       this.formData = formData;
       const uploadData = await ProductService.uploadSatauProducts(formData);
-      this.products = uploadData.formattedData;
+      uploadData.formattedData.forEach((product) => {
+        const productArray = this._productArrayForAction(product.action);
+        productArray.push(product);
+      })
       this.uploadUuid = uploadData.uploadUuid;
       this.isProductsFileLoading = false
     }

@@ -10,7 +10,8 @@ export default {
             category: "Catégorie",
             internalCode: "Code interne",
             maker: "Fabricant",
-            provider: "Fournisseur"
+            provider: "Fournisseur",
+            isAvailable: "Est disponible"
         });
         I18n.i18next.addResources("en", "product", {
             name: "Nom",
@@ -20,7 +21,8 @@ export default {
             category: "Catégorie",
             internalCode: "Code interne",
             maker: "Fabricant",
-            provider: "Fournisseur"
+            provider: "Fournisseur",
+            isAvailable: "Est disponible"
         });
     }
 }

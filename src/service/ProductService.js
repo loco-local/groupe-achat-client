@@ -40,5 +40,13 @@ export default {
     acceptImport: async function (uploadId) {
         const response = await Service.api().post('/products/upload/' + uploadId + "/accept")
         return response.data;
+    },
+    makeAvailable: async function (productId) {
+        return await Service.api().post(
+            '/products/' + productId + "/available")
+    },
+    makeUnavailable: async function(productId){
+        return await Service.api().post(
+            '/products/' + productId + "/unavailable")
     }
 }

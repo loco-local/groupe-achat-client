@@ -8,7 +8,6 @@
       class="elevation-1 mt-8 productsTable"
       :loading="loading"
       :loading-text="$t('productTable:loadingText')"
-      :group-by="groupBy"
       :show-select="showSelect"
       v-model="selected"
       :search="search"
@@ -26,14 +25,11 @@
     <template v-slot:item.price="{ item }">
       {{ item.price | currency }}
     </template>
-    <template v-slot:group.header="{ group, headers, toggle, isOpen }">
-      <td :colspan="headers.length">
-        <v-btn @click="toggle" x-small icon :ref="group">
-          <v-icon v-if="isOpen">mdi-minus</v-icon>
-          <v-icon v-else>mdi-plus</v-icon>
-        </v-btn>
-        <span class="mx-5 font-weight-bold">{{ $t('productTable:' + group) }}</span>
-      </td>
+    <template v-slot:item.isAvailable="{ item }">
+      <v-checkbox
+          v-model="item.isAvailable"
+          @change="toggleIsAvailable(item)"
+      ></v-checkbox>
     </template>
   </v-data-table>
 </template>
@@ -41,17 +37,12 @@
 <script>
 import ProductTranslation from "@/ProductTranslation";
 import I18n from "@/i18n";
+import ProductService from "@/service/ProductService";
 
 export default {
   name: "ProductsTable",
   props: {
     'products': Array,
-    'groupBy': {
-      type: Array,
-      default: function () {
-        return []
-      }
-    },
     loading: Boolean,
     showSelect: {
       type: Boolean,
@@ -115,6 +106,10 @@ export default {
         {
           text: this.$t('product:provider'),
           value: 'provider'
+        },
+        {
+          text: this.$t('product:isAvailable'),
+          value: 'isAvailable'
         }
       ],
     }
@@ -123,12 +118,21 @@ export default {
     selected: async function () {
       await this.$emit('selectionChanged', this.selected);
     }
+  },
+  methods: {
+    toggleIsAvailable: async function (product) {
+      if(product.isAvailable){
+        await ProductService.makeAvailable(product.id);
+      }else{
+        await ProductService.makeUnavailable(product.id);
+      }
+    }
   }
 }
 </script>
 
 <style>
 .productsTable .v-data-footer__select {
-  display:none;
+  display: none;
 }
 </style>

@@ -17,8 +17,11 @@
       <v-tab-item
           key="putForward" class="text-left"
       >
-        <v-btn color="primary" class="mt-4 mb-1" @click="deprecate" :loading="deprecateLoading"
-               :disabled="deprecateLoading">
+        <v-btn color="primary" class="mt-4 mb-1"
+               @click="deprecate"
+               :loading="deprecateLoading"
+               :disabled="deprecateLoading || selection.length === 0"
+        >
           {{ $t('productsAdmin:deprecatedInfinitive') }}
         </v-btn>
         <ProductsTable
@@ -32,8 +35,11 @@
           key="deprecated"
           class="text-left"
       >
-        <v-btn color="primary" class="mt-4 mb-1" @click="putForward" :loading="putForwardLoading"
-               :disabled="putForwardLoading">
+        <v-btn color="primary" class="mt-4 mb-1"
+               @click="putForward"
+               :loading="putForwardLoading"
+               :disabled="putForwardLoading || selection.length === 0"
+        >
           {{ $t('productsAdmin:putForwardInfinitive') }}
         </v-btn>
         <ProductsTable
