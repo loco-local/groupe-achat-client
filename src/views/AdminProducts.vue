@@ -102,12 +102,25 @@ export default {
     putForward: async function () {
       this.putForwardLoading = true;
       await ProductService.putForward(this.selection)
+      this.removeProductsOfSelection(this.productsDeprecated);
       this.putForwardLoading = false;
     },
     deprecate: async function () {
       this.deprecateLoading = true;
       await ProductService.deprecate(this.selection)
+      this.removeProductsOfSelection(this.productsPutForward);
       this.deprecateLoading = false;
+    },
+    removeProductsOfSelection: function (products) {
+      this.selection.forEach((selected) => {
+        let l = products.length;
+        while (l--) {
+          const product = products[l];
+          if (product.id === selected.id) {
+            products.splice(l, 1);
+          }
+        }
+      })
     }
   },
   watch: {

@@ -38,6 +38,7 @@
           <ProductsTable
               :products="productsToDisable"
               v-if="productsFile !== null && !isProductsFileLoading"
+              :canToggleAvailability="false"
           ></ProductsTable>
         </v-expansion-panel-content>
       </v-expansion-panel>
@@ -50,6 +51,7 @@
           <ProductsTable
               :products="updatePriceProducts"
               v-if="productsFile !== null && !isProductsFileLoading"
+              :canToggleAvailability="false"
           ></ProductsTable>
         </v-expansion-panel-content>
       </v-expansion-panel>
@@ -62,6 +64,7 @@
           <ProductsTable
               :products="newProducts"
               v-if="productsFile !== null && !isProductsFileLoading"
+              :canToggleAvailability="false"
           ></ProductsTable>
         </v-expansion-panel-content>
       </v-expansion-panel>
@@ -74,6 +77,7 @@
           <ProductsTable
               :products="doNothingProducts"
               v-if="productsFile !== null && !isProductsFileLoading"
+              :canToggleAvailability="false"
           ></ProductsTable>
         </v-expansion-panel-content>
       </v-expansion-panel>

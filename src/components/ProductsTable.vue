@@ -25,7 +25,7 @@
     <template v-slot:item.price="{ item }">
       {{ item.price | currency }}
     </template>
-    <template v-slot:item.isAvailable="{ item }">
+    <template v-slot:item.isAvailable="{ item }" v-if="canToggleAvailability">
       <v-checkbox
           v-model="item.isAvailable"
           @change="toggleIsAvailable(item)"
@@ -47,6 +47,10 @@ export default {
     showSelect: {
       type: Boolean,
       default: false
+    },
+    canToggleAvailability: {
+      type: Boolean,
+      default: true
     }
   },
   data: function () {
@@ -65,6 +69,46 @@ export default {
       loadingText: "Liste de produits en chargement",
       noProducts: "Pas de produits"
     });
+    const headers = [
+      {
+        text: this.$t('product:name'),
+        value: 'name'
+      },
+      {
+        text: this.$t('product:format'),
+        value: 'format'
+      },
+      {
+        text: this.$t('product:qtyInBox'),
+        value: 'qtyInBox'
+      },
+      {
+        text: this.$t('product:price'),
+        value: 'price'
+      },
+      {
+        text: this.$t('product:category'),
+        value: 'category'
+      },
+      {
+        text: this.$t('product:internalCode'),
+        value: 'internalCode'
+      },
+      {
+        text: this.$t('product:maker'),
+        value: 'maker'
+      },
+      {
+        text: this.$t('product:provider'),
+        value: 'provider'
+      },
+    ];
+    if (this.canToggleAvailability) {
+      headers.push({
+        text: this.$t('product:isAvailable'),
+        value: 'isAvailable'
+      });
+    }
     return {
       selected: [],
       search: null,
@@ -74,44 +118,7 @@ export default {
         page: 1,
         itemsPerPage: 50
       },
-      headers: [
-        {
-          text: this.$t('product:name'),
-          value: 'name'
-        },
-        {
-          text: this.$t('product:format'),
-          value: 'format'
-        },
-        {
-          text: this.$t('product:qtyInBox'),
-          value: 'qtyInBox'
-        },
-        {
-          text: this.$t('product:price'),
-          value: 'price'
-        },
-        {
-          text: this.$t('product:category'),
-          value: 'category'
-        },
-        {
-          text: this.$t('product:internalCode'),
-          value: 'internalCode'
-        },
-        {
-          text: this.$t('product:maker'),
-          value: 'maker'
-        },
-        {
-          text: this.$t('product:provider'),
-          value: 'provider'
-        },
-        {
-          text: this.$t('product:isAvailable'),
-          value: 'isAvailable'
-        }
-      ],
+      headers: headers
     }
   },
   watch: {
@@ -121,9 +128,9 @@ export default {
   },
   methods: {
     toggleIsAvailable: async function (product) {
-      if(product.isAvailable){
+      if (product.isAvailable) {
         await ProductService.makeAvailable(product.id);
-      }else{
+      } else {
         await ProductService.makeUnavailable(product.id);
       }
     }
