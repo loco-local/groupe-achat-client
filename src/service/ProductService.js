@@ -9,6 +9,26 @@ export default {
         const response = await Service.api().get("/products/deprecated");
         return response.data;
     },
+    putForward: async function (products) {
+        await Service.api().post(
+            "/products/forward",
+            products.map((product) => {
+                return {
+                    id: product.id
+                }
+            })
+        );
+    },
+    deprecate: async function (products) {
+        await Service.api().post(
+            "/products/deprecate",
+            products.map((product) => {
+                return {
+                    id: product.id
+                }
+            })
+        );
+    },
     uploadSatauProducts: async function (formData) {
         const response = await Service.api().post('/products/upload/provider/satau', formData, {
             headers: {

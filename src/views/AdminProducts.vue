@@ -15,10 +15,11 @@
     </v-tabs>
     <v-tabs-items v-model="tab">
       <v-tab-item
-          key="putForward"  class="text-left"
+          key="putForward" class="text-left"
       >
-        <v-btn color="primary" class="mt-4 mb-1">
-          {{$t('productsAdmin:deprecatedInfinitive')}}
+        <v-btn color="primary" class="mt-4 mb-1" @click="deprecate" :loading="deprecateLoading"
+               :disabled="deprecateLoading">
+          {{ $t('productsAdmin:deprecatedInfinitive') }}
         </v-btn>
         <ProductsTable
             :products="productsPutForward || []"
@@ -31,8 +32,9 @@
           key="deprecated"
           class="text-left"
       >
-        <v-btn color="primary" class="mt-4 mb-1">
-          {{$t('productsAdmin:putForwardInfinitive')}}
+        <v-btn color="primary" class="mt-4 mb-1" @click="putForward" :loading="putForwardLoading"
+               :disabled="putForwardLoading">
+          {{ $t('productsAdmin:putForwardInfinitive') }}
         </v-btn>
         <ProductsTable
             :products="productsDeprecated || []"
@@ -77,7 +79,9 @@ export default {
       productsDeprecated: null,
       isLoading: false,
       tab: null,
-      selection: []
+      selection: [],
+      putForwardLoading: false,
+      deprecateLoading: false
     }
   },
   mounted: async function () {
@@ -88,6 +92,16 @@ export default {
   methods: {
     updateSelection: function (selection) {
       this.selection = selection;
+    },
+    putForward: async function () {
+      this.putForwardLoading = true;
+      await ProductService.putForward(this.selection)
+      this.putForwardLoading = false;
+    },
+    deprecate: async function () {
+      this.deprecateLoading = true;
+      await ProductService.deprecate(this.selection)
+      this.deprecateLoading = false;
     }
   },
   watch: {
