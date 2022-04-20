@@ -40,6 +40,7 @@ export default {
             resources: {
                 en: {
                     translation: {
+                        name:"Name",
                         Email: "Email",
                         Phone: "Phone",
                         Messenger: "Messenger",
@@ -63,6 +64,7 @@ export default {
                         modify: "Modify",
                         continue: "Continue",
                         cancel: "Cancel",
+                        save: "Sauvegarder",
                         remove: "Remove",
                         users: "Users",
                         noSearchResults: "No search results",
@@ -82,6 +84,7 @@ export default {
                 },
                 fr: {
                     translation: {
+                        name:"Nom",
                         Email: "Courriel",
                         Phone: "Téléphone",
                         Messenger: "Messenger",
@@ -105,6 +108,7 @@ export default {
                         modify: "Modifier",
                         continue: "Continuer",
                         cancel: "Annuler",
+                        save: "Sauvegarder",
                         remove: "Supprimer",
                         users: "Usagers",
                         noSearchResults: "Pas de résultats de recherche",

@@ -31,6 +31,11 @@
           @change="toggleIsAvailable(item)"
       ></v-checkbox>
     </template>
+    <template v-slot:item.edit="{ item }" v-if="showEditButton">
+      <v-btn icon class="mx-0" @click="$emit('modify', item)">
+        <v-icon color="primary">edit</v-icon>
+      </v-btn>
+    </template>
   </v-data-table>
 </template>
 
@@ -109,6 +114,14 @@ export default {
         value: 'isAvailable'
       });
     }
+    const showEditButton = new Boolean(this.$listeners && this.$listeners.modify);
+    if (showEditButton) {
+      headers.push({
+        text: '',
+        sortable: false,
+        value: 'edit'
+      });
+    }
     return {
       selected: [],
       search: null,
@@ -118,7 +131,8 @@ export default {
         page: 1,
         itemsPerPage: 50
       },
-      headers: headers
+      headers: headers,
+      showEditButton: showEditButton
     }
   },
   watch: {

@@ -24,11 +24,28 @@
         >
           {{ $t('productsAdmin:deprecatedInfinitive') }}
         </v-btn>
+        <v-row>
+          <v-col cols="12" class="text-right pb-0 ">
+            <v-fab-transition>
+              <v-btn
+                  color="primary"
+                  fab
+                  dark
+                  right
+                  absolute
+                  @click="enterNewProductFlow"
+              >
+                <v-icon>mdi-plus</v-icon>
+              </v-btn>
+            </v-fab-transition>
+          </v-col>
+        </v-row>
         <ProductsTable
             :products="productsPutForward || []"
             :loading="isLoading"
             :showSelect="true"
             @selectionChanged="updateSelection"
+            @modify="enterUpdateProductFlow"
         ></ProductsTable>
       </v-tab-item>
       <v-tab-item
@@ -47,15 +64,151 @@
             :loading="isLoading"
             :showSelect="true"
             @selectionChanged="updateSelection"
+            @modify="enterUpdateProductFlow"
         ></ProductsTable>
       </v-tab-item>
     </v-tabs-items>
+    <v-dialog
+        v-model="editProductDialog"
+        max-width="500px"
+        v-if="editedProduct !== null"
+    >
+      <v-card>
+        <v-card-title class="text-h5">
+          <span v-if="isNewProductFlow">
+              {{ $t('productsAdmin:newProduct') }}
+          </span>
+          <span v-else>
+              {{ $t('modify') }}
+          </span>
+          <v-spacer></v-spacer>
+          <v-icon @click="cancelSave">close</v-icon>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-form name="productForm" ref="productForm">
+              <v-row>
+                <v-col
+                    cols="12"
+                >
+                  <v-text-field
+                      v-model="editedProduct.name"
+                      :label="$t('name')"
+                      :rules="[rules.required]"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                >
+                  <v-text-field
+                      v-model="editedProduct.format"
+                      :label="$t('product:format')"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                >
+                  <v-text-field
+                      v-model="editedProduct.price"
+                      :label="$t('product:price')"
+                      :rules="[rules.required]"
+                  ></v-text-field>
+                </v-col>
+                <!--                <v-col-->
+                <!--                    cols="12"-->
+                <!--                    sm="6"-->
+                <!--                    md="4"-->
+                <!--                >-->
+                <!--                  <v-text-field-->
+                <!--                      v-model="editedProduct.category"-->
+                <!--                      :label="$t('product:category')"-->
+                <!--                  ></v-text-field>-->
+                <!--                </v-col>-->
+                <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                >
+                  <v-text-field
+                      v-model="editedProduct.internalCode"
+                      :label="$t('product:internalCode')"
+                      :rules="[rules.required]"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                >
+                  <v-text-field
+                      v-model="editedProduct.maker"
+                      :label="$t('product:maker')"
+                      :rules="[rules.required]"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                >
+                  <v-text-field
+                      v-model="editedProduct.provider"
+                      :label="$t('product:provider')"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                >
+                  <v-checkbox
+                      :label="$t('product:isTaxable')"
+                      v-model="editedProduct.isTaxable"
+                  />
+                </v-col>
+              </v-row>
+            </v-form>
+          </v-container>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-btn
+              color="blue darken-1"
+              text
+              @click="cancelSave"
+          >
+            {{ $t('cancel') }}
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+              color="blue darken-1"
+              @click="save"
+              dark
+              :loading="isSaveLoading"
+              :disabled="isSaveLoading"
+          >
+            <span v-if="isNewProductFlow">
+              {{ $t('add') }}
+              <!--              <v-icon right large>add_circle</v-icon>-->
+            </span>
+            <span v-else>
+              {{ $t('modify') }}
+            </span>
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </Page>
 </template>
 
 <script>
 import ProductService from "@/service/ProductService";
 import I18n from "@/i18n";
+import Rules from '@/Rules'
 
 export default {
   name: "Products",
@@ -71,6 +224,8 @@ export default {
       putForwardInfinitive: "Valoriser",
       deprecate: "Déprécié",
       deprecatedInfinitive: "Déprécier",
+      newProduct: "Ajouter Produit",
+
     });
     I18n.i18next.addResources("en", "productsAdmin", {
       "title": "Produits",
@@ -79,6 +234,7 @@ export default {
       putForwardInfinitive: "Valoriser",
       deprecate: "Déprécié",
       deprecatedInfinitive: "Déprécier",
+      newProduct: "Ajouter Produit"
     });
     return {
       productsPutForward: null,
@@ -87,7 +243,12 @@ export default {
       tab: null,
       selection: [],
       putForwardLoading: false,
-      deprecateLoading: false
+      deprecateLoading: false,
+      editProductDialog: false,
+      editedProduct: null,
+      originalEditProduct: null,
+      rules: Rules,
+      isSaveLoading: false,
     }
   },
   mounted: async function () {
@@ -96,6 +257,42 @@ export default {
     }
   },
   methods: {
+    cancelSave : function(){
+      this.editedProduct.name = this.originalEditProductValues.name;
+      this.editedProduct.format = this.originalEditProductValues.format;
+      this.editedProduct.price = this.originalEditProductValues.price;
+      this.editedProduct.internalCode = this.originalEditProductValues.internalCode;
+      this.editedProduct.maker = this.originalEditProductValues.maker;
+      this.editedProduct.provider = this.originalEditProductValues.provider;
+      this.editedProduct.isAvailable = this.originalEditProductValues.isAvailable;
+      this.editedProduct.isTaxable = this.originalEditProductValues.isTaxable;
+      this.editProductDialog = false;
+    },
+    save: async function () {
+      if (!this.$refs.productForm.validate()) {
+        return
+      }
+      this.isSaveLoading = true;
+      if (this.isNewProductFlow) {
+        await ProductService.createProduct(this.editedProduct);
+      } else {
+        await ProductService.modifyProduct(this.editedProduct);
+        this.originalEditProduct = this.editedProduct;
+      }
+      this.isSaveLoading = false;
+      this.editProductDialog = false;
+    },
+    enterNewProductFlow: function () {
+      this.editedProduct = {
+        isAvailable: true
+      }
+      this.editProductDialog = true;
+    },
+    enterUpdateProductFlow: function (product) {
+      this.originalEditProductValues = {...product};
+      this.editedProduct = product;
+      this.editProductDialog = true;
+    },
     updateSelection: function (selection) {
       this.selection = selection;
     },
@@ -128,15 +325,16 @@ export default {
       this.isLoading = true;
       this.selection = [];
       if (this.tab === 0) {
-        if (this.productsPutForward === null) {
-          this.productsPutForward = await ProductService.listPutForward();
-        }
+        this.productsPutForward = await ProductService.listPutForward();
       } else {
-        if (this.productsDeprecated === null) {
-          this.productsDeprecated = await ProductService.listDeprecated();
-        }
+        this.productsDeprecated = await ProductService.listDeprecated();
       }
       this.isLoading = false;
+    }
+  },
+  computed: {
+    isNewProductFlow: function () {
+      return this.editedProduct !== null && this.editedProduct.id === undefined;
     }
   }
 }

@@ -11,7 +11,8 @@ export default {
             internalCode: "Code interne",
             maker: "Fabricant",
             provider: "Fournisseur",
-            isAvailable: "Est disponible"
+            isAvailable: "Est disponible",
+            isTaxable: "Est taxable"
         });
         I18n.i18next.addResources("en", "product", {
             name: "Nom",
@@ -22,7 +23,8 @@ export default {
             internalCode: "Code interne",
             maker: "Fabricant",
             provider: "Fournisseur",
-            isAvailable: "Est disponible"
+            isAvailable: "Est disponible",
+            isTaxable: "Est taxable"
         });
     }
 }
