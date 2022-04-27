@@ -52,15 +52,24 @@
           key="deprecated"
           class="text-left"
       >
-        <v-btn color="primary" class="mt-4 mb-1"
-               @click="putForward"
-               :loading="putForwardLoading"
-               :disabled="putForwardLoading || selection.length === 0"
-        >
-          {{ $t('productsAdmin:putForwardInfinitive') }}
-        </v-btn>
+        <v-row>
+          <v-col cols="12">
+            <v-btn color="primary" class="mt-4 mb-1"
+                   @click="putForward"
+                   :loading="putForwardLoading"
+                   :disabled="putForwardLoading || selection.length === 0"
+            >
+              {{ $t('productsAdmin:putForwardInfinitive') }}
+            </v-btn>
+            <v-spacer></v-spacer>
+            <v-checkbox
+                :label="$t('productsAdmin:onlyBigFormat')"
+                v-model="onlyBigFormat"
+            />
+          </v-col>
+        </v-row>
         <ProductsTable
-            :products="productsDeprecated || []"
+            :products="productsDeprecatedFiltered || []"
             :loading="isLoading"
             :showSelect="true"
             @selectionChanged="updateSelection"
@@ -225,6 +234,7 @@ export default {
       deprecate: "Déprécié",
       deprecatedInfinitive: "Déprécier",
       newProduct: "Ajouter Produit",
+      onlyBigFormat: "3 litres/kilo ou plus gros"
 
     });
     I18n.i18next.addResources("en", "productsAdmin", {
@@ -234,7 +244,8 @@ export default {
       putForwardInfinitive: "Valoriser",
       deprecate: "Déprécié",
       deprecatedInfinitive: "Déprécier",
-      newProduct: "Ajouter Produit"
+      newProduct: "Ajouter Produit",
+      onlyBigFormat: "3 litres/kilo ou plus gros"
     });
     return {
       productsPutForward: null,
@@ -249,6 +260,7 @@ export default {
       originalEditProduct: null,
       rules: Rules,
       isSaveLoading: false,
+      onlyBigFormat: false
     }
   },
   mounted: async function () {
@@ -257,7 +269,7 @@ export default {
     }
   },
   methods: {
-    cancelSave : function(){
+    cancelSave: function () {
       this.editedProduct.name = this.originalEditProductValues.name;
       this.editedProduct.format = this.originalEditProductValues.format;
       this.editedProduct.price = this.originalEditProductValues.price;
@@ -318,23 +330,48 @@ export default {
           }
         }
       })
-    }
+    },
   },
   watch: {
     tab: async function () {
       this.isLoading = true;
       this.selection = [];
+      this.onlyBigFormat = false;
       if (this.tab === 0) {
         this.productsPutForward = await ProductService.listPutForward();
       } else {
         this.productsDeprecated = await ProductService.listDeprecated();
       }
       this.isLoading = false;
-    }
+    },
   },
   computed: {
     isNewProductFlow: function () {
       return this.editedProduct !== null && this.editedProduct.id === undefined;
+    },
+    productsDeprecatedFiltered: function () {
+      if (this.onlyBigFormat) {
+        return this.productsDeprecated.filter((product) => {
+          if (product.format === null) {
+            return false;
+          }
+          let format = product.format.toLowerCase().replace(/\s/g, "");
+          const numbers = format.match(/[+-]?([0-9]*[.])?[0-9]+/)
+          if (numbers === null || !numbers.length) {
+            return false;
+          }
+          let quantity = numbers[0].trim();
+          const measureUnit = format.substring(quantity.toString().length).trim();
+          if (measureUnit === "g" || measureUnit === "ml") {
+            quantity = quantity / 1000;
+          } else if (measureUnit !== "kg" && measureUnit !== "l") {
+            return false;
+          }
+          return quantity >= 3;
+        });
+      } else {
+        return this.productsDeprecated;
+      }
     }
   }
 }
