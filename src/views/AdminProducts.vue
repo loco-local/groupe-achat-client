@@ -270,14 +270,16 @@ export default {
   },
   methods: {
     cancelSave: function () {
-      this.editedProduct.name = this.originalEditProductValues.name;
-      this.editedProduct.format = this.originalEditProductValues.format;
-      this.editedProduct.price = this.originalEditProductValues.price;
-      this.editedProduct.internalCode = this.originalEditProductValues.internalCode;
-      this.editedProduct.maker = this.originalEditProductValues.maker;
-      this.editedProduct.provider = this.originalEditProductValues.provider;
-      this.editedProduct.isAvailable = this.originalEditProductValues.isAvailable;
-      this.editedProduct.isTaxable = this.originalEditProductValues.isTaxable;
+      if(!this.isNewProductFlow){
+        this.editedProduct.name = this.originalEditProductValues.name;
+        this.editedProduct.format = this.originalEditProductValues.format;
+        this.editedProduct.price = this.originalEditProductValues.price;
+        this.editedProduct.internalCode = this.originalEditProductValues.internalCode;
+        this.editedProduct.maker = this.originalEditProductValues.maker;
+        this.editedProduct.provider = this.originalEditProductValues.provider;
+        this.editedProduct.isAvailable = this.originalEditProductValues.isAvailable;
+        this.editedProduct.isTaxable = this.originalEditProductValues.isTaxable;
+      }
       this.editProductDialog = false;
     },
     save: async function () {
