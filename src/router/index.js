@@ -20,11 +20,6 @@ const routes = [
         component: () => import('../views/Dashboard.vue')
     },
     {
-        path: '/produits',
-        name: 'Products',
-        component: () => import('../views/Products.vue')
-    },
-    {
         path: '/produits/admin',
         name: 'AdminProducts',
         component: () => import('../views/AdminProducts.vue')
@@ -39,6 +34,11 @@ const routes = [
         name: 'ImportProducts',
         component: () => import('../views/ImportProducts.vue')
     },
+    {
+        path: '/:buyGroup/',
+        name: 'Products',
+        component: () => import('../views/Products')
+    }
 ]
 
 const router = new VueRouter({

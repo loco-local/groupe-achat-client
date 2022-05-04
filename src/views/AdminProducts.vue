@@ -340,9 +340,9 @@ export default {
       this.selection = [];
       this.onlyBigFormat = false;
       if (this.tab === 0) {
-        this.productsPutForward = await ProductService.listPutForward();
+        this.productsPutForward = await ProductService.listPutForward(this.$store.state.user.BuyGroupId);
       } else {
-        this.productsDeprecated = await ProductService.listDeprecated();
+        this.productsDeprecated = await ProductService.listDeprecated(this.$store.state.user.BuyGroupId);
       }
       this.isLoading = false;
     },

@@ -2,12 +2,12 @@ import Service from "@/service/Service";
 import Product from "@/Product"
 
 export default {
-    listPutForward: async function () {
-        const response = await Service.api().get("/products/forward");
+    listPutForward: async function (buyGroupId) {
+        const response = await Service.api().get("/buy-group/" + buyGroupId +"/products/forward");
         return response.data.map(Product.format)
     },
-    listDeprecated: async function () {
-        const response = await Service.api().get("/products/deprecated");
+    listDeprecated: async function (buyGroupId) {
+        const response = await Service.api().get("/buy-group/" + buyGroupId +"/products/deprecated");
         return response.data.map(Product.format)
     },
     putForward: async function (products) {
