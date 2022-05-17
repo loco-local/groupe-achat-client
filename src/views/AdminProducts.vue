@@ -257,7 +257,6 @@ export default {
       deprecateLoading: false,
       editProductDialog: false,
       editedProduct: null,
-      originalEditProduct: null,
       rules: Rules,
       isSaveLoading: false,
       onlyBigFormat: false
@@ -291,7 +290,6 @@ export default {
         await ProductService.createProduct(this.editedProduct);
       } else {
         await ProductService.modifyProduct(this.editedProduct);
-        this.originalEditProduct = this.editedProduct;
       }
       this.isSaveLoading = false;
       this.editProductDialog = false;

@@ -20,6 +20,7 @@
           :loading="isLoading"
           :canToggleAvailability="false"
           :canOrder="true"
+          @quantityUpdate="updateOrderQuantity"
       ></ProductsTable>
     </v-row>
   </Page>
@@ -54,6 +55,12 @@ export default {
     const buyGroup = await BuyGroupService.getForPath(buyGroupPath);
     this.products = await ProductService.listPutForward(buyGroup.id);
     this.isLoading = false;
+  },
+  methods: {
+    updateOrderQuantity: function (product) {
+      console.log(product.orderQuantity);
+
+    }
   }
 }
 </script>

@@ -1,0 +1,242 @@
+<template>
+  <Page>
+    <v-card flat>
+      <v-card-actions class="vh-center">
+        <v-btn @click="enterNewOrderFlow">
+          <v-icon left>add</v-icon>
+          {{ $t('groupOrders:newOrder') }}
+        </v-btn>
+      </v-card-actions>
+      <v-card-title v-if="orders.length === 0" class="vh-center">
+        {{ $t('groupOrders:none') }}
+      </v-card-title>
+      <v-card-text v-if="isLoading">
+        <v-progress-circular
+            :width="2"
+            :size="80"
+            indeterminate
+        ></v-progress-circular>
+      </v-card-text>
+      <v-card-text v-if="orders.length > 0 && !isLoading">
+        <v-list>
+          <div v-for="order in orders"
+               :key="order.id">
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title class="font-weight-bold">
+                  {{ order.startDate | dayDate }}
+                  <div class="mt-2 mb-2">
+                    {{ $t('to') }}
+                  </div>
+                  {{ order.endDate | dayDate }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-divider></v-divider>
+          </div>
+        </v-list>
+      </v-card-text>
+    </v-card>
+    <v-dialog
+        v-model="editOrderDialog"
+        max-width="500px"
+        v-if="editedOrder !== null"
+    >
+      <v-card>
+        <v-card-title>
+          <span v-if="isNewOrderFlow">
+              {{ $t('groupOrders:newOrder') }}
+          </span>
+          <span v-else>
+              {{ $t('modify') }}
+          </span>
+          <v-spacer></v-spacer>
+          <v-icon @click="cancelSave">close</v-icon>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-form name="groupOrderForm" ref="groupOrderForm">
+              <v-row>
+                <v-col
+                    cols="12"
+                >
+                  <v-menu
+                      v-model="startDateMenu"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                          v-model="editedOrder.startDate"
+                          :label="$t('startDate')"
+                          prepend-icon="mdi-calendar"
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                          :rules="[rules.required]"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                        v-model="editedOrder.startDate"
+                        @input="startDateMenu = false"
+                    ></v-date-picker>
+                  </v-menu>
+                </v-col>
+                <v-col
+                    cols="12"
+                >
+                  <v-menu
+                      v-model="endDateMenu"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                          v-model="editedOrder.endDate"
+                          :label="$t('endDate')"
+                          prepend-icon="mdi-calendar"
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                          :rules="[rules.required]"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                        v-model="editedOrder.endDate"
+                        @input="endDateMenu = false"
+                        :rules="[rules.required]"
+                    ></v-date-picker>
+                  </v-menu>
+                </v-col>
+              </v-row>
+            </v-form>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn
+              color="blue darken-1"
+              text
+              @click="cancelSave"
+          >
+            {{ $t('cancel') }}
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+              color="blue darken-1"
+              @click="save"
+              dark
+              :loading="isSaveLoading"
+              :disabled="isSaveLoading"
+          >
+            <span v-if="isNewOrderFlow">
+              {{ $t('add') }}
+              <!--              <v-icon right large>add_circle</v-icon>-->
+            </span>
+            <span v-else>
+              {{ $t('modify') }}
+            </span>
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </Page>
+</template>
+
+<script>
+import BuyGroupOrderService from "@/service/BuyGroupOrderService";
+import I18n from "@/i18n";
+import Rules from "@/Rules";
+
+export default {
+
+  name: "GroupOrders",
+  components: {
+    Page: () => import('@/components/Page'),
+  },
+  data: () => {
+    I18n.i18next.addResources("fr", "groupOrders", {
+      none: "Aucunes commandes passées",
+      newOrder: "Nouvelle commande",
+      orderOf: "Commande du"
+    });
+    I18n.i18next.addResources("en", "groupOrders", {
+      none: "Aucunes commandes passées",
+      newOrder: "Nouvelle commande",
+      orderOf: "Commande du"
+    });
+    return {
+      orders: [],
+      isLoading: false,
+      editedOrder: null,
+      editOrderDialog: false,
+      originalEditOrderValues: null,
+      rules: Rules,
+      isSaveLoading: false,
+      startDateMenu: false,
+      endDateMenu: false
+    }
+  },
+  mounted: async function () {
+    await this.resetList();
+  },
+  methods: {
+    resetList: async function () {
+      this.isLoading = true;
+      this.orders = await BuyGroupOrderService.list(this.$store.state.user.BuyGroupId);
+      this.isLoading = false;
+    },
+    save: async function () {
+      if (!this.$refs.groupOrderForm.validate()) {
+        return
+      }
+      this.isSaveLoading = true;
+      if (this.isNewOrderFlow) {
+        await BuyGroupOrderService.create(
+            this.editedOrder
+        );
+      } else {
+        await BuyGroupOrderService.update(
+            this.editedOrder
+        );
+      }
+      this.isSaveLoading = false;
+      this.editOrderDialog = false;
+    },
+    cancelSave: function () {
+      if (!this.isNewOrderFlow) {
+        this.editedOrder.startDate = this.originalEditOrderValues.startDate;
+        this.editedOrder.endDate = this.originalEditOrderValues.endDate;
+      }
+      this.editOrderDialog = false;
+    },
+    enterNewOrderFlow: async function () {
+      this.editedOrder = {}
+      this.editOrderDialog = true;
+      await this.$nextTick();
+      this.$refs.groupOrderForm.reset();
+    },
+    enterUpdateOrderFlow: async function (order) {
+      this.originalEditOrderValues = {...order};
+      this.editedOrder = order;
+      this.editOrderDialog = true;
+      await this.$nextTick();
+      this.$refs.groupOrderForm.reset();
+    },
+  },
+  computed: {
+    isNewOrderFlow: function () {
+      return this.editedOrder !== null && this.editedOrder.id === undefined;
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>

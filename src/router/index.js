@@ -35,6 +35,11 @@ const routes = [
         component: () => import('../views/ImportProducts.vue')
     },
     {
+        path: '/commandes-de-groupe',
+        name: 'GroupOrders',
+        component: () => import('../views/GroupOrders')
+    },
+    {
         path: '/:buyGroup/',
         name: 'Products',
         component: () => import('../views/Products')

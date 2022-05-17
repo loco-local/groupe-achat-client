@@ -40,6 +40,8 @@ export default {
             resources: {
                 en: {
                     translation: {
+                        startDate : "Date de début",
+                        endDate: "Date de fin",
                         name:"Name",
                         Email: "Email",
                         Phone: "Phone",
@@ -84,6 +86,8 @@ export default {
                 },
                 fr: {
                     translation: {
+                        startDate : "Date de début",
+                        endDate: "Date de fin",
                         name:"Nom",
                         Email: "Courriel",
                         Phone: "Téléphone",
@@ -93,7 +97,7 @@ export default {
                         admin: "Administrateur",
                         disabled: "Désactivé",
                         copy: "Copier",
-                        to: "à",
+                        to: "au",
                         finish: "Terminer",
                         close: 'Fermer',
                         ignore: "Ignorer et continuer",

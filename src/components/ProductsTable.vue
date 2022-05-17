@@ -158,7 +158,6 @@ export default {
     }
     const showEditButton = new Boolean(this.$listeners && this.$listeners.modify).valueOf()
     if (showEditButton) {
-      console.log("ouate")
       headers.push({
         text: '',
         sortable: false,

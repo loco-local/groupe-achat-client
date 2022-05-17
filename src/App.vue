@@ -48,6 +48,14 @@
                 {{ $t('app:members') }}
               </v-list-item-content>
             </v-list-item>
+            <v-list-item to="/commandes-de-groupe" v-if="isAdmin">
+              <v-list-item-action>
+                <v-icon>groups_2</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                {{ $t('app:groupOrder') }}
+              </v-list-item-content>
+            </v-list-item>
             <v-subheader v-if="isAdmin">
               {{ $t('app:products') }}
             </v-subheader>
@@ -118,13 +126,17 @@ export default {
       products: "Produits",
       listProducts: "Lister",
       importProducts: "Importer",
-      logout: "Déconnecter"
+      logout: "Déconnecter",
+      groupOrder: "Commandes",
+      members: "Membres"
     });
     I18n.i18next.addResources("en", "app", {
       products: "Produits",
       listProducts: "Lister",
       importProducts: "Importer",
-      logout: "Déconnecter"
+      logout: "Déconnecter",
+      groupOrder: "Commandes",
+      members: "Membres"
     });
     return {};
   },
