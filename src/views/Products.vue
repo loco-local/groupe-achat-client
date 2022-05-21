@@ -1,5 +1,6 @@
 <template>
   <Page>
+    <GroupOrderStatus @buyGroupDefined="setBuyGroup"></GroupOrderStatus>
     <v-card flat class="pt-8" color="transparent">
       <v-card-title class="text-h4">
         {{ $t('products:title') }}
@@ -29,13 +30,13 @@
 <script>
 import ProductService from "@/service/ProductService";
 import I18n from "@/i18n";
-import BuyGroupService from "@/service/BuyGroupService";
 
 export default {
   name: "Products",
   components: {
     Page: () => import('@/components/Page'),
     ProductsTable: () => import('@/components/ProductsTable'),
+    GroupOrderStatus: ()=> import('@/components/GroupOrderStatus')
   },
   data: function () {
     I18n.i18next.addResources("fr", "products", {
@@ -51,12 +52,12 @@ export default {
   },
   mounted: async function () {
     this.isLoading = true;
-    const buyGroupPath = this.$route.params.buyGroup;
-    const buyGroup = await BuyGroupService.getForPath(buyGroupPath);
-    this.products = await ProductService.listPutForward(buyGroup.id);
-    this.isLoading = false;
   },
   methods: {
+    setBuyGroup: async function(buyGroup){
+      this.products = await ProductService.listPutForward(buyGroup.id);
+      this.isLoading = false;
+    },
     updateOrderQuantity: function (product) {
       console.log(product.orderQuantity);
 
