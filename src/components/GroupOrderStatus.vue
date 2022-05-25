@@ -6,7 +6,7 @@
           <v-progress-circular indeterminate></v-progress-circular>
         </v-card-text>
         <v-card-title v-if="!isLoading">
-          {{buyGroup}}
+          {{ buyGroup.relevantOrder.status }}
         </v-card-title>
         <v-card-subtitle v-if="!isLoading">
 
@@ -18,19 +18,27 @@
 
 <script>
 import BuyGroupService from "@/service/BuyGroupService";
+import BuyGroupOrderService from "@/service/BuyGroupOrderService";
+import GroupOrder from "@/GroupOrder";
 
 export default {
   name: "GroupOrderStatus",
   data: function () {
     return {
       buyGroup: null,
-      isLoading: false,
+      isLoading: true,
     }
   },
   mounted: async function () {
     this.isLoading = true;
     const buyGroupPath = this.$route.params.buyGroup;
     this.buyGroup = await BuyGroupService.getForPath(buyGroupPath);
+    const unfinishedGroupOrders = await BuyGroupOrderService.listUnfinished(this.buyGroup.id);
+    this.buyGroup.relevantOrder = GroupOrder.mostRelevantUnfinishedOrder(
+        unfinishedGroupOrders.map((groupOrder) => {
+          return GroupOrder.format(groupOrder)
+        })
+    );
     await this.$emit('buyGroupDefined', this.buyGroup);
     this.isLoading = false;
   }
