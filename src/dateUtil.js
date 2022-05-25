@@ -16,12 +16,24 @@ const dateUtil = {
             }
         })
         Vue.filter('dayDate', dateUtil.getDayDate)
+        Vue.filter('dayNoYearDate', dateUtil.getDayNoYearDate)
     },
     getDayDate: function (value) {
         if (value) {
             return format(
                 new Date(String(value)),
                 'd MMMM yyyy',
+                {
+                    locale: fr
+                }
+            )
+        }
+    },
+    getDayNoYearDate: function (value) {
+        if (value) {
+            return format(
+                new Date(String(value)),
+                'd MMMM',
                 {
                     locale: fr
                 }
