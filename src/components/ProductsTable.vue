@@ -28,7 +28,7 @@
             v-model="item.orderQuantity"
             :placeholder="$t('quantity')"
             @keydown="quantityKeydown($event, item)"
-            @blur="changeQuantity(item)"
+            @blur="changeQuantity($event, item)"
         ></v-text-field>
       </template>
       <template v-slot:item.price="{ item }">
@@ -46,25 +46,6 @@
         </v-btn>
       </template>
     </v-data-table>
-    <v-snackbar
-        v-model="quantityUpdateSnackbar"
-        top
-        :timeout="7000"
-    >
-        <span class="body-1">
-          {{ $t('productTable:quantityUpdated') }}
-        </span>
-      <template v-slot:action="{ attrs }">
-        <v-btn
-            color="white"
-            text
-            v-bind="attrs"
-            @click="quantityUpdateSnackbar = false"
-        >
-          {{ $t('close') }}
-        </v-btn>
-      </template>
-    </v-snackbar>
   </div>
 </template>
 
@@ -99,16 +80,14 @@ export default {
       updatePrice: "Prix mis à jour",
       nothing: "Rien de changé",
       loadingText: "Liste de produits en chargement",
-      noProducts: "Pas de produits",
-      quantityUpdated: "Quantité mise à jour"
+      noProducts: "Pas de produits"
     });
     I18n.i18next.addResources("en", "productTable", {
       create: "Nouveau",
       updatePrice: "Prix mis à jour",
       nothing: "Rien de changé",
       loadingText: "Liste de produits en chargement",
-      noProducts: "Pas de produits",
-      quantityUpdated: "Quantité mise à jour"
+      noProducts: "Pas de produits"
     });
     const headers = [
       {
@@ -168,14 +147,13 @@ export default {
       selected: [],
       search: null,
       tableOptions: {
-        sortBy: ['name'],
+        sortBy: ['orderQuantity', 'name'],
         sortDesc: [true],
         page: 1,
         itemsPerPage: 50
       },
       headers: headers,
-      showEditButton: showEditButton,
-      quantityUpdateSnackbar: false
+      showEditButton: showEditButton
     }
   },
   watch: {
@@ -186,17 +164,11 @@ export default {
   methods: {
     quantityKeydown: function (event, product) {
       if (event.keyCode === ENTER_KEY_CODE) {
-        this.changeQuantity(product);
+        this.changeQuantity(event, product);
       }
     },
-    changeQuantity: async function (product) {
-      const timeout = this.quantityUpdateSnackbar ? 500 : 0;
-      this.quantityUpdateSnackbar = false;
+    changeQuantity: async function (event, product) {
       await this.$emit('quantityUpdate', product)
-      await this.$nextTick();
-      setTimeout(() => {
-        this.quantityUpdateSnackbar = true;
-      }, timeout)
     },
     toggleIsAvailable: async function (product) {
       if (product.isAvailable) {

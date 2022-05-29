@@ -24,6 +24,25 @@
           @quantityUpdate="updateOrderQuantity"
       ></ProductsTable>
     </v-row>
+    <v-snackbar
+        v-model="quantityUpdateSnackbar"
+        top
+        :timeout="7000"
+    >
+        <span class="body-1">
+          {{ $t('products:quantityUpdated') }}
+        </span>
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="quantityUpdateSnackbar = false"
+        >
+          {{ $t('close') }}
+        </v-btn>
+      </template>
+    </v-snackbar>
   </Page>
 </template>
 
@@ -41,15 +60,19 @@ export default {
   },
   data: function () {
     I18n.i18next.addResources("fr", "products", {
-      "title": "Produits"
+      "title": "Produits",
+      quantityUpdated: "Quantité mise à jour"
     });
     I18n.i18next.addResources("en", "products", {
-      "title": "Produits"
+      "title": "Produits",
+      quantityUpdated: "Quantité mise à jour"
     });
     return {
       products: [],
+      orderItems: [],
       userOrderId: null,
-      isLoading: false
+      isLoading: false,
+      quantityUpdateSnackbar: false
     }
   },
   mounted: async function () {
@@ -64,9 +87,9 @@ export default {
           true
       );
       this.userOrderId = userOrder.id;
-      const items = await UserOrderService.listForOrderId(userOrder.id);
+      this.orderItems = await UserOrderService.listForOrderId(userOrder.id);
       this.products = await ProductService.listPutForward(buyGroup.id);
-      items.forEach((item) => {
+      this.orderItems.forEach((item) => {
         const matchingProduct = this.products.filter((product) => {
           return product.id === item.ProductId;
         });
@@ -76,12 +99,34 @@ export default {
       });
       this.isLoading = false;
     },
-    updateOrderQuantity: async function (product) {
-      await UserOrderService.setQuantity(
-          this.userOrderId,
-          product.id,
-          product.orderQuantity
-      )
+    updateOrderQuantity: async function (updatedProduct) {
+      let orderItem = this.orderItems.filter((orderItem) => {
+        return orderItem.ProductId === updatedProduct.id;
+      });
+      if (!orderItem.length) {
+        orderItem = {...updatedProduct};
+        orderItem.quantity = 0;
+        this.orderItems.push(
+            orderItem
+        )
+      } else {
+        orderItem = orderItem[0];
+      }
+      const previousQuantity = orderItem.quantity;
+      orderItem.quantity = updatedProduct.orderQuantity;
+      if (parseInt(previousQuantity) !== parseInt(updatedProduct.orderQuantity)) {
+        await UserOrderService.setQuantity(
+            this.userOrderId,
+            updatedProduct.id,
+            orderItem.quantity
+        )
+        const timeout = this.quantityUpdateSnackbar ? 500 : 0;
+        this.quantityUpdateSnackbar = false;
+        await this.$nextTick();
+        setTimeout(() => {
+          this.quantityUpdateSnackbar = true;
+        }, timeout)
+      }
     }
   }
 }
