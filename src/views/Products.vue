@@ -30,13 +30,14 @@
 <script>
 import ProductService from "@/service/ProductService";
 import I18n from "@/i18n";
+import UserOrderService from "@/service/UserOrderService";
 
 export default {
   name: "Products",
   components: {
     Page: () => import('@/components/Page'),
     ProductsTable: () => import('@/components/ProductsTable'),
-    GroupOrderStatus: ()=> import('@/components/GroupOrderStatus')
+    GroupOrderStatus: () => import('@/components/GroupOrderStatus')
   },
   data: function () {
     I18n.i18next.addResources("fr", "products", {
@@ -47,6 +48,7 @@ export default {
     });
     return {
       products: [],
+      userOrderId: null,
       isLoading: false
     }
   },
@@ -54,13 +56,32 @@ export default {
     this.isLoading = true;
   },
   methods: {
-    setBuyGroup: async function(buyGroup){
+    setBuyGroup: async function (buyGroup) {
+      const userOrder = await UserOrderService.get(
+          buyGroup.id,
+          buyGroup.relevantOrder.id,
+          this.$store.state.user.id,
+          true
+      );
+      this.userOrderId = userOrder.id;
+      const items = await UserOrderService.listForOrderId(userOrder.id);
       this.products = await ProductService.listPutForward(buyGroup.id);
+      items.forEach((item) => {
+        const matchingProduct = this.products.filter((product) => {
+          return product.id === item.ProductId;
+        });
+        if (matchingProduct.length) {
+          matchingProduct[0].orderQuantity = item.quantity;
+        }
+      });
       this.isLoading = false;
     },
-    updateOrderQuantity: function (product) {
-      console.log(product.orderQuantity);
-
+    updateOrderQuantity: async function (product) {
+      await UserOrderService.setQuantity(
+          this.userOrderId,
+          product.id,
+          product.orderQuantity
+      )
     }
   }
 }
