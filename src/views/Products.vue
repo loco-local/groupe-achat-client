@@ -2,9 +2,13 @@
   <Page>
     <GroupOrderStatus @buyGroupDefined="setBuyGroup"></GroupOrderStatus>
     <v-card flat class="pt-8" color="transparent">
-      <v-card-title class="text-h4">
-        {{ $t('products:title') }}
-      </v-card-title>
+      <!--      <v-card-title class="text-h4">-->
+      <!--        {{ $t('products:title') }}-->
+      <!--      </v-card-title>-->
+      <v-card-text class="font-weight-bold text-left body-1">
+        <span class="">{{ $t('total') }} : </span>
+        {{ total | currency }}
+      </v-card-text>
     </v-card>
     <v-row>
       <v-col v-if="products.length === 0" cols="12" class="text-h6">
@@ -55,8 +59,8 @@
 import ProductService from "@/service/ProductService";
 import I18n from "@/i18n";
 import UserOrderService from "@/service/UserOrderService";
-import Product from "@/Product";
 import GroupOrder from "@/GroupOrder";
+import OrderItem from "@/OrderItem";
 
 export default {
   name: "Products",
@@ -108,7 +112,7 @@ export default {
         });
         if (matchingProduct.length) {
           matchingProduct[0].orderQuantity = item.quantity;
-          Product.buildTotal(matchingProduct[0]);
+          matchingProduct[0].total = OrderItem.calculateTotal(item)
         }
       });
       this.products = this.products.sort((a, b) => {
@@ -131,7 +135,7 @@ export default {
       }
       const previousQuantity = orderItem.quantity;
       orderItem.quantity = updatedProduct.orderQuantity;
-      Product.buildTotal(updatedProduct);
+      updatedProduct.total = OrderItem.calculateTotal(orderItem);
       this.$set(this.products, this.products.indexOf(updatedProduct), updatedProduct);
       if (parseInt(previousQuantity) !== parseInt(updatedProduct.orderQuantity)) {
         await UserOrderService.setQuantity(
@@ -146,6 +150,13 @@ export default {
           this.quantityUpdateSnackbar = true;
         }, timeout)
       }
+    }
+  },
+  computed: {
+    total: function () {
+      return this.orderItems.reduce((total, orderItem) => {
+        return OrderItem.calculateTotal(orderItem) + total;
+      }, 0)
     }
   }
 }
