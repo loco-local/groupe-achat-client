@@ -4,6 +4,7 @@ const STATUS = {
     TO_COME: "TO_COME"
 }
 const GroupOrder = {
+    STATUS: STATUS,
     format: function (groupOrder) {
         groupOrder.startDate = new Date(groupOrder.startDate);
         groupOrder.endDate = new Date(groupOrder.endDate);
@@ -19,7 +20,8 @@ const GroupOrder = {
             return STATUS.FINISHED
         }
         return STATUS.TO_COME;
-    },
+    }
+    ,
     mostRelevantUnfinishedOrder: function (orders) {
         return orders.sort((a, b) => {
             if (a.status === STATUS.CURRENT) {
@@ -30,7 +32,8 @@ const GroupOrder = {
             }
             return a.startDate - b.startDate;
         })[0];
-    },
+    }
+    ,
 }
 
 export default GroupOrder;

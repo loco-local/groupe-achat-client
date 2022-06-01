@@ -40,9 +40,9 @@ export default {
             resources: {
                 en: {
                     translation: {
-                        startDate : "Date de début",
+                        startDate: "Date de début",
                         endDate: "Date de fin",
-                        name:"Name",
+                        name: "Name",
                         Email: "Email",
                         Phone: "Phone",
                         Messenger: "Messenger",
@@ -54,6 +54,7 @@ export default {
                         to: "to",
                         order: "Order",
                         total: "Total",
+                        quantityShort: "Qté",
                         finish: "Finish",
                         close: 'Close',
                         ignore: "Ignore",
@@ -88,9 +89,9 @@ export default {
                 },
                 fr: {
                     translation: {
-                        startDate : "Date de début",
+                        startDate: "Date de début",
                         endDate: "Date de fin",
-                        name:"Nom",
+                        name: "Nom",
                         Email: "Courriel",
                         Phone: "Téléphone",
                         Messenger: "Messenger",
@@ -102,6 +103,7 @@ export default {
                         to: "au",
                         order: "Commande",
                         total: "Total",
+                        quantityShort: "Qté",
                         finish: "Terminer",
                         close: 'Fermer',
                         ignore: "Ignorer et continuer",

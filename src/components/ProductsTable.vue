@@ -22,21 +22,22 @@
             class="mx-4 mb-6"
         ></v-text-field>
       </template>
-      <template v-slot:item.orderQuantity="{ item }" v-if="canOrder">
+      <template v-slot:item.orderQuantity="{ item }" v-if="canChangeOrderQuantity">
         <v-text-field
             type="number"
             v-model="item.orderQuantity"
             :placeholder="$t('quantity')"
             @keydown="quantityKeydown($event, item)"
             @blur="changeQuantity($event, item)"
+            :disabled="!canChangeOrderQuantity"
         ></v-text-field>
       </template>
-      <template v-slot:item.total="{ item }" v-if="canOrder">
+      <template v-slot:item.total="{ item }" v-if="canChangeOrderQuantity">
         <span v-if="item.total === undefined">
             <v-divider></v-divider>
         </span>
         <span v-else>
-          {{ item.total | currency}}
+          {{ item.total | currency }}
         </span>
       </template>
       <template v-slot:item.price="{ item }">
@@ -61,7 +62,6 @@
 import ProductTranslation from "@/ProductTranslation";
 import I18n from "@/i18n";
 import ProductService from "@/service/ProductService";
-import Product from "@/Product";
 
 const ENTER_KEY_CODE = 13;
 export default {
@@ -77,7 +77,11 @@ export default {
       type: Boolean,
       default: true
     },
-    canOrder: {
+    canChangeOrderQuantity: {
+      type: Boolean,
+      default: false
+    },
+    hasOrderQuantity: {
       type: Boolean,
       default: false
     }
@@ -132,13 +136,13 @@ export default {
         value: 'provider'
       },
     ];
-    if (this.canOrder) {
+    if (this.canChangeOrderQuantity) {
       headers.unshift({
         text: this.$t('total'),
         value: 'total'
       });
       headers.unshift({
-        text: "",
+        text: this.$t('quantityShort'),
         value: 'orderQuantity'
       });
     }
@@ -156,16 +160,19 @@ export default {
         value: 'edit'
       });
     }
+    const tableOptions = {
+      sortBy: ['name'],
+      sortDesc: [true],
+      page: 1,
+      itemsPerPage: 50
+    };
+    if (this.canChangeOrderQuantity || this.hasOrderQuantity) {
+      tableOptions.sortBy = [];
+    }
     return {
       selected: [],
       search: null,
-      tableOptions: {
-        sortBy: ['name'],
-        sortDesc: [true],
-        page: 1,
-        itemsPerPage: 50,
-        mustSort: false
-      },
+      tableOptions: tableOptions,
       headers: headers,
       showEditButton: showEditButton
     }

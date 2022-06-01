@@ -16,11 +16,16 @@
       <!--             :key="product.id">-->
       <!--        <ProductCard :product="product"></ProductCard>-->
       <!--      </v-col>-->
+
+      <v-col cols="12" class="vh-center" v-if="isLoading">
+        <v-progress-circular indeterminate :size="80" :width="2"></v-progress-circular>
+      </v-col>
       <ProductsTable
+          v-else
           :products="products || []"
-          :loading="isLoading"
           :canToggleAvailability="false"
-          :canOrder="true"
+          :canChangeOrderQuantity="canChangeOrderQuantity"
+          :hasOrderQuantity="hasOrderQuantity"
           @quantityUpdate="updateOrderQuantity"
       ></ProductsTable>
     </v-row>
@@ -51,6 +56,7 @@ import ProductService from "@/service/ProductService";
 import I18n from "@/i18n";
 import UserOrderService from "@/service/UserOrderService";
 import Product from "@/Product";
+import GroupOrder from "@/GroupOrder";
 
 export default {
   name: "Products",
@@ -73,7 +79,9 @@ export default {
       orderItems: [],
       userOrderId: null,
       isLoading: false,
-      quantityUpdateSnackbar: false
+      quantityUpdateSnackbar: false,
+      canChangeOrderQuantity: false,
+      hasOrderQuantity: false
     }
   },
   mounted: async function () {
@@ -81,6 +89,10 @@ export default {
   },
   methods: {
     setBuyGroup: async function (buyGroup) {
+      if (buyGroup.relevantOrder) {
+        this.hasOrderQuantity = true;
+        this.canChangeOrderQuantity = buyGroup.relevantOrder.status === GroupOrder.STATUS.CURRENT;
+      }
       const userOrder = await UserOrderService.get(
           buyGroup.id,
           buyGroup.relevantOrder.id,
@@ -98,6 +110,9 @@ export default {
           matchingProduct[0].orderQuantity = item.quantity;
           Product.buildTotal(matchingProduct[0]);
         }
+      });
+      this.products = this.products.sort((a, b) => {
+        return (b.orderQuantity || 0) - (a.orderQuantity || 0);
       });
       this.isLoading = false;
     },
