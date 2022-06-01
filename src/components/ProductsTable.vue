@@ -31,6 +31,14 @@
             @blur="changeQuantity($event, item)"
         ></v-text-field>
       </template>
+      <template v-slot:item.total="{ item }" v-if="canOrder">
+        <span v-if="item.total === undefined">
+            <v-divider></v-divider>
+        </span>
+        <span v-else>
+          {{ item.total | currency}}
+        </span>
+      </template>
       <template v-slot:item.price="{ item }">
         {{ item.price | currency }}
       </template>
@@ -53,6 +61,7 @@
 import ProductTranslation from "@/ProductTranslation";
 import I18n from "@/i18n";
 import ProductService from "@/service/ProductService";
+import Product from "@/Product";
 
 const ENTER_KEY_CODE = 13;
 export default {
@@ -125,6 +134,10 @@ export default {
     ];
     if (this.canOrder) {
       headers.unshift({
+        text: this.$t('total'),
+        value: 'total'
+      });
+      headers.unshift({
         text: "",
         value: 'orderQuantity'
       });
@@ -147,10 +160,11 @@ export default {
       selected: [],
       search: null,
       tableOptions: {
-        sortBy: ['orderQuantity', 'name'],
+        sortBy: ['name'],
         sortDesc: [true],
         page: 1,
-        itemsPerPage: 50
+        itemsPerPage: 50,
+        mustSort: false
       },
       headers: headers,
       showEditButton: showEditButton

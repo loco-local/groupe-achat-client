@@ -50,6 +50,7 @@
 import ProductService from "@/service/ProductService";
 import I18n from "@/i18n";
 import UserOrderService from "@/service/UserOrderService";
+import Product from "@/Product";
 
 export default {
   name: "Products",
@@ -95,6 +96,7 @@ export default {
         });
         if (matchingProduct.length) {
           matchingProduct[0].orderQuantity = item.quantity;
+          Product.buildTotal(matchingProduct[0]);
         }
       });
       this.isLoading = false;
@@ -114,6 +116,8 @@ export default {
       }
       const previousQuantity = orderItem.quantity;
       orderItem.quantity = updatedProduct.orderQuantity;
+      Product.buildTotal(updatedProduct);
+      this.$set(this.products, this.products.indexOf(updatedProduct), updatedProduct);
       if (parseInt(previousQuantity) !== parseInt(updatedProduct.orderQuantity)) {
         await UserOrderService.setQuantity(
             this.userOrderId,
