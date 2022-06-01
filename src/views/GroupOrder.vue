@@ -2,10 +2,21 @@
   <Page>
     <v-card flat>
       <v-card-title>
-
       </v-card-title>
       <v-card-text>
-        {{ userOrders }}
+        <v-list>
+          <v-list-item v-for="userOrder in userOrders" :key="userOrder.id" class="vh-center">
+            <v-list-item-content>
+              <v-list-item-title class="vh-center">
+                {{ userOrder.User.firstname }}
+                {{ userOrder.User.lastname }}
+              </v-list-item-title>
+              <v-list-item-subtitle>
+                {{ userOrder.totalPrice |currency }}
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
       </v-card-text>
     </v-card>
   </Page>
