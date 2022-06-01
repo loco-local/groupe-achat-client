@@ -21,7 +21,7 @@
         <v-list>
           <div v-for="order in orders"
                :key="order.id">
-            <v-list-item>
+            <v-list-item :to="'/groupe/' + $store.state.user.BuyGroupId + '/commande/'  + order.id">
               <v-list-item-content>
                 <v-list-item-title class="font-weight-bold">
                   {{ order.startDate | dayDate }}
