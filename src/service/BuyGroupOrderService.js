@@ -1,5 +1,6 @@
 import Service from "@/service/Service";
 import {startOfDay, endOfDay} from 'date-fns'
+import OrderItem from "@/OrderItem";
 
 export default {
     list: async function (buyGroupId) {
@@ -11,8 +12,20 @@ export default {
         return response.data;
     },
     listUserOrders: async function (buyGroupId, buyGroupOrderId) {
-        const response = await Service.api().get("/buy-group/" + buyGroupId + "/orders/" + buyGroupOrderId+ "/userOrders");
+        const response = await Service.api().get("/buy-group/" + buyGroupId + "/orders/" + buyGroupOrderId + "/userOrders");
         return response.data;
+    },
+    listUserOrderItems: async function (buyGroupId, buyGroupOrderId) {
+        const response = await Service.api().get("/buy-group/" + buyGroupId + "/orders/" + buyGroupOrderId + "/userOrders/items");
+        return response.data.map((orderItem) => {
+            orderItem.name = orderItem.description;
+            orderItem.orderQuantity = orderItem.quantity;
+            orderItem.total = OrderItem.calculateTotal(orderItem)
+            if (orderItem.UserOrder && orderItem.UserOrder.User) {
+                orderItem.personFullname = orderItem.UserOrder.User.firstname + " " + orderItem.UserOrder.User.lastname;
+            }
+            return orderItem
+        })
     },
     create: async function (buyGroup) {
         buyGroup.startDate = startOfDay(buyGroup.startDate);

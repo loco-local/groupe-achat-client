@@ -12,7 +12,8 @@ export default {
             maker: "Fabricant",
             provider: "Fournisseur",
             isAvailable: "Est disponible",
-            isTaxable: "Est taxable"
+            isTaxable: "Est taxable",
+            personName: "Personne"
         });
         I18n.i18next.addResources("en", "product", {
             name: "Nom",
@@ -24,7 +25,8 @@ export default {
             maker: "Fabricant",
             provider: "Fournisseur",
             isAvailable: "Est disponible",
-            isTaxable: "Est taxable"
+            isTaxable: "Est taxable",
+            personName: "Personne"
         });
     }
 }

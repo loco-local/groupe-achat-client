@@ -22,7 +22,7 @@
             class="mx-4 mb-6"
         ></v-text-field>
       </template>
-      <template v-slot:item.orderQuantity="{ item }" v-if="canChangeOrderQuantity">
+      <template v-slot:item.orderQuantity="{ item }" v-if="hasOrderQuantity">
         <v-text-field
             type="number"
             v-model="item.orderQuantity"
@@ -32,7 +32,7 @@
             :disabled="!canChangeOrderQuantity"
         ></v-text-field>
       </template>
-      <template v-slot:item.total="{ item }" v-if="canChangeOrderQuantity">
+      <template v-slot:item.total="{ item }" v-if="hasOrderQuantity">
         <span v-if="item.total === undefined">
             <v-divider></v-divider>
         </span>
@@ -82,6 +82,10 @@ export default {
       default: false
     },
     hasOrderQuantity: {
+      type: Boolean,
+      default: false
+    },
+    showPersonName: {
       type: Boolean,
       default: false
     }
@@ -136,7 +140,7 @@ export default {
         value: 'provider'
       },
     ];
-    if (this.canChangeOrderQuantity) {
+    if (this.hasOrderQuantity) {
       headers.unshift({
         text: this.$t('total'),
         value: 'total'
@@ -158,6 +162,13 @@ export default {
         text: '',
         sortable: false,
         value: 'edit'
+      });
+    }
+    if (this.showPersonName) {
+      headers.unshift({
+        text: this.$t('product:personName'),
+        sortable: true,
+        value: 'personFullname'
       });
     }
     const tableOptions = {
