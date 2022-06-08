@@ -1,6 +1,9 @@
 <template>
   <Page>
-    <GroupOrderStatus @buyGroupDefined="setBuyGroup"></GroupOrderStatus>
+    <GroupOrderStatus @buyGroupDefined="setBuyGroup"
+                      :buyGroupPath="$route.params.buyGroup"
+                      class="mt-8"
+    ></GroupOrderStatus>
     <v-card flat class="pt-8" color="transparent">
       <!--      <v-card-title class="text-h4">-->
       <!--        {{ $t('products:title') }}-->
@@ -11,7 +14,7 @@
       </v-card-text>
     </v-card>
     <v-row>
-      <v-col v-if="products.length === 0" cols="12" class="text-h6">
+      <v-col v-if="!isLoading && products.length === 0" cols="12" class="text-h6">
         <v-sheet height="400" class="grey--text">
           {{ $t('products:noResults') }}
         </v-sheet>
@@ -92,7 +95,7 @@ export default {
     this.isLoading = true;
   },
   methods: {
-    setBuyGroup: async function (buyGroup) {
+      setBuyGroup: async function (buyGroup) {
       if (buyGroup.relevantOrder) {
         this.hasOrderQuantity = true;
         this.canChangeOrderQuantity = buyGroup.relevantOrder.status === GroupOrder.STATUS.CURRENT;

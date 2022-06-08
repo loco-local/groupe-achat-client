@@ -29,8 +29,9 @@
             :placeholder="$t('quantity')"
             @keydown="quantityKeydown($event, item)"
             @blur="changeQuantity($event, item)"
-            :disabled="!canChangeOrderQuantity"
+            v-if="canChangeOrderQuantity"
         ></v-text-field>
+        <span v-else>{{ item.orderQuantity }}</span>
       </template>
       <template v-slot:item.total="{ item }" v-if="hasOrderQuantity">
         <span v-if="item.total === undefined">

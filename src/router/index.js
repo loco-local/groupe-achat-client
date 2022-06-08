@@ -45,6 +45,21 @@ const routes = [
         component: () => import('../views/GroupOrder')
     },
     {
+        path: '/groupe/:buyGroupId/commande/:orderId/tous-les-items',
+        name: 'GroupOrderAllItems',
+        component: () => import('../views/GroupOrder')
+    },
+    {
+        path: '/groupe/:buyGroupId/commande/:orderId/factures-membres',
+        name: 'GroupOrderMemberBills',
+        component: () => import('../views/GroupOrder')
+    },
+    {
+        path: '/groupe/:buyGroupId/commande/:orderId/commandes-fournisseurs',
+        name: 'GroupOrderProvidersOrders',
+        component: () => import('../views/GroupOrder')
+    },
+    {
         path: '/:buyGroup/',
         name: 'Products',
         component: () => import('../views/Products')

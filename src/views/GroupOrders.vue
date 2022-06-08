@@ -1,6 +1,9 @@
 <template>
   <Page>
     <v-card flat>
+      <v-card-title class="text-center vh-center">
+        {{ $t('groupOrders:title') }}
+      </v-card-title>
       <v-card-actions class="vh-center">
         <v-btn @click="enterNewOrderFlow">
           <v-icon left>add</v-icon>
@@ -18,23 +21,22 @@
         ></v-progress-circular>
       </v-card-text>
       <v-card-text v-if="orders.length > 0 && !isLoading">
-        <v-list>
-          <div v-for="order in orders"
-               :key="order.id">
-            <v-list-item :to="'/groupe/' + $store.state.user.BuyGroupId + '/commande/'  + order.id">
-              <v-list-item-content>
-                <v-list-item-title class="font-weight-bold">
-                  {{ order.startDate | dayDate }}
-                  <div class="mt-2 mb-2">
-                    {{ $t('to') }}
-                  </div>
-                  {{ order.endDate | dayDate }}
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-divider></v-divider>
-          </div>
-        </v-list>
+        <div v-for="order in orders"
+             :key="order.id">
+          <v-list-item :to="'/groupe/' + $store.state.user.BuyGroupId + '/commande/'  + order.id">
+            <v-list-item-content>
+              <v-list-item-title class="font-weight-bold mb-2 text-capitalize">
+                <GroupOrderStatusText :status="order.status"></GroupOrderStatusText>
+              </v-list-item-title>
+              <v-list-item-subtitle class="mb-2">
+                {{ order.startDate | dayDate }}
+                  {{ $t('to') }}
+                {{ order.endDate | dayDate }}
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+          <v-divider></v-divider>
+        </div>
       </v-card-text>
     </v-card>
     <v-dialog
@@ -158,14 +160,17 @@ export default {
   name: "GroupOrders",
   components: {
     Page: () => import('@/components/Page'),
+    GroupOrderStatusText: () => import('@/components/GroupOrderStatusText')
   },
   data: () => {
     I18n.i18next.addResources("fr", "groupOrders", {
+      title: "Commandes du groupe",
       none: "Aucunes commandes passées",
       newOrder: "Nouvelle commande",
       orderOf: "Commande du"
     });
     I18n.i18next.addResources("en", "groupOrders", {
+      title: "Commandes du groupe",
       none: "Aucunes commandes passées",
       newOrder: "Nouvelle commande",
       orderOf: "Commande du"

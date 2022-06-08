@@ -1,15 +1,20 @@
 import Service from "@/service/Service";
 import {startOfDay, endOfDay} from 'date-fns'
 import OrderItem from "@/OrderItem";
+import GroupOrder from "@/GroupOrder";
 
 export default {
     list: async function (buyGroupId) {
         const response = await Service.api().get("/buy-group/" + buyGroupId + "/orders");
-        return response.data;
+        return response.data.map((groupOrder) => {
+            return GroupOrder.format(groupOrder)
+        });
     },
     listUnfinished: async function (buyGroupId) {
         const response = await Service.api().get("/buy-group/" + buyGroupId + "/orders/unfinished");
-        return response.data;
+        return response.data.map((groupOrder) => {
+            return GroupOrder.format(groupOrder)
+        });
     },
     listUserOrders: async function (buyGroupId, buyGroupOrderId) {
         const response = await Service.api().get("/buy-group/" + buyGroupId + "/orders/" + buyGroupOrderId + "/userOrders");
