@@ -3,13 +3,13 @@ import Service from "@/service/Service";
 export default {
     get: async function (buyGroupId, buyGroupOrderId, userId, createIfNotExist) {
         createIfNotExist = createIfNotExist | false;
-        const response = await Service.api().get(
+        let response = await Service.api().get(
             '/buy-group/' + buyGroupId + '/buy-group-order/' +
             buyGroupOrderId + '/userOrder/' + userId
         );
         if (response.status === 204) {
             if (createIfNotExist) {
-                await Service.api().post(
+                response = await Service.api().post(
                     '/buy-group/' + buyGroupId + '/buy-group-order/' +
                     buyGroupOrderId + '/userOrder/' + userId
                 );
