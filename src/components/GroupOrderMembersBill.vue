@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-text v-if="isLoading">
-      <v-progress-circular indeterminate></v-progress-circular>
+      <v-progress-circular indeterminate :size="80" :width="2"></v-progress-circular>
     </v-card-text>
     <v-card-text v-if="!isLoading && !userOrders.length">
       {{ $t('membersBill:noBills') }}
@@ -15,14 +15,11 @@
           </v-btn>
         </v-col>
         <v-col cols="12" class="vh-center">
-          <v-list width="375">
+          <v-list width="475">
             <div v-for="userOrder in userOrders" :key="userOrder.id">
               <v-list-item>
                 <v-list-item-action>
-                  <v-icon @click="downloadReceipt">file_download</v-icon>
-                </v-list-item-action>
-                <v-list-item-action>
-                  <v-icon @click="viewReceipt">receipt</v-icon>
+                  <v-icon @click="downloadReceipt" large>file_download</v-icon>
                 </v-list-item-action>
                 <v-list-item-content>
                   <v-list-item-title>
@@ -33,6 +30,12 @@
                     {{ userOrder.totalPrice | currency }}
                   </v-list-item-subtitle>
                 </v-list-item-content>
+                <v-list-item-action>
+                  <v-icon @click="viewReceipt(userOrder.User.id)" large>preview</v-icon>
+                </v-list-item-action>
+                <v-list-item-action>
+                  <v-icon to="" large>link</v-icon>
+                </v-list-item-action>
               </v-list-item>
               <v-divider></v-divider>
             </div>
@@ -40,15 +43,23 @@
         </v-col>
       </v-row>
     </v-card-text>
+    <UserBillDialog
+        :buyGroupId="buyGroupId"
+        :buyGroupOrderId="buyGroupOrderId"
+        :userId="selectedUserId"
+        ref="userBillDialog"
+    ></UserBillDialog>
   </v-card>
 </template>
 
 <script>
 import I18n from "@/i18n";
 import BuyGroupOrderService from "@/service/BuyGroupOrderService";
+import UserBillDialog from "@/components/UserBillDialog";
 
 export default {
   name: "GroupOrderMemberBills",
+  components: {UserBillDialog},
   props: ['buyGroupId', 'buyGroupOrderId'],
   data: function () {
     I18n.i18next.addResources("fr", "membersBill", {
@@ -61,7 +72,9 @@ export default {
     });
     return {
       isLoading: true,
-      userOrders: []
+      userOrders: [],
+      userBillModal: false,
+      selectedUserId: null
     }
   },
   mounted: async function () {
@@ -76,8 +89,9 @@ export default {
     downloadReceipt: function () {
 
     },
-    viewReceipt: function () {
-
+    viewReceipt: function (userId) {
+      this.selectedUserId = userId;
+      this.$refs.userBillDialog.enter();
     }
   }
 }

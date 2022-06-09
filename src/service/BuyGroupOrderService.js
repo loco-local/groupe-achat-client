@@ -3,7 +3,8 @@ import {startOfDay, endOfDay} from 'date-fns'
 import OrderItem from "@/OrderItem";
 import GroupOrder from "@/GroupOrder";
 
-export default {
+
+const BuyGroupOrderService = {
     list: async function (buyGroupId) {
         const response = await Service.api().get("/buy-group/" + buyGroupId + "/orders");
         return response.data.map((groupOrder) => {
@@ -22,7 +23,20 @@ export default {
     },
     listUserOrderItems: async function (buyGroupId, buyGroupOrderId) {
         const response = await Service.api().get("/buy-group/" + buyGroupId + "/orders/" + buyGroupOrderId + "/userOrders/items");
-        return response.data.map((orderItem) => {
+        return BuyGroupOrderService._formattedOrderItems(
+            response.data
+        );
+    },
+    listOrderItemsOfUser: async function (buyGroupId, buyGroupOrderId, userId) {
+        const response = await Service.api().get(
+            "/buy-group/" + buyGroupId + "/orders/" + buyGroupOrderId + "/user/" + userId + " /order-items"
+        );
+        return BuyGroupOrderService._formattedOrderItems(
+            response.data
+        );
+    },
+    _formattedOrderItems: function (orderItems) {
+        return orderItems.map((orderItem) => {
             orderItem.name = orderItem.description;
             orderItem.orderQuantity = orderItem.quantity;
             orderItem.total = OrderItem.calculateTotal(orderItem)
@@ -49,3 +63,4 @@ export default {
         );
     }
 }
+export default BuyGroupOrderService;

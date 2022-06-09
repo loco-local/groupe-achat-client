@@ -3,7 +3,7 @@
     <v-col cols="12" class="vh-center">
       <v-card max-width="400">
         <v-card-text v-if="isLoading">
-          <v-progress-circular indeterminate></v-progress-circular>
+          <v-progress-circular indeterminate :size="80" :width="2"></v-progress-circular>
         </v-card-text>
         <v-card-title v-if="!isLoading">
           <span class="mr-2">{{ $t('order') }}</span>

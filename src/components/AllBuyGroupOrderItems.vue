@@ -1,7 +1,7 @@
 <template>
   <v-card flat>
     <v-card-text v-if="isLoading">
-      <v-progress-circular indeterminate></v-progress-circular>
+      <v-progress-circular indeterminate :size="80" :width="2"></v-progress-circular>
     </v-card-text>
     <v-card-text v-if="!isLoading && !userOrdersItems.length">
       {{ $t('groupOrder:noUserOrder') }}
