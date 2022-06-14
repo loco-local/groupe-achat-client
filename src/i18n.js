@@ -3,7 +3,6 @@ import Store from '@/store'
 import i18next from 'i18next'
 import VueI18Next from '@panter/vue-i18next'
 import I18nextBrowserLanguageDetector from 'i18next-browser-languagedetector'
-
 export default {
     setup: function () {
         Vue.use(VueI18Next);

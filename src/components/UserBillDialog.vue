@@ -8,7 +8,7 @@
         <v-btn
             icon
             dark
-            @click="show = false"
+            @click="leave"
         >
           <v-icon>mdi-close</v-icon>
         </v-btn>
@@ -24,9 +24,11 @@
           <v-btn
               dark
               text
-              @click="show = false"
+              @click="exportToCsv"
+              :disabled="itemsLoading"
           >
-            Save
+            <v-icon left>file_download</v-icon>
+            {{ $t('userBill:download') }}
           </v-btn>
         </v-toolbar-items>
       </v-toolbar>
@@ -34,6 +36,7 @@
           :buyGroupId="buyGroupId"
           :buyGroupOrderId="buyGroupOrderId"
           :userId="userId"
+          @itemsDefined="setItems"
       ></UserBill>
     </v-card>
   </v-dialog>
@@ -41,25 +44,54 @@
 
 <script>
 import MemberService from "@/service/MemberService";
+import MemberOrder from "@/MemberOrder";
 
 export default {
   name: "UserBillDialog",
-  props: ['buyGroupId', 'buyGroupOrderId', 'userId'],
+  props: ['buyGroupId', 'buyGroupOrderId'],
   components: {
     UserBill: () => import('@/components/UserBill')
   },
   data: function () {
     return {
       show: false,
-      member: null
+      member: null,
+      userId: null,
+      itemsLoading: true
     }
   },
+  mounted: function () {
+  },
   methods: {
-    enter: async function () {
+    enter: async function (userId) {
+      this.userId = userId;
       this.show = true;
       this.member = await MemberService.getForId(this.userId);
+      this.itemsLoading = true;
+    },
+    leave: function () {
+      let path = this.$router.currentRoute.path;
+      path = path.substring(0, path.lastIndexOf("/"));
+      this.$router.push(
+          path
+      );
+      this.show = false;
+    },
+    setItems: function (items) {
+      this.items = items;
+      this.itemsLoading = false;
+    },
+    exportToCsv: async function () {
+      MemberOrder.exportToCsv(this.items);
     }
-  }
+  },
+  watch: {
+    '$route'(to) {
+      if (to.name !== "GroupOrderMemberBillsForMember") {
+        this.show = false;
+      }
+    }
+  },
 }
 </script>
 

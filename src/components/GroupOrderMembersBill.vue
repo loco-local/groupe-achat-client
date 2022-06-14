@@ -19,23 +19,24 @@
             <div v-for="userOrder in userOrders" :key="userOrder.id">
               <v-list-item>
                 <v-list-item-action>
-                  <v-icon @click="downloadReceipt" large>file_download</v-icon>
+                  <v-btn icon @click="downloadReceipt" large>
+                    <v-icon large>file_download</v-icon>
+                  </v-btn>
+                </v-list-item-action>
+                <v-list-item-action>
+                  <v-btn icon large @click="viewReceipt(userOrder.User.id)">
+                    <v-icon large>preview</v-icon>
+                  </v-btn>
                 </v-list-item-action>
                 <v-list-item-content>
-                  <v-list-item-title>
+                  <v-list-item-title class="text-left ml-6">
                     {{ userOrder.User.firstname }}
                     {{ userOrder.User.lastname }}
                   </v-list-item-title>
-                  <v-list-item-subtitle>
+                  <v-list-item-subtitle class="text-left ml-6">
                     {{ userOrder.totalPrice | currency }}
                   </v-list-item-subtitle>
                 </v-list-item-content>
-                <v-list-item-action>
-                  <v-icon @click="viewReceipt(userOrder.User.id)" large>preview</v-icon>
-                </v-list-item-action>
-                <v-list-item-action>
-                  <v-icon to="" large>link</v-icon>
-                </v-list-item-action>
               </v-list-item>
               <v-divider></v-divider>
             </div>
@@ -46,7 +47,6 @@
     <UserBillDialog
         :buyGroupId="buyGroupId"
         :buyGroupOrderId="buyGroupOrderId"
-        :userId="selectedUserId"
         ref="userBillDialog"
     ></UserBillDialog>
   </v-card>
@@ -73,8 +73,7 @@ export default {
     return {
       isLoading: true,
       userOrders: [],
-      userBillModal: false,
-      selectedUserId: null
+      userBillModal: false
     }
   },
   mounted: async function () {
@@ -90,8 +89,13 @@ export default {
 
     },
     viewReceipt: function (userId) {
-      this.selectedUserId = userId;
-      this.$refs.userBillDialog.enter();
+      const toPath = this.$router.currentRoute.path + "/" + userId;
+      if (this.$router.currentRoute.path !== toPath) {
+        this.$router.push(
+            toPath
+        );
+      }
+      this.$refs.userBillDialog.enter(userId);
     }
   }
 }

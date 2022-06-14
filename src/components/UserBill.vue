@@ -29,11 +29,13 @@ export default {
   data: function () {
     I18n.i18next.addResources("fr", "userBill", {
       noItems: "Rien de commandé",
-      billOf: "Facture de"
+      billOf: "Facture de",
+      download: "Télécharger"
     });
     I18n.i18next.addResources("en", "userBill", {
       noItems: "Rien de commandé",
-      billOf: "Facture de"
+      billOf: "Facture de",
+      download: "Télécharger"
     });
     return {
       userOrder: null,
@@ -48,6 +50,7 @@ export default {
         this.buyGroupOrderId,
         this.userId
     );
+    this.$emit('itemsDefined', this.userOrderItems);
     this.isLoading = false;
   }
 }
