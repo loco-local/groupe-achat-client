@@ -25,11 +25,11 @@ export default {
         );
         return response.data;
     },
-    setQuantity: async function (memberOrderId, productId, quantity) {
+    setExpectedQuantity: async function (memberOrderId, productId, expectedQuantity) {
         return Service.api().post(
-            '/memberOrder/' + memberOrderId + '/product/' + productId + '/quantity',
+            '/memberOrder/' + memberOrderId + '/product/' + productId + '/quantity/expected',
             {
-                quantity: quantity
+                expectedQuantity: expectedQuantity
             }
         );
     }

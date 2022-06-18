@@ -33,37 +33,40 @@
         ></v-text-field>
         <span v-else>{{ item.orderQuantity }}</span>
       </template>
-      <template v-slot:item.total="{ item }" v-if="hasOrderQuantity">
-        <span v-if="item.total === undefined">
+      <template v-slot:item.expectedTotalAfterRebateWithTaxes="{ item }" v-if="hasOrderQuantity">
+        <span v-if="item.expectedTotalAfterRebateWithTaxes === undefined">
             <v-divider></v-divider>
         </span>
         <span v-else>
-          {{ item.total | currency }}
+          {{ item.expectedTotalAfterRebateWithTaxes | currency }}
         </span>
       </template>
       <template v-slot:item.tps="{ item }" v-if="showEditButton">
-        {{item.tps | currency}}
+        {{ item.tps | currency }}
       </template>
       <template v-slot:item.tvq="{ item }" v-if="showEditButton">
-        {{item.tvq | currency}}
+        {{ item.tvq | currency }}
+      </template>
+      <template v-slot:item.expectedPrice="{ item }">
+        {{ item.expectedPrice | currency }}
       </template>
       <template v-slot:item.costPrice="{ item }">
         {{ item.costPrice | currency }}
       </template>
       <template v-slot:item.hasTPS="{ item }" v-if="showEditButton">
         <span v-if="item.hasTPS">
-          {{$t('yes')}}
+          {{ $t('yes') }}
         </span>
         <span v-else>
-          {{$t('no')}}
+          {{ $t('no') }}
         </span>
       </template>
       <template v-slot:item.hasTVQ="{ item }" v-if="showEditButton">
         <span v-if="item.hasTVQ">
-          {{$t('yes')}}
+          {{ $t('yes') }}
         </span>
         <span v-else>
-          {{$t('no')}}
+          {{ $t('no') }}
         </span>
       </template>
       <template v-slot:item.isAvailable="{ item }" v-if="canToggleAvailability">
@@ -151,6 +154,10 @@ export default {
         value: 'qtyInBox'
       },
       {
+        text: this.$t('product:expectedPrice'),
+        value: 'expectedPrice'
+      },
+      {
         text: this.$t('product:costPrice'),
         value: 'costPrice'
       },
@@ -185,8 +192,8 @@ export default {
     }
     if (this.hasOrderQuantity) {
       headers.unshift({
-        text: this.$t('total'),
-        value: 'total'
+        text: this.$t('product:expectedTotal'),
+        value: 'expectedTotalAfterRebateWithTaxes'
       });
       headers.unshift({
         text: this.$t('quantityShort'),

@@ -229,6 +229,7 @@
 import ProductService from "@/service/ProductService";
 import I18n from "@/i18n";
 import Rules from '@/Rules'
+import BuyGroupService from "@/service/BuyGroupService";
 
 export default {
   name: "Products",
@@ -270,7 +271,8 @@ export default {
       editedProduct: null,
       rules: Rules,
       isSaveLoading: false,
-      onlyBigFormat: false
+      onlyBigFormat: false,
+      buyGroup: null
     }
   },
   mounted: async function () {
@@ -280,7 +282,7 @@ export default {
   },
   methods: {
     cancelSave: function () {
-      if(!this.isNewProductFlow){
+      if (!this.isNewProductFlow) {
         this.editedProduct.name = this.originalEditProductValues.name;
         this.editedProduct.format = this.originalEditProductValues.format;
         this.editedProduct.costPrice = this.originalEditProductValues.costPrice;
@@ -347,12 +349,23 @@ export default {
   watch: {
     tab: async function () {
       this.isLoading = true;
+      if (this.buyGroup === null) {
+        this.buyGroup = await BuyGroupService.getForId(
+            this.$store.state.user.BuyGroupId
+        )
+      }
       this.selection = [];
       this.onlyBigFormat = false;
       if (this.tab === 0) {
-        this.productsPutForward = await ProductService.listPutForward(this.$store.state.user.BuyGroupId);
+        this.productsPutForward = await ProductService.listPutForward(
+            this.$store.state.user.BuyGroupId,
+            this.buyGroup.salePercentage
+        );
       } else {
-        this.productsDeprecated = await ProductService.listDeprecated(this.$store.state.user.BuyGroupId);
+        this.productsDeprecated = await ProductService.listDeprecated(
+            this.$store.state.user.BuyGroupId,
+            this.buyGroup.salePercentage
+        );
       }
       this.isLoading = false;
     },

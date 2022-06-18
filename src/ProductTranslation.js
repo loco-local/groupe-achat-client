@@ -8,6 +8,7 @@ export default {
             qty: "Qté",
             qtyInBox: "Qté dans boîte",
             price: "Prix",
+            expectedPrice: "Prix Prévu",
             costPrice: "Prix Coûtant",
             category: "Catégorie",
             internalCode: "Code interne",
@@ -23,7 +24,8 @@ export default {
             addTVQ: "+ TVQ",
             addTPS: "+ TPS",
             totalWithTaxes: "Total avec tx",
-            totalWithoutTaxes: "Total avant tx"
+            totalWithoutTaxes: "Total avant tx",
+            expectedTotal: "Total prévu"
         });
         I18n.i18next.addResources("en", "product", {
             name: "Nom",
@@ -31,6 +33,7 @@ export default {
             qty: "Qté",
             qtyInBox: "Qté dans boîte",
             price: "Prix",
+            expectedPrice: "Prix Prévu",
             costPrice: "Prix Coûtant",
             category: "Catégorie",
             internalCode: "Code interne",
@@ -46,7 +49,8 @@ export default {
             addTPS: "Ajouter TPS",
             addTVQ: "Ajouter TVQ",
             totalWithTaxes: "Total avec tx",
-            totalWithoutTaxes: "Total avant tx"
+            totalWithoutTaxes: "Total avant tx",
+            expectedTotal: "Total prévu"
         });
     }
 }

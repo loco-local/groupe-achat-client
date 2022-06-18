@@ -4,7 +4,19 @@
                       :buyGroupPath="$route.params.buyGroup"
                       class="mt-8"
     ></GroupOrderStatus>
-    <v-card flat class="pt-8" color="transparent">
+    <v-alert
+        text
+        dense
+        color="teal"
+        icon="mdi-clock-fast"
+        border="left"
+        class="mt-8 body-1"
+    >
+      {{ $t('products:info1') }}
+      <br>
+      {{ $t('products:info2') }}
+    </v-alert>
+    <v-card flat class="" color="transparent">
       <!--      <v-card-title class="text-h4">-->
       <!--        {{ $t('products:title') }}-->
       <!--      </v-card-title>-->
@@ -76,11 +88,15 @@ export default {
   data: function () {
     I18n.i18next.addResources("fr", "products", {
       "title": "Produits",
-      quantityUpdated: "Quantité mise à jour"
+      quantityUpdated: "Quantité mise à jour",
+      info1: "Il n'y a pas de bouton de confirmation pour votre panier de commande.",
+      info2: "À la date de fin de la commande, les dernières quantités que vous aurez inscrites seront commandées aux fournisseurs."
     });
     I18n.i18next.addResources("en", "products", {
       "title": "Produits",
-      quantityUpdated: "Quantité mise à jour"
+      quantityUpdated: "Quantité mise à jour",
+      info1: "Il n'y a pas de bouton de confirmation pour votre panier de commande.",
+      info2: "À la date de fin de la commande, les dernières quantités que vous aurez inscrites seront commandées aux fournisseurs."
     });
     return {
       products: [],
@@ -109,14 +125,17 @@ export default {
       );
       this.userOrderId = userOrder.id;
       this.orderItems = await MemberOrderService.listForOrderId(userOrder.id);
-      this.products = await ProductService.listPutForward(buyGroup.id);
+      this.products = await ProductService.listPutForward(
+          buyGroup.id,
+          buyGroup.salePercentage
+      );
       this.orderItems.forEach((item) => {
         const matchingProduct = this.products.filter((product) => {
           return product.id === item.ProductId;
         });
         if (matchingProduct.length) {
-          matchingProduct[0].orderQuantity = item.quantity;
-          matchingProduct[0].total = OrderItem.calculateTotal(item)
+          matchingProduct[0].orderQuantity = item.expectedQuantity;
+          matchingProduct[0].expectedTotalAfterRebateWithTaxes = OrderItem.calculateTotal(item)
           matchingProduct[0].tps = OrderItem.calculateTPS(item)
           matchingProduct[0].tvq = OrderItem.calculateTVQ(item)
         }
@@ -132,24 +151,24 @@ export default {
       });
       if (!orderItem.length) {
         orderItem = {...updatedProduct};
-        orderItem.quantity = 0;
+        orderItem.expectedQuantity = 0;
         this.orderItems.push(
             orderItem
         )
       } else {
         orderItem = orderItem[0];
       }
-      const previousQuantity = orderItem.quantity;
-      orderItem.quantity = updatedProduct.orderQuantity;
-      updatedProduct.total = OrderItem.calculateTotal(orderItem);
+      const previousQuantity = orderItem.expectedQuantity;
+      orderItem.expectedQuantity = updatedProduct.orderQuantity;
+      updatedProduct.expectedTotalAfterRebateWithTaxes = OrderItem.calculateTotal(orderItem);
       updatedProduct.tps = OrderItem.calculateTPS(orderItem);
       updatedProduct.tvq = OrderItem.calculateTVQ(orderItem);
       this.$set(this.products, this.products.indexOf(updatedProduct), updatedProduct);
       if (parseInt(previousQuantity) !== parseInt(updatedProduct.orderQuantity)) {
-        await MemberOrderService.setQuantity(
+        await MemberOrderService.setExpectedQuantity(
             this.userOrderId,
             updatedProduct.id,
-            orderItem.quantity
+            orderItem.expectedQuantity
         )
         const timeout = this.quantityUpdateSnackbar ? 500 : 0;
         this.quantityUpdateSnackbar = false;
