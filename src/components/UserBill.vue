@@ -45,7 +45,7 @@ export default {
   },
   mounted: async function () {
     this.isLoading = true;
-    this.userOrderItems = await BuyGroupOrderService.listOrderItemsOfUser(
+    this.userOrderItems = await BuyGroupOrderService.listOrderItemsOfMember(
         this.buyGroupId,
         this.buyGroupOrderId,
         this.userId

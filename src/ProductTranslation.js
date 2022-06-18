@@ -8,14 +8,22 @@ export default {
             qty: "Qté",
             qtyInBox: "Qté dans boîte",
             price: "Prix",
+            costPrice: "Prix Coûtant",
             category: "Catégorie",
             internalCode: "Code interne",
             maker: "Fabricant",
             provider: "Fournisseur",
             isAvailable: "Est disponible",
-            isTaxable: "Est taxable",
+            hasTPS: "+ TPS",
+            hasTVQ: "+ TVQ",
             personName: "Personne",
-            order: "Commande"
+            order: "Commande",
+            tps: "TPS",
+            tvq: "TVQ",
+            addTVQ: "+ TVQ",
+            addTPS: "+ TPS",
+            totalWithTaxes: "Total avec tx",
+            totalWithoutTaxes: "Total avant tx"
         });
         I18n.i18next.addResources("en", "product", {
             name: "Nom",
@@ -23,14 +31,22 @@ export default {
             qty: "Qté",
             qtyInBox: "Qté dans boîte",
             price: "Prix",
+            costPrice: "Prix Coûtant",
             category: "Catégorie",
             internalCode: "Code interne",
             maker: "Fabricant",
             provider: "Fournisseur",
             isAvailable: "Est disponible",
-            isTaxable: "Est taxable",
+            hasTPS: "+ TPS",
+            hasTVQ: "+ TVQ",
             personName: "Personne",
-            order: "Commande"
+            order: "Commande",
+            tps: "TPS",
+            tvq: "TVQ",
+            addTPS: "Ajouter TPS",
+            addTVQ: "Ajouter TVQ",
+            totalWithTaxes: "Total avec tx",
+            totalWithoutTaxes: "Total avant tx"
         });
     }
 }

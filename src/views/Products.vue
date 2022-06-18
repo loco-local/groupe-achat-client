@@ -33,6 +33,7 @@
           :canToggleAvailability="false"
           :canChangeOrderQuantity="canChangeOrderQuantity"
           :hasOrderQuantity="hasOrderQuantity"
+          :showTaxes="true"
           @quantityUpdate="updateOrderQuantity"
       ></ProductsTable>
     </v-row>
@@ -61,7 +62,7 @@
 <script>
 import ProductService from "@/service/ProductService";
 import I18n from "@/i18n";
-import UserOrderService from "@/service/UserOrderService";
+import MemberOrderService from "@/service/MemberOrderService";
 import GroupOrder from "@/GroupOrder";
 import OrderItem from "@/OrderItem";
 
@@ -95,19 +96,19 @@ export default {
     this.isLoading = true;
   },
   methods: {
-      setBuyGroup: async function (buyGroup) {
+    setBuyGroup: async function (buyGroup) {
       if (buyGroup.relevantOrder) {
         this.hasOrderQuantity = true;
         this.canChangeOrderQuantity = buyGroup.relevantOrder.status === GroupOrder.STATUS.CURRENT;
       }
-      const userOrder = await UserOrderService.get(
+      const userOrder = await MemberOrderService.get(
           buyGroup.id,
           buyGroup.relevantOrder.id,
           this.$store.state.user.id,
           true
       );
       this.userOrderId = userOrder.id;
-      this.orderItems = await UserOrderService.listForOrderId(userOrder.id);
+      this.orderItems = await MemberOrderService.listForOrderId(userOrder.id);
       this.products = await ProductService.listPutForward(buyGroup.id);
       this.orderItems.forEach((item) => {
         const matchingProduct = this.products.filter((product) => {
@@ -116,6 +117,8 @@ export default {
         if (matchingProduct.length) {
           matchingProduct[0].orderQuantity = item.quantity;
           matchingProduct[0].total = OrderItem.calculateTotal(item)
+          matchingProduct[0].tps = OrderItem.calculateTPS(item)
+          matchingProduct[0].tvq = OrderItem.calculateTVQ(item)
         }
       });
       this.products = this.products.sort((a, b) => {
@@ -139,9 +142,11 @@ export default {
       const previousQuantity = orderItem.quantity;
       orderItem.quantity = updatedProduct.orderQuantity;
       updatedProduct.total = OrderItem.calculateTotal(orderItem);
+      updatedProduct.tps = OrderItem.calculateTPS(orderItem);
+      updatedProduct.tvq = OrderItem.calculateTVQ(orderItem);
       this.$set(this.products, this.products.indexOf(updatedProduct), updatedProduct);
       if (parseInt(previousQuantity) !== parseInt(updatedProduct.orderQuantity)) {
-        await UserOrderService.setQuantity(
+        await MemberOrderService.setQuantity(
             this.userOrderId,
             updatedProduct.id,
             orderItem.quantity

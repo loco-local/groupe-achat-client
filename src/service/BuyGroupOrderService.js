@@ -17,19 +17,19 @@ const BuyGroupOrderService = {
             return GroupOrder.format(groupOrder)
         });
     },
-    listUserOrders: async function (buyGroupId, buyGroupOrderId) {
-        const response = await Service.api().get("/buy-group/" + buyGroupId + "/orders/" + buyGroupOrderId + "/userOrders");
+    listMemberOrders: async function (buyGroupId, buyGroupOrderId) {
+        const response = await Service.api().get("/buy-group/" + buyGroupId + "/orders/" + buyGroupOrderId + "/memberOrders");
         return response.data;
     },
-    listUserOrderItems: async function (buyGroupId, buyGroupOrderId) {
-        const response = await Service.api().get("/buy-group/" + buyGroupId + "/orders/" + buyGroupOrderId + "/userOrders/items");
+    listMemberOrderItems: async function (buyGroupId, buyGroupOrderId) {
+        const response = await Service.api().get("/buy-group/" + buyGroupId + "/orders/" + buyGroupOrderId + "/memberOrders/items");
         return BuyGroupOrderService._formattedOrderItems(
             response.data
         );
     },
-    listOrderItemsOfUser: async function (buyGroupId, buyGroupOrderId, userId) {
+    listOrderItemsOfMember: async function (buyGroupId, buyGroupOrderId, memberId) {
         const response = await Service.api().get(
-            "/buy-group/" + buyGroupId + "/orders/" + buyGroupOrderId + "/user/" + userId + " /order-items"
+            "/buy-group/" + buyGroupId + "/orders/" + buyGroupOrderId + "/member/" + memberId + " /order-items"
         );
         return BuyGroupOrderService._formattedOrderItems(
             response.data
@@ -40,8 +40,8 @@ const BuyGroupOrderService = {
             orderItem.name = orderItem.description;
             orderItem.orderQuantity = orderItem.quantity;
             orderItem.total = OrderItem.calculateTotal(orderItem)
-            if (orderItem.UserOrder && orderItem.UserOrder.User) {
-                orderItem.personFullname = orderItem.UserOrder.User.firstname + " " + orderItem.UserOrder.User.lastname;
+            if (orderItem.MemberOrder && orderItem.MemberOrder.Member) {
+                orderItem.personFullname = orderItem.MemberOrder.Member.firstname + " " + orderItem.MemberOrder.Member.lastname;
             }
             return orderItem
         })

@@ -5,13 +5,13 @@ export default {
         createIfNotExist = createIfNotExist | false;
         let response = await Service.api().get(
             '/buy-group/' + buyGroupId + '/buy-group-order/' +
-            buyGroupOrderId + '/userOrder/' + userId
+            buyGroupOrderId + '/memberOrder/' + userId
         );
         if (response.status === 204) {
             if (createIfNotExist) {
                 response = await Service.api().post(
                     '/buy-group/' + buyGroupId + '/buy-group-order/' +
-                    buyGroupOrderId + '/userOrder/' + userId
+                    buyGroupOrderId + '/memberOrder/' + userId
                 );
             } else {
                 return null;
@@ -21,13 +21,13 @@ export default {
     },
     listForOrderId: async function (orderId) {
         const response = await Service.api().get(
-            '/userOrder/' + orderId + '/items'
+            '/memberOrder/' + orderId + '/items'
         );
         return response.data;
     },
-    setQuantity: async function (userOrderId, productId, quantity) {
+    setQuantity: async function (memberOrderId, productId, quantity) {
         return Service.api().post(
-            '/userOrder/' + userOrderId + '/product/' + productId + '/quantity',
+            '/memberOrder/' + memberOrderId + '/product/' + productId + '/quantity',
             {
                 quantity: quantity
             }

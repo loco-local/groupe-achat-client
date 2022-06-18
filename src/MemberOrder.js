@@ -10,7 +10,10 @@ const MemberOrder = {
         let data = [
             [
                 t('product:qty'),
-                t('total'),
+                t('product:totalWithTaxes'),
+                t('product:tps'),
+                t('product:tvq'),
+                t('product:totalWithoutTaxes'),
                 t('product:name'),
                 t('product:format'),
                 t('product:qtyInBox'),
@@ -25,6 +28,9 @@ const MemberOrder = {
         items.forEach((item) => {
             data.push([
                 item.orderQuantity,
+                item.totalPriceAfterRebateWithTaxes.toFixed(2),
+                item.tps.toFixed(2),
+                item.tvq.toFixed(2),
                 item.totalPriceAfterRebate.toFixed(2),
                 item.description,
                 item.format,

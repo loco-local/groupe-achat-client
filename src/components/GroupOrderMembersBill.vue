@@ -78,7 +78,7 @@ export default {
   },
   mounted: async function () {
     this.isLoading = true;
-    this.userOrders = await BuyGroupOrderService.listUserOrders(
+    this.userOrders = await BuyGroupOrderService.listMemberOrders(
         this.buyGroupId,
         this.buyGroupOrderId
     );

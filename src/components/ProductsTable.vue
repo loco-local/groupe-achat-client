@@ -26,7 +26,7 @@
         <v-text-field
             type="number"
             v-model="item.orderQuantity"
-            :placeholder="$t('quantity')"
+            :placeholder="$t('quantityShort')"
             @keydown="quantityKeydown($event, item)"
             @blur="changeQuantity($event, item)"
             v-if="canChangeOrderQuantity"
@@ -41,8 +41,30 @@
           {{ item.total | currency }}
         </span>
       </template>
-      <template v-slot:item.price="{ item }">
-        {{ item.price | currency }}
+      <template v-slot:item.tps="{ item }" v-if="showEditButton">
+        {{item.tps | currency}}
+      </template>
+      <template v-slot:item.tvq="{ item }" v-if="showEditButton">
+        {{item.tvq | currency}}
+      </template>
+      <template v-slot:item.costPrice="{ item }">
+        {{ item.costPrice | currency }}
+      </template>
+      <template v-slot:item.hasTPS="{ item }" v-if="showEditButton">
+        <span v-if="item.hasTPS">
+          {{$t('yes')}}
+        </span>
+        <span v-else>
+          {{$t('no')}}
+        </span>
+      </template>
+      <template v-slot:item.hasTVQ="{ item }" v-if="showEditButton">
+        <span v-if="item.hasTVQ">
+          {{$t('yes')}}
+        </span>
+        <span v-else>
+          {{$t('no')}}
+        </span>
       </template>
       <template v-slot:item.isAvailable="{ item }" v-if="canToggleAvailability">
         <v-checkbox
@@ -89,6 +111,14 @@ export default {
     showPersonName: {
       type: Boolean,
       default: false
+    },
+    showTaxes: {
+      type: Boolean,
+      default: false
+    },
+    showHasTaxes: {
+      type: Boolean,
+      default: false
     }
   },
   data: function () {
@@ -121,8 +151,8 @@ export default {
         value: 'qtyInBox'
       },
       {
-        text: this.$t('product:price'),
-        value: 'price'
+        text: this.$t('product:costPrice'),
+        value: 'costPrice'
       },
       {
         text: this.$t('product:category'),
@@ -141,6 +171,18 @@ export default {
         value: 'provider'
       },
     ];
+    if (this.showTaxes) {
+      headers.unshift({
+        text: this.$t('product:tps'),
+        value: 'tps'
+      });
+      headers.unshift(
+          {
+            text: this.$t('product:tvq'),
+            value: 'tvq'
+          }
+      );
+    }
     if (this.hasOrderQuantity) {
       headers.unshift({
         text: this.$t('total'),
@@ -150,6 +192,18 @@ export default {
         text: this.$t('quantityShort'),
         value: 'orderQuantity'
       });
+    }
+    if (this.showHasTaxes) {
+      headers.push({
+        text: this.$t('product:addTPS'),
+        value: 'hasTPS'
+      });
+      headers.push(
+          {
+            text: this.$t('product:addTVQ'),
+            value: 'hasTVQ'
+          }
+      );
     }
     if (this.canToggleAvailability) {
       headers.push({

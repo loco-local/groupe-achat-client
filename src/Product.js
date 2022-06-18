@@ -1,7 +1,7 @@
 export default {
     format: function (product) {
-        if (product.price) {
-            product.price = product.price.toFixed(2);
+        if (product.costPrice) {
+            product.costPrice = product.costPrice.toFixed(2);
         }
         return product;
     }

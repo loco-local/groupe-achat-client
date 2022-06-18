@@ -44,6 +44,7 @@
             :products="productsPutForward || []"
             :loading="isLoading"
             :showSelect="true"
+            :showHasTaxes="true"
             @selectionChanged="updateSelection"
             @modify="enterUpdateProductFlow"
         ></ProductsTable>
@@ -122,8 +123,8 @@
                     md="4"
                 >
                   <v-text-field
-                      v-model="editedProduct.price"
-                      :label="$t('product:price')"
+                      v-model="editedProduct.costPrice"
+                      :label="$t('product:costPrice')"
                       :rules="[rules.required]"
                   ></v-text-field>
                 </v-col>
@@ -175,8 +176,18 @@
                     md="4"
                 >
                   <v-checkbox
-                      :label="$t('product:isTaxable')"
-                      v-model="editedProduct.isTaxable"
+                      :label="$t('product:hasTPS')"
+                      v-model="editedProduct.hasTPS"
+                  />
+                </v-col>
+                <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                >
+                  <v-checkbox
+                      :label="$t('product:hasTVQ')"
+                      v-model="editedProduct.hasTVQ"
                   />
                 </v-col>
               </v-row>
@@ -234,7 +245,7 @@ export default {
       deprecate: "Déprécié",
       deprecatedInfinitive: "Déprécier",
       newProduct: "Ajouter Produit",
-      onlyBigFormat: "3 litres/kilo ou plus gros"
+      onlyBigFormat: "2.5 litres/kilo ou plus gros"
 
     });
     I18n.i18next.addResources("en", "productsAdmin", {
@@ -245,7 +256,7 @@ export default {
       deprecate: "Déprécié",
       deprecatedInfinitive: "Déprécier",
       newProduct: "Ajouter Produit",
-      onlyBigFormat: "3 litres/kilo ou plus gros"
+      onlyBigFormat: "2.5 litres/kilo ou plus gros"
     });
     return {
       productsPutForward: null,
@@ -272,12 +283,13 @@ export default {
       if(!this.isNewProductFlow){
         this.editedProduct.name = this.originalEditProductValues.name;
         this.editedProduct.format = this.originalEditProductValues.format;
-        this.editedProduct.price = this.originalEditProductValues.price;
+        this.editedProduct.costPrice = this.originalEditProductValues.costPrice;
         this.editedProduct.internalCode = this.originalEditProductValues.internalCode;
         this.editedProduct.maker = this.originalEditProductValues.maker;
         this.editedProduct.provider = this.originalEditProductValues.provider;
         this.editedProduct.isAvailable = this.originalEditProductValues.isAvailable;
-        this.editedProduct.isTaxable = this.originalEditProductValues.isTaxable;
+        this.editedProduct.hasTPS = this.originalEditProductValues.hasTPS;
+        this.editedProduct.hasTVQ = this.originalEditProductValues.hasTVQ;
       }
       this.editProductDialog = false;
     },
@@ -367,7 +379,7 @@ export default {
           } else if (measureUnit !== "kg" && measureUnit !== "l") {
             return false;
           }
-          return quantity >= 3;
+          return quantity >= 2.5;
         });
       } else {
         return this.productsDeprecated;

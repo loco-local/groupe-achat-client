@@ -83,7 +83,9 @@ export default {
                         nonBinary: "Non binaire",
                         male: "Homme",
                         female: "Femme",
-                        genderPreferNotAnswer: "Préfère ne pas répondre"
+                        genderPreferNotAnswer: "Préfère ne pas répondre",
+                        yes: "oui",
+                        no: "non"
                     }
                 },
                 fr: {
@@ -132,7 +134,9 @@ export default {
                         nonBinary: "Non binaire",
                         male: "Homme",
                         female: "Femme",
-                        genderPreferNotAnswer: "Préfère ne pas répondre"
+                        genderPreferNotAnswer: "Préfère ne pas répondre",
+                        yes: "oui",
+                        no: "non"
                     }
                 }
             }

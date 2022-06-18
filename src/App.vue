@@ -56,6 +56,14 @@
                 {{ $t('app:groupOrder') }}
               </v-list-item-content>
             </v-list-item>
+            <v-list-item :to="'/groupe/' +  $store.state.user.BuyGroupId" v-if="isAdmin">
+              <v-list-item-action>
+                <v-icon>settings</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                {{ $t('app:yourGroup') }}
+              </v-list-item-content>
+            </v-list-item>
             <v-subheader v-if="isAdmin">
               {{ $t('app:products') }}
             </v-subheader>
@@ -128,6 +136,7 @@ export default {
       importProducts: "Importer",
       logout: "Déconnecter",
       groupOrder: "Commandes",
+      yourGroup: "Votre groupe",
       members: "Membres"
     });
     I18n.i18next.addResources("en", "app", {
@@ -136,6 +145,7 @@ export default {
       importProducts: "Importer",
       logout: "Déconnecter",
       groupOrder: "Commandes",
+      yourGroup: "Votre groupe",
       members: "Membres"
     });
     return {};

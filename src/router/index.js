@@ -40,6 +40,11 @@ const routes = [
         component: () => import('../views/GroupOrders')
     },
     {
+        path: '/groupe/:buyGroupId',
+        name: 'GroupInfo',
+        component: () => import('../views/GroupInfo')
+    },
+    {
         path: '/groupe/:buyGroupId/commande/:orderId',
         name: 'GroupOrder',
         component: () => import('../views/GroupOrder')

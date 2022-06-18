@@ -8,5 +8,10 @@ export default {
     getForId: async function (buyGroupId) {
         const response = await Service.api().get("/buy-group/" + buyGroupId);
         return response.data;
+    },
+    update: async function (buyGroupId, buyGroup) {
+        await Service.api().put(
+            "/buy-group/" + buyGroupId,
+            buyGroup);
     }
 }
