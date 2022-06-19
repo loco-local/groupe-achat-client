@@ -37,6 +37,14 @@
                   type="number"
               ></v-text-field>
             </v-col>
+            <v-col
+                cols="12"
+            >
+              <v-textarea
+                  v-model="buyGroup.additionalFees"
+                  :label="$t('group:additionalFees')"
+              ></v-textarea>
+            </v-col>
             <v-col cols="12" class="text-left">
               <v-btn color="primary"
                      :loading="isSaving"
@@ -67,13 +75,15 @@ export default {
       title: "Votre groupe",
       name: "Nom",
       path: "Chemin dans l'url",
-      salePercentage: "Pourcentage de vente"
+      salePercentage: "Pourcentage de vente",
+      additionalFees: "Frais additionels"
     });
     I18n.i18next.addResources("en", "group", {
       title: "Votre groupe",
       name: "Nom",
       path: "Chemin dans l'url",
-      salePercentage: "Pourcentage de vente"
+      salePercentage: "Pourcentage de vente",
+      additionalFees: "Frais additionels"
     });
     return {
       buyGroup: null,

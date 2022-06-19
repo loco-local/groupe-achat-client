@@ -32,5 +32,13 @@ export default {
                 expectedQuantity: expectedQuantity
             }
         );
-    }
+    },
+    setQuantity: async function (memberOrderId, productId, quantity) {
+        return Service.api().post(
+            '/memberOrder/' + memberOrderId + '/product/' + productId + '/quantity',
+            {
+                quantity: quantity
+            }
+        );
+    },
 }

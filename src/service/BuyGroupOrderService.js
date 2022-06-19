@@ -38,8 +38,13 @@ const BuyGroupOrderService = {
     _formattedOrderItems: function (orderItems) {
         return orderItems.map((orderItem) => {
             orderItem.name = orderItem.description;
-            orderItem.orderQuantity = orderItem.quantity;
-            orderItem.total = OrderItem.calculateTotal(orderItem)
+            orderItem.previousExpectedQuantity = orderItem.expectedQuantity;
+            orderItem.previousQuantity = orderItem.quantity;
+            orderItem.total = OrderItem.calculateTotal(
+                orderItem,
+                orderItem.expectedQuantity,
+                orderItem.expectedPrice
+            )
             if (orderItem.MemberOrder && orderItem.MemberOrder.Member) {
                 orderItem.personFullname = orderItem.MemberOrder.Member.firstname + " " + orderItem.MemberOrder.Member.lastname;
             }

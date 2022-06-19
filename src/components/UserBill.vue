@@ -9,7 +9,8 @@
     <v-card-text v-if="!isLoading && userOrderItems.length">
       <ProductsTable
           :products="userOrderItems || []"
-          :hasOrderQuantity="true"
+          :hasQuantity="true"
+          :hasExpectedQuantity="true"
           :canToggleAvailability="false"
       ></ProductsTable>
     </v-card-text>

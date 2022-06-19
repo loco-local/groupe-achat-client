@@ -24,14 +24,14 @@
                   </v-btn>
                 </v-list-item-action>
                 <v-list-item-action>
-                  <v-btn icon large @click="viewReceipt(userOrder.User.id)">
+                  <v-btn icon large @click="viewReceipt(userOrder.Member.id)">
                     <v-icon large>preview</v-icon>
                   </v-btn>
                 </v-list-item-action>
                 <v-list-item-content>
                   <v-list-item-title class="text-left ml-6">
-                    {{ userOrder.User.firstname }}
-                    {{ userOrder.User.lastname }}
+                    {{ userOrder.Member.firstname }}
+                    {{ userOrder.Member.lastname }}
                   </v-list-item-title>
                   <v-list-item-subtitle class="text-left ml-6">
                     {{ userOrder.totalPrice | currency }}

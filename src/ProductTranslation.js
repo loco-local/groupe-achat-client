@@ -6,6 +6,7 @@ export default {
             name: "Nom",
             format: "Format",
             qty: "Qté",
+            expectedQuantityShort: "Qté prévue",
             qtyInBox: "Qté dans boîte",
             price: "Prix",
             expectedPrice: "Prix Prévu",
@@ -25,12 +26,14 @@ export default {
             addTPS: "+ TPS",
             totalWithTaxes: "Total avec tx",
             totalWithoutTaxes: "Total avant tx",
+            total: "Total",
             expectedTotal: "Total prévu"
         });
         I18n.i18next.addResources("en", "product", {
             name: "Nom",
             format: "Format",
             qty: "Qté",
+            expectedQuantityShort: "Qté prévue",
             qtyInBox: "Qté dans boîte",
             price: "Prix",
             expectedPrice: "Prix Prévu",
@@ -50,6 +53,7 @@ export default {
             addTVQ: "Ajouter TVQ",
             totalWithTaxes: "Total avec tx",
             totalWithoutTaxes: "Total avant tx",
+            total: "Total",
             expectedTotal: "Total prévu"
         });
     }

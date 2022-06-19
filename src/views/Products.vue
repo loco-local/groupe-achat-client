@@ -43,31 +43,13 @@
           v-else
           :products="products || []"
           :canToggleAvailability="false"
-          :canChangeOrderQuantity="canChangeOrderQuantity"
-          :hasOrderQuantity="hasOrderQuantity"
+          :canChangeExpectedQuantity="canChangeExpectedQuantity"
+          :hasExpectedQuantity="hasExpectedQuantity"
           :showTaxes="true"
           @quantityUpdate="updateOrderQuantity"
+          ref="productsTable"
       ></ProductsTable>
     </v-row>
-    <v-snackbar
-        v-model="quantityUpdateSnackbar"
-        top
-        :timeout="7000"
-    >
-        <span class="body-1">
-          {{ $t('products:quantityUpdated') }}
-        </span>
-      <template v-slot:action="{ attrs }">
-        <v-btn
-            color="white"
-            text
-            v-bind="attrs"
-            @click="quantityUpdateSnackbar = false"
-        >
-          {{ $t('close') }}
-        </v-btn>
-      </template>
-    </v-snackbar>
   </Page>
 </template>
 
@@ -88,13 +70,11 @@ export default {
   data: function () {
     I18n.i18next.addResources("fr", "products", {
       "title": "Produits",
-      quantityUpdated: "Quantité mise à jour",
       info1: "Il n'y a pas de bouton de confirmation pour votre panier de commande.",
       info2: "À la date de fin de la commande, les dernières quantités que vous aurez inscrites seront commandées aux fournisseurs."
     });
     I18n.i18next.addResources("en", "products", {
       "title": "Produits",
-      quantityUpdated: "Quantité mise à jour",
       info1: "Il n'y a pas de bouton de confirmation pour votre panier de commande.",
       info2: "À la date de fin de la commande, les dernières quantités que vous aurez inscrites seront commandées aux fournisseurs."
     });
@@ -103,9 +83,8 @@ export default {
       orderItems: [],
       userOrderId: null,
       isLoading: false,
-      quantityUpdateSnackbar: false,
-      canChangeOrderQuantity: false,
-      hasOrderQuantity: false
+      canChangeExpectedQuantity: false,
+      hasExpectedQuantity: false
     }
   },
   mounted: async function () {
@@ -114,8 +93,8 @@ export default {
   methods: {
     setBuyGroup: async function (buyGroup) {
       if (buyGroup.relevantOrder) {
-        this.hasOrderQuantity = true;
-        this.canChangeOrderQuantity = buyGroup.relevantOrder.status === GroupOrder.STATUS.CURRENT;
+        this.hasExpectedQuantity = true;
+        this.canChangeExpectedQuantity = buyGroup.relevantOrder.status === GroupOrder.STATUS.CURRENT;
       }
       const userOrder = await MemberOrderService.get(
           buyGroup.id,
@@ -127,21 +106,33 @@ export default {
       this.orderItems = await MemberOrderService.listForOrderId(userOrder.id);
       this.products = await ProductService.listPutForward(
           buyGroup.id,
-          buyGroup.salePercentage
+          buyGroup.relevantOrder.salePercentage
       );
       this.orderItems.forEach((item) => {
         const matchingProduct = this.products.filter((product) => {
           return product.id === item.ProductId;
         });
         if (matchingProduct.length) {
-          matchingProduct[0].orderQuantity = item.expectedQuantity;
-          matchingProduct[0].expectedTotalAfterRebateWithTaxes = OrderItem.calculateTotal(item)
-          matchingProduct[0].tps = OrderItem.calculateTPS(item)
-          matchingProduct[0].tvq = OrderItem.calculateTVQ(item)
+          matchingProduct[0].expectedQuantity = item.expectedQuantity;
+          matchingProduct[0].previousExpectedQuantity = item.expectedQuantity;
+          matchingProduct[0].expectedTotalAfterRebateWithTaxes = OrderItem.calculateTotal(
+              item,
+              item.expectedQuantity,
+              item.expectedPrice
+          )
+          matchingProduct[0].tps = OrderItem.calculateTPS(
+              item,
+              item.expectedQuantity,
+              item.expectedPrice)
+          matchingProduct[0].tvq = OrderItem.calculateTVQ(
+              item,
+              item.expectedQuantity,
+              item.expectedPrice
+          )
         }
       });
       this.products = this.products.sort((a, b) => {
-        return (b.orderQuantity || 0) - (a.orderQuantity || 0);
+        return (b.expectedQuantity || 0) - (a.expectedQuantity || 0);
       });
       this.isLoading = false;
     },
@@ -158,31 +149,39 @@ export default {
       } else {
         orderItem = orderItem[0];
       }
-      const previousQuantity = orderItem.expectedQuantity;
-      orderItem.expectedQuantity = updatedProduct.orderQuantity;
-      updatedProduct.expectedTotalAfterRebateWithTaxes = OrderItem.calculateTotal(orderItem);
-      updatedProduct.tps = OrderItem.calculateTPS(orderItem);
-      updatedProduct.tvq = OrderItem.calculateTVQ(orderItem);
+      orderItem.expectedQuantity = updatedProduct.expectedQuantity;
+      updatedProduct.expectedTotalAfterRebateWithTaxes = OrderItem.calculateTotal(
+          orderItem,
+          orderItem.expectedQuantity,
+          orderItem.expectedPrice
+      );
+      updatedProduct.tps = OrderItem.calculateTPS(
+          orderItem,
+          orderItem.expectedQuantity,
+          orderItem.expectedPrice
+      );
+      updatedProduct.tvq = OrderItem.calculateTVQ(
+          orderItem,
+          orderItem.expectedQuantity,
+          orderItem.expectedPrice
+      );
       this.$set(this.products, this.products.indexOf(updatedProduct), updatedProduct);
-      if (parseInt(previousQuantity) !== parseInt(updatedProduct.orderQuantity)) {
-        await MemberOrderService.setExpectedQuantity(
-            this.userOrderId,
-            updatedProduct.id,
-            orderItem.expectedQuantity
-        )
-        const timeout = this.quantityUpdateSnackbar ? 500 : 0;
-        this.quantityUpdateSnackbar = false;
-        await this.$nextTick();
-        setTimeout(() => {
-          this.quantityUpdateSnackbar = true;
-        }, timeout)
-      }
+      await MemberOrderService.setExpectedQuantity(
+          this.userOrderId,
+          updatedProduct.id,
+          orderItem.expectedQuantity
+      )
+      await this.$refs.productsTable.showQuantityChangedSuccess();
     }
   },
   computed: {
     total: function () {
       return this.orderItems.reduce((total, orderItem) => {
-        return OrderItem.calculateTotal(orderItem) + total;
+        return OrderItem.calculateTotal(
+            orderItem,
+            orderItem.expectedQuantity,
+            orderItem.expectedPrice
+        ) + total;
       }, 0)
     }
   }

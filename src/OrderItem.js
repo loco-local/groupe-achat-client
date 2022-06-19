@@ -1,13 +1,21 @@
 const OrderItem = {
-    calculateTotal: function (orderItem) {
-        const quantity = orderItem.expectedQuantity || 0;
-        return quantity * orderItem.expectedPrice + OrderItem.calculateTVQ(orderItem) + OrderItem.calculateTPS(orderItem);
+    calculateTotal: function (orderItem, quantity, price) {
+        quantity = quantity || 0;
+        return quantity * price + OrderItem.calculateTVQ(
+            orderItem,
+            quantity,
+            price
+        ) + OrderItem.calculateTPS(
+            orderItem,
+            quantity,
+            price
+        );
     },
-    calculateTVQ(orderItem) {
-        return orderItem.hasTVQ ? orderItem.expectedPrice * 0.09975 * orderItem.expectedQuantity : 0;
+    calculateTVQ(orderItem, quantity, price) {
+        return orderItem.hasTVQ ? price * 0.09975 * quantity : 0;
     },
-    calculateTPS(orderItem) {
-        return orderItem.hasTPS ? orderItem.expectedPrice * 0.05 * orderItem.expectedQuantity : 0;
+    calculateTPS(orderItem, quantity, price) {
+        return orderItem.hasTPS ? price * 0.05 * quantity : 0;
     },
 }
 export default OrderItem;

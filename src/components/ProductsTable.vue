@@ -22,23 +22,43 @@
             class="mx-4 mb-6"
         ></v-text-field>
       </template>
-      <template v-slot:item.orderQuantity="{ item }" v-if="hasOrderQuantity">
+      <template v-slot:item.expectedQuantity="{ item }" v-if="hasExpectedQuantity">
         <v-text-field
             type="number"
-            v-model="item.orderQuantity"
+            v-model="item.expectedQuantity"
+            :placeholder="$t('quantityShort')"
+            @keydown="quantityKeydown($event, item)"
+            @blur="changeExpectedQuantity($event, item)"
+            v-if="canChangeExpectedQuantity"
+            style="max-width: 50px;"
+        ></v-text-field>
+        <span v-else>{{ item.expectedQuantity }}</span>
+      </template>
+      <template v-slot:item.quantity="{ item }" v-if="hasQuantity">
+        <v-text-field
+            type="number"
+            v-model="item.quantity"
             :placeholder="$t('quantityShort')"
             @keydown="quantityKeydown($event, item)"
             @blur="changeQuantity($event, item)"
-            v-if="canChangeOrderQuantity"
+            v-if="canChangeQuantity"
         ></v-text-field>
-        <span v-else>{{ item.orderQuantity }}</span>
+        <span v-else>{{ item.quantity }}</span>
       </template>
-      <template v-slot:item.expectedTotalAfterRebateWithTaxes="{ item }" v-if="hasOrderQuantity">
+      <template v-slot:item.expectedTotalAfterRebateWithTaxes="{ item }" v-if="hasExpectedQuantity">
         <span v-if="item.expectedTotalAfterRebateWithTaxes === undefined">
             <v-divider></v-divider>
         </span>
         <span v-else>
           {{ item.expectedTotalAfterRebateWithTaxes | currency }}
+        </span>
+      </template>
+      <template v-slot:item.totalAfterRebateWithTaxes="{ item }" v-if="hasQuantity">
+        <span v-if="item.totalAfterRebateWithTaxes === undefined">
+            <v-divider></v-divider>
+        </span>
+        <span v-else>
+          {{ item.totalAfterRebateWithTaxes | currency }}
         </span>
       </template>
       <template v-slot:item.tps="{ item }" v-if="showEditButton">
@@ -81,6 +101,25 @@
         </v-btn>
       </template>
     </v-data-table>
+    <v-snackbar
+        v-model="quantityUpdateSnackbar"
+        top
+        :timeout="7000"
+    >
+        <span class="body-1">
+          {{ $t('productTable:quantityUpdated') }}
+        </span>
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="quantityUpdateSnackbar = false"
+        >
+          {{ $t('close') }}
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -103,11 +142,19 @@ export default {
       type: Boolean,
       default: true
     },
-    canChangeOrderQuantity: {
+    canChangeExpectedQuantity: {
       type: Boolean,
       default: false
     },
-    hasOrderQuantity: {
+    canChangeQuantity: {
+      type: Boolean,
+      default: false
+    },
+    hasQuantity: {
+      type: Boolean,
+      default: false
+    },
+    hasExpectedQuantity: {
       type: Boolean,
       default: false
     },
@@ -131,14 +178,16 @@ export default {
       updatePrice: "Prix mis à jour",
       nothing: "Rien de changé",
       loadingText: "Liste de produits en chargement",
-      noProducts: "Pas de produits"
+      noProducts: "Pas de produits",
+      quantityUpdated: "Quantité mise à jour",
     });
     I18n.i18next.addResources("en", "productTable", {
       create: "Nouveau",
       updatePrice: "Prix mis à jour",
       nothing: "Rien de changé",
       loadingText: "Liste de produits en chargement",
-      noProducts: "Pas de produits"
+      noProducts: "Pas de produits",
+      quantityUpdated: "Quantité mise à jour",
     });
     const headers = [
       {
@@ -190,14 +239,22 @@ export default {
           }
       );
     }
-    if (this.hasOrderQuantity) {
+    if (this.hasQuantity) {
+      headers.unshift({
+        text: this.$t('product:total'),
+        value: 'totalAfterRebateWithTaxes'
+      });
+    }
+    if (this.hasExpectedQuantity) {
       headers.unshift({
         text: this.$t('product:expectedTotal'),
         value: 'expectedTotalAfterRebateWithTaxes'
       });
+    }
+    if (this.hasQuantity) {
       headers.unshift({
         text: this.$t('quantityShort'),
-        value: 'orderQuantity'
+        value: 'quantity'
       });
     }
     if (this.showHasTaxes) {
@@ -226,6 +283,12 @@ export default {
         value: 'edit'
       });
     }
+    if (this.hasExpectedQuantity) {
+      headers.unshift({
+        text: this.$t('product:expectedQuantityShort'),
+        value: 'expectedQuantity'
+      });
+    }
     if (this.showPersonName) {
       headers.unshift({
         text: this.$t('product:personName'),
@@ -239,7 +302,7 @@ export default {
       page: 1,
       itemsPerPage: 50
     };
-    if (this.canChangeOrderQuantity || this.hasOrderQuantity) {
+    if (this.canChangeQuantity || this.hasQuantity || this.canChangeExpectedQuantity || this.hasExpectedQuantity) {
       tableOptions.sortBy = [];
     }
     return {
@@ -247,7 +310,8 @@ export default {
       search: null,
       tableOptions: tableOptions,
       headers: headers,
-      showEditButton: showEditButton
+      showEditButton: showEditButton,
+      quantityUpdateSnackbar: false,
     }
   },
   watch: {
@@ -262,7 +326,32 @@ export default {
       }
     },
     changeQuantity: async function (event, product) {
+      if(isNaN(product.quantity)){
+        return;
+      }
+      if (parseFloat(product.previousQuantity) === parseFloat(product.quantity)) {
+        return;
+      }
       await this.$emit('quantityUpdate', product)
+      product.previousQuantity = product.quantity;
+    },
+    changeExpectedQuantity: async function (event, product) {
+      if(isNaN(product.expectedQuantity)){
+        return;
+      }
+      if (parseFloat(product.previousExpectedQuantity) === parseFloat(product.expectedQuantity)) {
+        return;
+      }
+      await this.$emit('quantityUpdate', product)
+      product.previousExpectedQuantity = product.expectedQuantity;
+    },
+    showQuantityChangedSuccess: async function () {
+      const timeout = this.quantityUpdateSnackbar ? 500 : 0;
+      this.quantityUpdateSnackbar = false;
+      await this.$nextTick();
+      setTimeout(() => {
+        this.quantityUpdateSnackbar = true;
+      }, timeout)
     },
     toggleIsAvailable: async function (product) {
       if (product.isAvailable) {

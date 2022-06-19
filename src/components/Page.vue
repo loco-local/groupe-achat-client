@@ -4,7 +4,7 @@
          :class="{
           'pl-4 pr-4' : $vuetify.breakpoint.smAndDown
     }">
-    <v-col cols="12" md="11" lg="10" xl="8" class="text-center">
+    <v-col cols="12" md="11" lg="10" xl="9" class="text-center">
       <slot></slot>
     </v-col>
   </v-row>

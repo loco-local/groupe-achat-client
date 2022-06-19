@@ -9,9 +9,13 @@
     <v-card-text v-if="!isLoading && userOrdersItems.length">
       <ProductsTable
           :products="userOrdersItems || []"
-          :hasOrderQuantity="true"
+          :hasQuantity="true"
+          :hasExpectedQuantity="true"
+          :canChangeQuantity="true"
           :canToggleAvailability="false"
           :showPersonName="true"
+          @quantityUpdate="updateOrderQuantity"
+          ref="allOrderItemsTable"
       ></ProductsTable>
     </v-card-text>
   </v-card>
@@ -19,6 +23,8 @@
 
 <script>
 import BuyGroupOrderService from "@/service/BuyGroupOrderService";
+import OrderItem from "@/OrderItem";
+import MemberOrderService from "@/service/MemberOrderService";
 
 export default {
   name: "AllBuyGroupOrderItems",
@@ -39,6 +45,32 @@ export default {
         this.buyGroupOrderId
     );
     this.isLoading = false;
+  },
+  methods: {
+    updateOrderQuantity: async function (updatedItem) {
+      updatedItem.totalAfterRebateWithTaxes = OrderItem.calculateTotal(
+          updatedItem,
+          updatedItem.quantity,
+          updatedItem.price
+      );
+      updatedItem.tps = OrderItem.calculateTPS(
+          updatedItem,
+          updatedItem.quantity,
+          updatedItem.price
+      );
+      updatedItem.tvq = OrderItem.calculateTVQ(
+          updatedItem,
+          updatedItem.quantity,
+          updatedItem.price
+      );
+      this.$set(this.userOrdersItems, this.userOrdersItems.indexOf(updatedItem), updatedItem);
+      await MemberOrderService.setQuantity(
+          updatedItem.MemberOrderId,
+          updatedItem.ProductId,
+          updatedItem.quantity
+      )
+      await this.$refs.allOrderItemsTable.showQuantityChangedSuccess();
+    }
   }
 }
 </script>
