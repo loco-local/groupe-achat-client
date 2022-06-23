@@ -20,6 +20,7 @@
             hide-details
             v-model="search"
             class="mx-4 mb-6"
+            clearable
         ></v-text-field>
       </template>
       <template v-slot:item.expectedQuantity="{ item }" v-if="hasExpectedQuantity">
@@ -27,7 +28,7 @@
             type="number"
             v-model="item.expectedQuantity"
             :placeholder="$t('quantityShort')"
-            @keydown="quantityKeydown($event, item)"
+            @keydown="enterKeyDownAction($event, item, changeExpectedQuantity)"
             @blur="changeExpectedQuantity($event, item)"
             v-if="canChangeExpectedQuantity"
             style="max-width: 50px;"
@@ -39,7 +40,7 @@
             type="number"
             v-model="item.quantity"
             :placeholder="$t('quantityShort')"
-            @keydown="quantityKeydown($event, item)"
+            @keydown="enterKeyDownAction($event, item, changeQuantity)"
             @blur="changeQuantity($event, item)"
             v-if="canChangeQuantity"
         ></v-text-field>
@@ -57,23 +58,47 @@
         <span v-if="item.totalAfterRebateWithTaxes === undefined">
             <v-divider></v-divider>
         </span>
-        <span v-else>
+        <strong v-else>
           {{ item.totalAfterRebateWithTaxes | currency }}
+        </strong>
+      </template>
+      <template v-slot:item.tps="{ item }">
+        <span v-if="item.hasTPS">
+          {{ item.tps | currency }}
+        </span>
+        <span v-else>
+          <v-divider></v-divider>
         </span>
       </template>
-      <template v-slot:item.tps="{ item }" v-if="showEditButton">
-        {{ item.tps | currency }}
-      </template>
-      <template v-slot:item.tvq="{ item }" v-if="showEditButton">
-        {{ item.tvq | currency }}
+      <template v-slot:item.tvq="{ item }">
+        <span v-if="item.hasTVQ">
+          {{ item.tvq | currency }}
+        </span>
+        <span v-else>
+          <v-divider></v-divider>
+        </span>
       </template>
       <template v-slot:item.expectedPrice="{ item }">
         {{ item.expectedPrice | currency }}
       </template>
-      <template v-slot:item.costPrice="{ item }">
-        {{ item.costPrice | currency }}
+      <template v-slot:item.expectedCostPrice="{ item }">
+        {{ item.expectedCostPrice | currency }}
       </template>
-      <template v-slot:item.hasTPS="{ item }" v-if="showEditButton">
+      <template v-slot:item.costPrice="{ item }">
+        <v-text-field
+            type="number"
+            v-model="item.costPrice"
+            :placeholder="$t('product:price')"
+            @keydown="enterKeyDownAction($event, item, changeCostPrice)"
+            @blur="changeCostPrice($event, item)"
+            v-if="canChangeQuantity"
+            suffix="$"
+            hide-details
+            hide-spin-buttons
+        ></v-text-field>
+        <span v-else>{{ item.costPrice | currency }}</span>
+      </template>
+      <template v-slot:item.hasTPS="{ item }">
         <span v-if="item.hasTPS">
           {{ $t('yes') }}
         </span>
@@ -81,7 +106,7 @@
           {{ $t('no') }}
         </span>
       </template>
-      <template v-slot:item.hasTVQ="{ item }" v-if="showEditButton">
+      <template v-slot:item.hasTVQ="{ item }">
         <span v-if="item.hasTVQ">
           {{ $t('yes') }}
         </span>
@@ -115,6 +140,25 @@
             text
             v-bind="attrs"
             @click="quantityUpdateSnackbar = false"
+        >
+          {{ $t('close') }}
+        </v-btn>
+      </template>
+    </v-snackbar>
+    <v-snackbar
+        v-model="costPriceUpdateSnackbar"
+        top
+        :timeout="7000"
+    >
+        <span class="body-1">
+          {{ $t('productTable:costPriceUpdated') }}
+        </span>
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="costPriceUpdateSnackbar = false"
         >
           {{ $t('close') }}
         </v-btn>
@@ -169,6 +213,18 @@ export default {
     showHasTaxes: {
       type: Boolean,
       default: false
+    },
+    showExpectedCostPrice: {
+      type: Boolean,
+      default: false
+    },
+    showCostPrice: {
+      type: Boolean,
+      default: false
+    },
+    canEditCostPrice: {
+      type: Boolean,
+      default: false
     }
   },
   data: function () {
@@ -180,6 +236,7 @@ export default {
       loadingText: "Liste de produits en chargement",
       noProducts: "Pas de produits",
       quantityUpdated: "Quantité mise à jour",
+      costPriceUpdated: "Prix coûtant mis à jour"
     });
     I18n.i18next.addResources("en", "productTable", {
       create: "Nouveau",
@@ -188,8 +245,9 @@ export default {
       loadingText: "Liste de produits en chargement",
       noProducts: "Pas de produits",
       quantityUpdated: "Quantité mise à jour",
+      costPriceUpdated: "Prix coûtant mis à jour"
     });
-    const headers = [
+    let headers = [
       {
         text: this.$t('product:name'),
         value: 'name'
@@ -205,28 +263,43 @@ export default {
       {
         text: this.$t('product:expectedPrice'),
         value: 'expectedPrice'
-      },
-      {
-        text: this.$t('product:costPrice'),
-        value: 'costPrice'
-      },
-      {
-        text: this.$t('product:category'),
-        value: 'category'
-      },
-      {
-        text: this.$t('product:internalCode'),
-        value: 'internalCode'
-      },
-      {
-        text: this.$t('product:maker'),
-        value: 'maker'
-      },
-      {
-        text: this.$t('product:provider'),
-        value: 'provider'
-      },
-    ];
+      }
+    ]
+    if (this.showExpectedCostPrice) {
+      headers.push(
+          {
+            text: this.$t('product:expectedCostPrice'),
+            value: 'expectedCostPrice'
+          }
+      )
+    }
+    if (this.showCostPrice) {
+      headers.push(
+          {
+            text: this.$t('product:costPrice'),
+            value: 'costPrice'
+          }
+      )
+    }
+    headers = headers.concat([
+          {
+            text: this.$t('product:category'),
+            value: 'category'
+          },
+          {
+            text: this.$t('product:internalCode'),
+            value: 'internalCode'
+          },
+          {
+            text: this.$t('product:maker'),
+            value: 'maker'
+          },
+          {
+            text: this.$t('product:provider'),
+            value: 'provider'
+          },
+        ]
+    );
     if (this.showTaxes) {
       headers.unshift({
         text: this.$t('product:tps'),
@@ -241,7 +314,7 @@ export default {
     }
     if (this.hasQuantity) {
       headers.unshift({
-        text: this.$t('product:total'),
+        text: this.$t('product:totalFinal'),
         value: 'totalAfterRebateWithTaxes'
       });
     }
@@ -253,7 +326,7 @@ export default {
     }
     if (this.hasQuantity) {
       headers.unshift({
-        text: this.$t('quantityShort'),
+        text: this.$t('product:qtyShortFinal'),
         value: 'quantity'
       });
     }
@@ -312,6 +385,7 @@ export default {
       headers: headers,
       showEditButton: showEditButton,
       quantityUpdateSnackbar: false,
+      costPriceUpdateSnackbar: false
     }
   },
   watch: {
@@ -320,13 +394,13 @@ export default {
     }
   },
   methods: {
-    quantityKeydown: function (event, product) {
+    enterKeyDownAction: function (event, entity, action) {
       if (event.keyCode === ENTER_KEY_CODE) {
-        this.changeQuantity(event, product);
+        action(event, entity);
       }
     },
     changeQuantity: async function (event, product) {
-      if(isNaN(product.quantity)){
+      if (isNaN(product.quantity)) {
         return;
       }
       if (parseFloat(product.previousQuantity) === parseFloat(product.quantity)) {
@@ -335,8 +409,17 @@ export default {
       await this.$emit('quantityUpdate', product)
       product.previousQuantity = product.quantity;
     },
+    async changeCostPrice(event, product) {
+      if (isNaN(product.costPrice)) {
+        return;
+      }
+      if (parseFloat(product.previousCostPrice) === parseFloat(product.costPrice)) {
+        return;
+      }
+      await this.$emit('costPriceUpdate', product)
+    },
     changeExpectedQuantity: async function (event, product) {
-      if(isNaN(product.expectedQuantity)){
+      if (isNaN(product.expectedQuantity)) {
         return;
       }
       if (parseFloat(product.previousExpectedQuantity) === parseFloat(product.expectedQuantity)) {
@@ -351,6 +434,14 @@ export default {
       await this.$nextTick();
       setTimeout(() => {
         this.quantityUpdateSnackbar = true;
+      }, timeout)
+    },
+    showCostPriceChangedSuccess: async function () {
+      const timeout = this.costPriceUpdateSnackbar ? 500 : 0;
+      this.costPriceUpdateSnackbar = false;
+      await this.$nextTick();
+      setTimeout(() => {
+        this.costPriceUpdateSnackbar = true;
       }, timeout)
     },
     toggleIsAvailable: async function (product) {

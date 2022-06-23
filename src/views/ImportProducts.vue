@@ -9,6 +9,7 @@
             truncate-length="15"
             v-model="productsFile"
             :loading="isProductsFileLoading"
+            placeholder="Bon de commande Satau seulement"
         ></v-file-input>
       </v-card-actions>
     </v-card>

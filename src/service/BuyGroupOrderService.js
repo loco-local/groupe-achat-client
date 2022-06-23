@@ -39,6 +39,7 @@ const BuyGroupOrderService = {
         return orderItems.map((orderItem) => {
             orderItem.name = orderItem.description;
             orderItem.previousExpectedQuantity = orderItem.expectedQuantity;
+            orderItem.previousCostPrice = orderItem.costPrice;
             orderItem.previousQuantity = orderItem.quantity;
             orderItem.total = OrderItem.calculateTotal(
                 orderItem,

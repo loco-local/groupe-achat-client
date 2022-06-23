@@ -45,6 +45,7 @@
           :canToggleAvailability="false"
           :canChangeExpectedQuantity="canChangeExpectedQuantity"
           :hasExpectedQuantity="hasExpectedQuantity"
+          :showExpectedCostPrice="true"
           :showTaxes="true"
           @quantityUpdate="updateOrderQuantity"
           ref="productsTable"
@@ -123,7 +124,8 @@ export default {
           matchingProduct[0].tps = OrderItem.calculateTPS(
               item,
               item.expectedQuantity,
-              item.expectedPrice)
+              item.expectedPrice
+          )
           matchingProduct[0].tvq = OrderItem.calculateTVQ(
               item,
               item.expectedQuantity,
@@ -150,27 +152,15 @@ export default {
         orderItem = orderItem[0];
       }
       orderItem.expectedQuantity = updatedProduct.expectedQuantity;
-      updatedProduct.expectedTotalAfterRebateWithTaxes = OrderItem.calculateTotal(
-          orderItem,
-          orderItem.expectedQuantity,
-          orderItem.expectedPrice
-      );
-      updatedProduct.tps = OrderItem.calculateTPS(
-          orderItem,
-          orderItem.expectedQuantity,
-          orderItem.expectedPrice
-      );
-      updatedProduct.tvq = OrderItem.calculateTVQ(
-          orderItem,
-          orderItem.expectedQuantity,
-          orderItem.expectedPrice
-      );
-      this.$set(this.products, this.products.indexOf(updatedProduct), updatedProduct);
-      await MemberOrderService.setExpectedQuantity(
+      const prices = await MemberOrderService.setExpectedQuantity(
           this.userOrderId,
           updatedProduct.id,
           orderItem.expectedQuantity
       )
+      updatedProduct.expectedTotalAfterRebateWithTaxes = prices.expectedTotalAfterRebateWithTaxes;
+      updatedProduct.tps = prices.tps;
+      updatedProduct.tvq = prices.tvq;
+      this.$set(this.products, this.products.indexOf(updatedProduct), updatedProduct);
       await this.$refs.productsTable.showQuantityChangedSuccess();
     }
   },

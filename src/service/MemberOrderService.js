@@ -26,19 +26,30 @@ export default {
         return response.data;
     },
     setExpectedQuantity: async function (memberOrderId, productId, expectedQuantity) {
-        return Service.api().post(
+        const response = await Service.api().post(
             '/memberOrder/' + memberOrderId + '/product/' + productId + '/quantity/expected',
             {
                 expectedQuantity: expectedQuantity
             }
         );
+        return response.data;
     },
     setQuantity: async function (memberOrderId, productId, quantity) {
-        return Service.api().post(
+        const response = await Service.api().post(
             '/memberOrder/' + memberOrderId + '/product/' + productId + '/quantity',
             {
                 quantity: quantity
             }
         );
+        return response.data;
+    },
+    setCostPrice: async function (memberOrderId, productId, costPrice) {
+        const response = await Service.api().post(
+            '/memberOrder/' + memberOrderId + '/product/' + productId + '/cost-price',
+            {
+                costPrice: costPrice
+            }
+        );
+        return response.data;
     },
 }

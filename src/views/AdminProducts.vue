@@ -45,6 +45,7 @@
             :loading="isLoading"
             :showSelect="true"
             :showHasTaxes="true"
+            :showExpectedCostPrice="true"
             @selectionChanged="updateSelection"
             @modify="enterUpdateProductFlow"
         ></ProductsTable>
@@ -73,6 +74,8 @@
             :products="productsDeprecatedFiltered || []"
             :loading="isLoading"
             :showSelect="true"
+            :showHasTaxes="true"
+            :showExpectedCostPrice="true"
             @selectionChanged="updateSelection"
             @modify="enterUpdateProductFlow"
         ></ProductsTable>
@@ -123,8 +126,8 @@
                     md="4"
                 >
                   <v-text-field
-                      v-model="editedProduct.costPrice"
-                      :label="$t('product:costPrice')"
+                      v-model="editedProduct.expectedCostPrice"
+                      :label="$t('product:expectedCostPrice')"
                       :rules="[rules.required]"
                   ></v-text-field>
                 </v-col>
@@ -285,7 +288,7 @@ export default {
       if (!this.isNewProductFlow) {
         this.editedProduct.name = this.originalEditProductValues.name;
         this.editedProduct.format = this.originalEditProductValues.format;
-        this.editedProduct.costPrice = this.originalEditProductValues.costPrice;
+        this.editedProduct.expectedCostPrice = this.originalEditProductValues.expectedCostPrice;
         this.editedProduct.internalCode = this.originalEditProductValues.internalCode;
         this.editedProduct.maker = this.originalEditProductValues.maker;
         this.editedProduct.provider = this.originalEditProductValues.provider;

@@ -14,6 +14,10 @@
           :canChangeQuantity="true"
           :canToggleAvailability="false"
           :showPersonName="true"
+          :showTaxes="true"
+          :showExpectedCostPrice="true"
+          :showCostPrice="true"
+          @costPriceUpdate="updateCostPrice"
           @quantityUpdate="updateOrderQuantity"
           ref="allOrderItemsTable"
       ></ProductsTable>
@@ -23,7 +27,6 @@
 
 <script>
 import BuyGroupOrderService from "@/service/BuyGroupOrderService";
-import OrderItem from "@/OrderItem";
 import MemberOrderService from "@/service/MemberOrderService";
 
 export default {
@@ -44,31 +47,43 @@ export default {
         this.buyGroupId,
         this.buyGroupOrderId
     );
+    this.userOrdersItems.forEach((orderItem) => {
+      if (orderItem.quantity === null) {
+        orderItem.quantity = orderItem.expectedQuantity;
+      }
+      if (orderItem.price === null) {
+        orderItem.price = orderItem.expectedPrice;
+      }
+      if (orderItem.totalAfterRebateWithTaxes === null) {
+        orderItem.totalAfterRebateWithTaxes = orderItem.expectedTotalAfterRebateWithTaxes;
+      }
+      if (orderItem.costPrice === null) {
+        orderItem.costPrice = orderItem.expectedCostPrice.toFixed(2);
+      }
+    });
     this.isLoading = false;
   },
   methods: {
-    updateOrderQuantity: async function (updatedItem) {
-      updatedItem.totalAfterRebateWithTaxes = OrderItem.calculateTotal(
-          updatedItem,
-          updatedItem.quantity,
-          updatedItem.price
+    updateCostPrice: async function (updatedItem) {
+      const prices = await MemberOrderService.setCostPrice(
+          updatedItem.MemberOrderId,
+          updatedItem.ProductId,
+          updatedItem.costPrice
       );
-      updatedItem.tps = OrderItem.calculateTPS(
-          updatedItem,
-          updatedItem.quantity,
-          updatedItem.price
-      );
-      updatedItem.tvq = OrderItem.calculateTVQ(
-          updatedItem,
-          updatedItem.quantity,
-          updatedItem.price
-      );
+      updatedItem.totalAfterRebateWithTaxes = prices.totalAfterRebateWithTaxes;
       this.$set(this.userOrdersItems, this.userOrdersItems.indexOf(updatedItem), updatedItem);
-      await MemberOrderService.setQuantity(
+      await this.$refs.allOrderItemsTable.showCostPriceChangedSuccess();
+    },
+    updateOrderQuantity: async function (updatedItem) {
+      const prices = await MemberOrderService.setQuantity(
           updatedItem.MemberOrderId,
           updatedItem.ProductId,
           updatedItem.quantity
       )
+      updatedItem.totalAfterRebateWithTaxes = prices.totalAfterRebateWithTaxes;
+      updatedItem.tps = prices.tps;
+      updatedItem.tvq = prices.tvq;
+      this.$set(this.userOrdersItems, this.userOrdersItems.indexOf(updatedItem), updatedItem);
       await this.$refs.allOrderItemsTable.showQuantityChangedSuccess();
     }
   }
