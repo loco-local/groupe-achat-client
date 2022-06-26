@@ -49,6 +49,18 @@ const BuyGroupOrderService = {
             if (orderItem.MemberOrder && orderItem.MemberOrder.Member) {
                 orderItem.personFullname = orderItem.MemberOrder.Member.firstname + " " + orderItem.MemberOrder.Member.lastname;
             }
+            if (orderItem.quantity === null) {
+                orderItem.quantity = orderItem.expectedQuantity;
+            }
+            if (orderItem.price === null) {
+                orderItem.price = orderItem.expectedPrice;
+            }
+            if (orderItem.totalAfterRebateWithTaxes === null) {
+                orderItem.totalAfterRebateWithTaxes = orderItem.expectedTotalAfterRebateWithTaxes;
+            }
+            if (orderItem.costPrice === null) {
+                orderItem.costPrice = orderItem.expectedCostPrice.toFixed(2);
+            }
             return orderItem
         })
     },

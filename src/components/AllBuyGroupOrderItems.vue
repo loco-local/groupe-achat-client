@@ -19,6 +19,7 @@
           :showCostPrice="true"
           @costPriceUpdate="updateCostPrice"
           @quantityUpdate="updateOrderQuantity"
+          :showUnitPrice="true"
           ref="allOrderItemsTable"
       ></ProductsTable>
     </v-card-text>
@@ -47,20 +48,6 @@ export default {
         this.buyGroupId,
         this.buyGroupOrderId
     );
-    this.userOrdersItems.forEach((orderItem) => {
-      if (orderItem.quantity === null) {
-        orderItem.quantity = orderItem.expectedQuantity;
-      }
-      if (orderItem.price === null) {
-        orderItem.price = orderItem.expectedPrice;
-      }
-      if (orderItem.totalAfterRebateWithTaxes === null) {
-        orderItem.totalAfterRebateWithTaxes = orderItem.expectedTotalAfterRebateWithTaxes;
-      }
-      if (orderItem.costPrice === null) {
-        orderItem.costPrice = orderItem.expectedCostPrice.toFixed(2);
-      }
-    });
     this.isLoading = false;
   },
   methods: {

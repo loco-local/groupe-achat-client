@@ -11,6 +11,9 @@
           :products="userOrderItems || []"
           :hasQuantity="true"
           :hasExpectedQuantity="true"
+          :showCostPrice="true"
+          :showUnitPrice="true"
+          :showExpectedCostPrice="true"
           :canToggleAvailability="false"
       ></ProductsTable>
     </v-card-text>

@@ -81,6 +81,9 @@
       <template v-slot:item.expectedPrice="{ item }">
         {{ item.expectedPrice | currency }}
       </template>
+      <template v-slot:item.price="{ item }">
+        {{ item.price | currency }}
+      </template>
       <template v-slot:item.expectedCostPrice="{ item }">
         {{ item.expectedCostPrice | currency }}
       </template>
@@ -225,6 +228,10 @@ export default {
     canEditCostPrice: {
       type: Boolean,
       default: false
+    },
+    showUnitPrice: {
+      type: Boolean,
+      default: false
     }
   },
   data: function () {
@@ -265,6 +272,14 @@ export default {
         value: 'expectedPrice'
       }
     ]
+    if (this.showUnitPrice) {
+      headers.push(
+          {
+            text: this.$t('product:price'),
+            value: 'price'
+          }
+      )
+    }
     if (this.showExpectedCostPrice) {
       headers.push(
           {
