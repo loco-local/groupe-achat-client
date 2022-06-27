@@ -5,7 +5,7 @@
         :items="products"
         :options="tableOptions"
         :no-data-text="$t('productTable:noProducts')"
-        class="elevation-1 mt-8 productsTable"
+        class="elevation-1 mt-8 productsTable body-1"
         :loading="loading"
         :loading-text="$t('productTable:loadingText')"
         :show-select="showSelect"
@@ -315,6 +315,18 @@ export default {
           },
         ]
     );
+    if (this.hasQuantity) {
+      headers.unshift({
+        text: this.$t('product:qtyShortFinal'),
+        value: 'quantity'
+      });
+    }
+    if (this.hasExpectedQuantity) {
+      headers.unshift({
+        text: this.$t('product:expectedQuantityShort'),
+        value: 'expectedQuantity'
+      });
+    }
     if (this.showTaxes) {
       headers.unshift({
         text: this.$t('product:tps'),
@@ -337,12 +349,6 @@ export default {
       headers.unshift({
         text: this.$t('product:expectedTotal'),
         value: 'expectedTotalAfterRebateWithTaxes'
-      });
-    }
-    if (this.hasQuantity) {
-      headers.unshift({
-        text: this.$t('product:qtyShortFinal'),
-        value: 'quantity'
       });
     }
     if (this.showHasTaxes) {
@@ -369,12 +375,6 @@ export default {
         text: '',
         sortable: false,
         value: 'edit'
-      });
-    }
-    if (this.hasExpectedQuantity) {
-      headers.unshift({
-        text: this.$t('product:expectedQuantityShort'),
-        value: 'expectedQuantity'
       });
     }
     if (this.showPersonName) {
@@ -421,6 +421,10 @@ export default {
       if (parseFloat(product.previousQuantity) === parseFloat(product.quantity)) {
         return;
       }
+      if (parseFloat(product.quantity) < 0) {
+        event.target.value = product.quantity = product.previousQuantity;
+        return;
+      }
       await this.$emit('quantityUpdate', product)
       product.previousQuantity = product.quantity;
     },
@@ -438,6 +442,10 @@ export default {
         return;
       }
       if (parseFloat(product.previousExpectedQuantity) === parseFloat(product.expectedQuantity)) {
+        return;
+      }
+      if (parseFloat(product.expectedQuantity) < 0) {
+        event.target.value = product.expectedQuantity = product.previousExpectedQuantity;
         return;
       }
       await this.$emit('quantityUpdate', product)
@@ -473,5 +481,13 @@ export default {
 <style>
 .productsTable .v-data-footer__select {
   display: none;
+}
+
+.productsTable td {
+  font-size: 1em !important;
+}
+
+.productsTable th {
+  font-size: 0.9em !important;
 }
 </style>

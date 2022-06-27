@@ -160,6 +160,7 @@ export default {
       updatedProduct.expectedTotalAfterRebateWithTaxes = prices.expectedTotalAfterRebateWithTaxes;
       updatedProduct.tps = prices.tps;
       updatedProduct.tvq = prices.tvq;
+      updatedProduct.expectedQuantity = prices.expectedQuantity;
       this.$set(this.products, this.products.indexOf(updatedProduct), updatedProduct);
       await this.$refs.productsTable.showQuantityChangedSuccess();
     }
