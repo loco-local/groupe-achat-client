@@ -40,7 +40,7 @@
             <v-subheader v-if="isAdmin">
               Administration
             </v-subheader>
-            <v-list-item to="/membres" v-if="isAdmin">
+            <v-list-item :to="'/groupe/'+$store.state.user.BuyGroupId+'/membres'" v-if="isAdmin">
               <v-list-item-action>
                 <v-icon>people</v-icon>
               </v-list-item-action>

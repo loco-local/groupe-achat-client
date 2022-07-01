@@ -1,6 +1,7 @@
 <template>
   <v-row justify="center"
-         style="margin-top:64px;margin-bottom:120px;"
+         style="margin-bottom:120px;"
+         class="mt-16"
          :class="{
           'pl-4 pr-4' : $vuetify.breakpoint.smAndDown
     }">
