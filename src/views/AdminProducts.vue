@@ -233,6 +233,7 @@ import ProductService from "@/service/ProductService";
 import I18n from "@/i18n";
 import Rules from '@/Rules'
 import BuyGroupService from "@/service/BuyGroupService";
+import Product from "@/Product";
 
 export default {
   name: "Products",
@@ -383,16 +384,10 @@ export default {
           if (product.format === null) {
             return false;
           }
-          let format = product.format.toLowerCase().replace(/\s/g, "");
-          const numbers = format.match(/[+-]?([0-9]*[.])?[0-9]+/)
-          if (numbers === null || !numbers.length) {
-            return false;
-          }
-          let quantity = numbers[0].trim();
-          const measureUnit = format.substring(quantity.toString().length).trim();
-          if (measureUnit === "g" || measureUnit === "ml") {
-            quantity = quantity / 1000;
-          } else if (measureUnit !== "kg" && measureUnit !== "l") {
+          const quantity = Product.formatInKg(
+              product.format
+          );
+          if (quantity === 999) {
             return false;
           }
           return quantity >= 2.5;

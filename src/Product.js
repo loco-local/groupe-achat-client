@@ -13,6 +13,24 @@ const Product = {
     },
     calculatePrice: function (costPrice, salePercentage) {
         return costPrice * (1 + (salePercentage / 100));
+    },
+    formatInKg: function (format) {
+        if(format === null){
+            return 999;
+        }
+        format = format.toLowerCase().replace(/\s/g, "");
+        const numbers = format.match(/[+-]?([0-9]*[.])?[0-9]+/)
+        if (numbers === null || !numbers.length) {
+            return 999;
+        }
+        let quantity = numbers[0].trim();
+        const measureUnit = format.substring(quantity.toString().length).trim();
+        if (measureUnit === "g" || measureUnit === "ml") {
+            quantity = quantity / 1000;
+        } else if (measureUnit !== "kg" && measureUnit !== "l") {
+            return 999;
+        }
+        return quantity;
     }
 }
 export default Product;

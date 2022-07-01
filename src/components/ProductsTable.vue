@@ -174,6 +174,7 @@
 import ProductTranslation from "@/ProductTranslation";
 import I18n from "@/i18n";
 import ProductService from "@/service/ProductService";
+import Product from "@/Product";
 
 const ENTER_KEY_CODE = 13;
 export default {
@@ -261,7 +262,10 @@ export default {
       },
       {
         text: this.$t('product:format'),
-        value: 'format'
+        value: 'format',
+        sort: function (a, b) {
+          return Product.formatInKg(a) - Product.formatInKg(b);
+        }
       },
       {
         text: this.$t('product:qtyInBox'),
