@@ -119,12 +119,19 @@
         </strong>
       </v-col>
     </v-footer>
+    <v-overlay :value="isLoadingFlow">
+      <v-progress-circular
+          indeterminate
+          size="64"
+      ></v-progress-circular>
+    </v-overlay>
   </div>
 </template>
 
 <script>
 
 import I18n from "@/i18n";
+import LoadingFlow from "@/LoadingFlow";
 
 export default {
   name: 'App',
@@ -148,7 +155,10 @@ export default {
       yourGroup: "Votre groupe",
       members: "Membres"
     });
-    return {};
+    return {
+      isLoadingFlow: false,
+      loadingFlows: LoadingFlow.loadingFlows
+    };
   },
   computed: {
     isAdmin: function () {
@@ -160,6 +170,11 @@ export default {
       this.$store.dispatch('setToken', null);
       this.$store.dispatch('setUser', null);
       this.$router.push('/connexion');
+    }
+  },
+  watch: {
+    loadingFlows: function () {
+      this.isLoadingFlow = this.loadingFlows.length > 0;
     }
   }
 };

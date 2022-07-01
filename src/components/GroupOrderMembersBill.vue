@@ -19,7 +19,7 @@
             <div v-for="userOrder in userOrders" :key="userOrder.id">
               <v-list-item>
                 <v-list-item-action>
-                  <v-btn icon @click="downloadReceipt" large>
+                  <v-btn icon @click="downloadReceipt($event, userOrder.Member.id)" large>
                     <v-icon large>file_download</v-icon>
                   </v-btn>
                 </v-list-item-action>
@@ -56,6 +56,8 @@
 import I18n from "@/i18n";
 import BuyGroupOrderService from "@/service/BuyGroupOrderService";
 import UserBillDialog from "@/components/UserBillDialog";
+import MemberOrder from "@/MemberOrder";
+import LoadingFlow from "@/LoadingFlow";
 
 export default {
   name: "GroupOrderMemberBills",
@@ -85,17 +87,26 @@ export default {
     this.isLoading = false;
   },
   methods: {
-    downloadReceipt: function () {
-
+    downloadReceipt: async function (event, memberId) {
+      LoadingFlow.enter();
+      const userOrderItems = await BuyGroupOrderService.listOrderItemsOfMember(
+          this.buyGroupId,
+          this.buyGroupOrderId,
+          memberId
+      );
+      MemberOrder.exportToCsv(userOrderItems);
+      LoadingFlow.leave();
     },
-    viewReceipt: function (userId) {
-      const toPath = this.$router.currentRoute.path + "/" + userId;
+    viewReceipt: function (memberId) {
+      LoadingFlow.enter();
+      const toPath = this.$router.currentRoute.path + "/" + memberId;
       if (this.$router.currentRoute.path !== toPath) {
         this.$router.push(
             toPath
         );
       }
-      this.$refs.userBillDialog.enter(userId);
+      this.$refs.userBillDialog.enter(memberId);
+      LoadingFlow.leave();
     }
   }
 }

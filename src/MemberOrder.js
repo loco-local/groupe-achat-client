@@ -1,6 +1,7 @@
 import ExportToCsv from "@/ExportToCsv";
 import I18n from "@/i18n";
-
+import ProductTranslation from "@/ProductTranslation";
+ProductTranslation.setup();
 const MemberOrder = {
     exportToCsv: function (items) {
         if (items.length === 0) {
@@ -30,18 +31,18 @@ const MemberOrder = {
         let fileName = items[0].personFullname + ".csv";
         items.forEach((item) => {
             data.push([
-                item.expectedQuantity,
-                item.quantity || item.expectedQuantity,
-                item.expectedTotalAfterRebateWithTaxes.toFixed(2),
-                (item.totalPriceAfterRebateWithTaxes || item.expectedTotalAfterRebateWithTaxes).toFixed(2),
-                item.tps.toFixed(2),
-                item.tvq.toFixed(2),
-                (item.totalPriceAfterRebate || item.expectedTotalAfterRebate).toFixed(2),
+                item.expectedQuantity.toLocaleString(),
+                (item.quantity || item.expectedQuantity).toLocaleString(),
+                item.expectedTotalAfterRebateWithTaxes.toFixed(2).toLocaleString(),
+                (item.totalPriceAfterRebateWithTaxes || item.expectedTotalAfterRebateWithTaxes).toFixed(2).toLocaleString(),
+                item.tps.toFixed(2).toLocaleString(),
+                item.tvq.toFixed(2).toLocaleString(),
+                (item.totalPriceAfterRebate || item.expectedTotalAfterRebate).toFixed(2).toLocaleString(),
                 item.description,
                 item.format,
                 item.qtyInBox,
-                item.expectedPrice.toFixed(2),
-                (item.price || item.expectedPrice).toFixed(2),
+                item.expectedPrice.toFixed(2).toLocaleString(),
+                (item.price || item.expectedPrice).toFixed(2).toLocaleString(),
                 item.category,
                 item.internalCode,
                 item.maker,

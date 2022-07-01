@@ -1,4 +1,4 @@
-    let loadingFlows = [];
+let loadingFlows = [];
 export default {
     enter: function () {
         loadingFlows.push(true)
