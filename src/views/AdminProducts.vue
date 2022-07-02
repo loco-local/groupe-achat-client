@@ -387,7 +387,7 @@ export default {
           const quantity = Product.formatInKg(
               product.format
           );
-          if (quantity === 999) {
+          if (quantity === -1) {
             return false;
           }
           return quantity >= 2.5;

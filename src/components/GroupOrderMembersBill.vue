@@ -9,7 +9,7 @@
     <v-card-text v-if="!isLoading && userOrders.length" class="vh-center">
       <v-row>
         <v-col cols="12">
-          <v-btn class="mt-4">
+          <v-btn class="mt-4" @click="downloadAllReceipts">
             <v-icon left>file_download</v-icon>
             {{ $t('membersBill:downloadAll') }}
           </v-btn>
@@ -19,7 +19,7 @@
             <div v-for="userOrder in userOrders" :key="userOrder.id">
               <v-list-item>
                 <v-list-item-action>
-                  <v-btn icon @click="downloadReceipt($event, userOrder.Member.id)" large>
+                  <v-btn icon @click="downloadReceipt(userOrder.Member.id)" large>
                     <v-icon large>file_download</v-icon>
                   </v-btn>
                 </v-list-item-action>
@@ -87,7 +87,7 @@ export default {
     this.isLoading = false;
   },
   methods: {
-    downloadReceipt: async function (event, memberId) {
+    downloadReceipt: async function (memberId) {
       LoadingFlow.enter();
       const userOrderItems = await BuyGroupOrderService.listOrderItemsOfMember(
           this.buyGroupId,
@@ -95,6 +95,13 @@ export default {
           memberId
       );
       MemberOrder.exportToCsv(userOrderItems);
+      LoadingFlow.leave();
+    },
+    downloadAllReceipts: async function () {
+      LoadingFlow.enter();
+      await Promise.all(this.userOrders.map(async (userOrder) => {
+        await this.downloadReceipt(userOrder.Member.id);
+      }))
       LoadingFlow.leave();
     },
     viewReceipt: function (memberId) {
