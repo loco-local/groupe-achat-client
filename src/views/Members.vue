@@ -23,7 +23,12 @@
                 {{ member.fullname }}
               </v-card-title>
               <v-card-subtitle>
-                asdf
+                <span v-if="member.rebates === null">
+                  {{ $t('members:noRebates') }}
+                </span>
+                <span v-else>
+
+                </span>
               </v-card-subtitle>
             </v-card>
           </v-col>
@@ -47,6 +52,7 @@
               <v-row>
                 <v-col
                     cols="12"
+                    lg="6"
                 >
                   <v-text-field
                       v-model="editedMember.firstname"
@@ -56,6 +62,7 @@
                 </v-col>
                 <v-col
                     cols="12"
+                    lg="6"
                 >
                   <v-text-field
                       v-model="editedMember.lastname"
@@ -101,11 +108,31 @@
                 </v-col>
                 <v-col
                     cols="12"
+                    lg="6"
                 >
                   <v-text-field
                       v-model="editedMember.pronoun"
                       :label="$t('member:pronoun')"
                       :rules="[rules.required]"
+                      :hint="$t('member:pronounHint')"
+                      persistent-hint
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                    cols="12"
+                >
+                  <h3>
+                    Rabais
+                  </h3>
+                </v-col>
+                <v-col
+                    cols="12"
+                >
+                  <v-text-field
+                      v-model="editedMember.rebates.percentage.number"
+                      :label="$t('member:rebatePercentage')"
+                      type="number"
+                      prefix="%"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -151,12 +178,14 @@ export default {
   data: function () {
     Members.setupTranslation();
     I18n.i18next.addResources("fr", "members", {
-      title: "Membres du groupe"
+      title: "Membres du groupe",
+      noRebates: "Aucuns rabais"
     });
     I18n.i18next.addResources("en", "members", {
       title: "Membres du groupe",
       firstname: "Prénom",
-      lastname: "Nom"
+      lastname: "Nom",
+      noRebates: "Aucuns rabais"
     });
     return {
       isLoading: false,
@@ -191,10 +220,12 @@ export default {
       this.editedMember.phone2 = this.originalEditMemberValues.phone2;
       this.editedMember.address = this.originalEditMemberValues.address;
       this.editedMember.pronoun = this.originalEditMemberValues.pronoun;
+      this.editedMember.rebates = this.originalEditMemberValues.rebates
       this.editMemberDialog = false;
     },
     enterUpdateMemberFlow: function (member) {
       this.originalEditMemberValues = {...member};
+      this.originalEditMemberValues.rebates = JSON.parse(JSON.stringify(member.rebates))
       this.editedMember = member;
       this.editMemberDialog = true;
     }
