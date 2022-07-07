@@ -1,18 +1,18 @@
 const Product = {
     format: function (product, salePercentage) {
-        if (product.expectedPrice === undefined) {
-            product.expectedPrice = Product.calculatePrice(
-                product.expectedCostPrice,
+        if (product.expectedUnitPrice === undefined) {
+            product.expectedUnitPrice = Product.calculateUnitPrice(
+                product.expectedCostUnitPrice,
                 salePercentage
             );
         }
-        if (product.expectedCostPrice) {
-            product.expectedCostPrice = product.expectedCostPrice.toFixed(2);
+        if (product.expectedCostUnitPrice) {
+            product.expectedCostUnitPrice = product.expectedCostUnitPrice.toFixed(2);
         }
         return product;
     },
-    calculatePrice: function (costPrice, salePercentage) {
-        return costPrice * (1 + (salePercentage / 100));
+    calculateUnitPrice: function (costUnitPrice, salePercentage) {
+        return costUnitPrice * (1 + (salePercentage / 100));
     },
     formatInKg: function (format) {
         if(format === null){

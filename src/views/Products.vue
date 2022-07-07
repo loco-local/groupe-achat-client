@@ -45,7 +45,7 @@
           :canToggleAvailability="false"
           :canChangeExpectedQuantity="canChangeExpectedQuantity"
           :hasExpectedQuantity="hasExpectedQuantity"
-          :showExpectedCostPrice="true"
+          :showExpectedCostUnitPrice="true"
           :showTaxes="true"
           @quantityUpdate="updateOrderQuantity"
           ref="productsTable"
@@ -119,17 +119,17 @@ export default {
           matchingProduct[0].expectedTotalAfterRebateWithTaxes = OrderItem.calculateTotal(
               item,
               item.expectedQuantity,
-              item.expectedPrice
+              item.expectedUnitPrice
           )
           matchingProduct[0].tps = OrderItem.calculateTPS(
               item,
               item.expectedQuantity,
-              item.expectedPrice
+              item.expectedUnitPrice
           )
           matchingProduct[0].tvq = OrderItem.calculateTVQ(
               item,
               item.expectedQuantity,
-              item.expectedPrice
+              item.expectedUnitPrice
           )
         }
       });
@@ -171,7 +171,7 @@ export default {
         return OrderItem.calculateTotal(
             orderItem,
             orderItem.expectedQuantity,
-            orderItem.expectedPrice
+            orderItem.expectedUnitPrice
         ) + total;
       }, 0)
     }

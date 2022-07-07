@@ -43,11 +43,11 @@ export default {
         );
         return response.data;
     },
-    setCostPrice: async function (memberOrderId, productId, costPrice) {
+    setCostUnitPrice: async function (memberOrderId, productId, costUnitPrice) {
         const response = await Service.api().post(
             '/memberOrder/' + memberOrderId + '/product/' + productId + '/cost-price',
             {
-                costPrice: costPrice
+                costUnitPrice: costUnitPrice
             }
         );
         return response.data;

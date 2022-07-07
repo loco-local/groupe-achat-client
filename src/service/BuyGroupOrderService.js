@@ -39,12 +39,12 @@ const BuyGroupOrderService = {
         return orderItems.map((orderItem) => {
             orderItem.name = orderItem.description;
             orderItem.previousExpectedQuantity = orderItem.expectedQuantity;
-            orderItem.previousCostPrice = orderItem.costPrice;
+            orderItem.previousCostUnitPrice = orderItem.costUnitPrice;
             orderItem.previousQuantity = orderItem.quantity;
             orderItem.total = OrderItem.calculateTotal(
                 orderItem,
                 orderItem.expectedQuantity,
-                orderItem.expectedPrice
+                orderItem.expectedUnitPrice
             )
             if (orderItem.MemberOrder && orderItem.MemberOrder.Member) {
                 orderItem.personFullname = orderItem.MemberOrder.Member.firstname + " " + orderItem.MemberOrder.Member.lastname;
@@ -52,14 +52,14 @@ const BuyGroupOrderService = {
             if (orderItem.quantity === null) {
                 orderItem.quantity = orderItem.expectedQuantity;
             }
-            if (orderItem.price === null) {
-                orderItem.price = orderItem.expectedPrice;
+            if (orderItem.unitPrice === null) {
+                orderItem.unitPrice = orderItem.expectedUnitPrice;
             }
             if (orderItem.totalAfterRebateWithTaxes === null) {
                 orderItem.totalAfterRebateWithTaxes = orderItem.expectedTotalAfterRebateWithTaxes;
             }
-            if (orderItem.costPrice === null) {
-                orderItem.costPrice = orderItem.expectedCostPrice.toFixed(2);
+            if (orderItem.costUnitPrice === null) {
+                orderItem.costUnitPrice = orderItem.expectedCostUnitPrice.toFixed(2);
             }
             return orderItem
         })

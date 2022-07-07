@@ -15,9 +15,9 @@
           :canToggleAvailability="false"
           :showPersonName="true"
           :showTaxes="true"
-          :showExpectedCostPrice="true"
-          :showCostPrice="true"
-          @costPriceUpdate="updateCostPrice"
+          :showExpectedCostUnitPrice="true"
+          :showCostUnitPrice="true"
+          @costUnitPriceUpdate="updateCostUnitPrice"
           @quantityUpdate="updateOrderQuantity"
           :showUnitPrice="true"
           ref="allOrderItemsTable"
@@ -51,15 +51,18 @@ export default {
     this.isLoading = false;
   },
   methods: {
-    updateCostPrice: async function (updatedItem) {
-      const prices = await MemberOrderService.setCostPrice(
+    updateCostUnitPrice: async function (updatedItem) {
+      const prices = await MemberOrderService.setCostUnitPrice(
           updatedItem.MemberOrderId,
           updatedItem.ProductId,
-          updatedItem.costPrice
+          updatedItem.costUnitPrice
       );
       updatedItem.totalAfterRebateWithTaxes = prices.totalAfterRebateWithTaxes;
+      updatedItem.tps = prices.tps;
+      updatedItem.tvq = prices.tvq;
+      updatedItem.unitPrice = prices.unitPrice;
       this.$set(this.userOrdersItems, this.userOrdersItems.indexOf(updatedItem), updatedItem);
-      await this.$refs.allOrderItemsTable.showCostPriceChangedSuccess();
+      await this.$refs.allOrderItemsTable.showCostUnitPriceChangedSuccess();
     },
     updateOrderQuantity: async function (updatedItem) {
       const prices = await MemberOrderService.setQuantity(

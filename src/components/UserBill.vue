@@ -11,11 +11,16 @@
           :products="userOrderItems || []"
           :hasQuantity="true"
           :hasExpectedQuantity="true"
-          :showCostPrice="true"
+          :showCostUnitPrice="true"
           :showUnitPrice="true"
-          :showExpectedCostPrice="true"
+          :showExpectedCostUnitPrice="true"
           :canToggleAvailability="false"
       ></ProductsTable>
+      <v-row>
+        <v-col cols="12" class="text-right text-h5 mt-8 pr-8">
+          Total: {{ orderTotal | currency }}
+        </v-col>
+      </v-row>
     </v-card-text>
   </div>
 </template>
@@ -44,6 +49,7 @@ export default {
     return {
       userOrder: null,
       userOrderItems: null,
+      orderTotal: null,
       isLoading: true
     }
   },
@@ -54,6 +60,12 @@ export default {
         this.buyGroupOrderId,
         this.userId
     );
+    if (this.userOrderItems.length) {
+      const memberOrder = this.userOrderItems[0].MemberOrder;
+      this.orderTotal = memberOrder.total || memberOrder.expectedTotal
+    } else {
+      this.orderTotal = 0;
+    }
     this.$emit('itemsDefined', this.userOrderItems);
     this.isLoading = false;
   }
