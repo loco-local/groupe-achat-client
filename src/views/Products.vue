@@ -3,6 +3,7 @@
     <GroupOrderStatus @buyGroupDefined="setBuyGroup"
                       :buyGroupPath="$route.params.buyGroup"
                       class="mt-8"
+                      v-if="!isMemberLoading"
     ></GroupOrderStatus>
     <v-alert
         text
@@ -36,6 +37,11 @@
       <!--        <ProductCard :product="product"></ProductCard>-->
       <!--      </v-col>-->
 
+      <v-row v-if="member !== null">
+        <v-col cols="12">
+          {{ member.rebates }}
+        </v-col>
+      </v-row>
       <v-col cols="12" class="vh-center" v-if="isLoading">
         <v-progress-circular indeterminate :size="80" :width="2"></v-progress-circular>
       </v-col>
@@ -47,6 +53,8 @@
           :hasExpectedQuantity="hasExpectedQuantity"
           :showExpectedCostUnitPrice="true"
           :showTaxes="true"
+          :hideExpectedUnitPrice="true"
+          :showExpectedUnitPriceAfterRebate="true"
           @quantityUpdate="updateOrderQuantity"
           ref="productsTable"
       ></ProductsTable>
@@ -60,6 +68,7 @@ import I18n from "@/i18n";
 import MemberOrderService from "@/service/MemberOrderService";
 import GroupOrder from "@/GroupOrder";
 import OrderItem from "@/OrderItem";
+import MemberService from "@/service/MemberService";
 
 export default {
   name: "Products",
@@ -80,16 +89,21 @@ export default {
       info2: "À la date de fin de la commande, les dernières quantités que vous aurez inscrites seront commandées aux fournisseurs."
     });
     return {
+      member: null,
       products: [],
       orderItems: [],
       userOrderId: null,
       isLoading: false,
+      isMemberLoading: true,
       canChangeExpectedQuantity: false,
       hasExpectedQuantity: false
     }
   },
   mounted: async function () {
     this.isLoading = true;
+    this.isMemberLoading = true;
+    this.member = await MemberService.getForId(this.$store.state.user.id)
+    this.isMemberLoading = false;
   },
   methods: {
     setBuyGroup: async function (buyGroup) {
@@ -107,7 +121,8 @@ export default {
       this.orderItems = await MemberOrderService.listForOrderId(userOrder.id);
       this.products = await ProductService.listPutForward(
           buyGroup.id,
-          buyGroup.relevantOrder.salePercentage
+          buyGroup.relevantOrder.salePercentage,
+          this.member.rebates
       );
       this.orderItems.forEach((item) => {
         const matchingProduct = this.products.filter((product) => {

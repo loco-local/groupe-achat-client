@@ -81,6 +81,9 @@
       <template v-slot:item.expectedUnitPrice="{ item }">
         {{ item.expectedUnitPrice | currency }}
       </template>
+      <template v-slot:item.expectedUnitPriceAfterRebate="{ item }">
+        {{ item.expectedUnitPriceAfterRebate | currency }}
+      </template>
       <template v-slot:item.unitPrice="{ item }">
         {{ item.unitPrice | currency }}
       </template>
@@ -233,6 +236,14 @@ export default {
     showUnitPrice: {
       type: Boolean,
       default: false
+    },
+    hideExpectedUnitPrice: {
+      type: Boolean,
+      default: false
+    },
+    showExpectedUnitPriceAfterRebate: {
+      type: Boolean,
+      default: false
     }
   },
   data: function () {
@@ -270,12 +281,20 @@ export default {
       {
         text: this.$t('product:qtyInBox'),
         value: 'qtyInBox'
-      },
-      {
-        text: this.$t('product:expectedUnitPrice'),
-        value: 'expectedUnitPrice'
       }
     ]
+    if (!this.hideExpectedUnitPrice) {
+      headers.push({
+        text: this.$t('product:expectedUnitPrice'),
+        value: 'expectedUnitPrice'
+      });
+    }
+    if(this.showExpectedUnitPriceAfterRebate){
+      headers.push({
+        text: this.$t('product:expectedUnitPrice'),
+        value: 'expectedUnitPriceAfterRebate'
+      });
+    }
     if (this.showUnitPrice) {
       headers.push(
           {

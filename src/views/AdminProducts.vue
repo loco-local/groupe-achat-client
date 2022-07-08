@@ -45,7 +45,7 @@
             :loading="isLoading"
             :showSelect="true"
             :showHasTaxes="true"
-            :showExpectedCostPrice="true"
+            :showExpectedCostUnitPrice="true"
             @selectionChanged="updateSelection"
             @modify="enterUpdateProductFlow"
         ></ProductsTable>
@@ -75,7 +75,7 @@
             :loading="isLoading"
             :showSelect="true"
             :showHasTaxes="true"
-            :showExpectedCostPrice="true"
+            :showExpectedCostUnitPrice="true"
             @selectionChanged="updateSelection"
             @modify="enterUpdateProductFlow"
         ></ProductsTable>
@@ -126,8 +126,8 @@
                     md="4"
                 >
                   <v-text-field
-                      v-model="editedProduct.expectedCostPrice"
-                      :label="$t('product:expectedCostPrice')"
+                      v-model="editedProduct.expectedCostUnitPrice"
+                      :label="$t('product:expectedCostUnitPrice')"
                       :rules="[rules.required]"
                   ></v-text-field>
                 </v-col>
@@ -289,7 +289,7 @@ export default {
       if (!this.isNewProductFlow) {
         this.editedProduct.name = this.originalEditProductValues.name;
         this.editedProduct.format = this.originalEditProductValues.format;
-        this.editedProduct.expectedCostPrice = this.originalEditProductValues.expectedCostPrice;
+        this.editedProduct.expectedCostUnitPrice = this.originalEditProductValues.expectedCostUnitPrice;
         this.editedProduct.internalCode = this.originalEditProductValues.internalCode;
         this.editedProduct.maker = this.originalEditProductValues.maker;
         this.editedProduct.provider = this.originalEditProductValues.provider;
@@ -368,7 +368,8 @@ export default {
       } else {
         this.productsDeprecated = await ProductService.listDeprecated(
             this.$store.state.user.BuyGroupId,
-            this.buyGroup.salePercentage
+            this.buyGroup.salePercentage,
+            null
         );
       }
       this.isLoading = false;

@@ -1,21 +1,31 @@
 const Product = {
-    format: function (product, salePercentage) {
+    format: function (product, salePercentage, rebates) {
         if (product.expectedUnitPrice === undefined) {
-            product.expectedUnitPrice = Product.calculateUnitPrice(
+            const unitPrices = Product.calculateUnitPrices(
                 product.expectedCostUnitPrice,
-                salePercentage
+                salePercentage,
+                rebates
             );
+            product.expectedUnitPrice = unitPrices.unitPrice;
+            product.expectedUnitPriceAfterRebate = unitPrices.unitPriceAfterRebate;
         }
         if (product.expectedCostUnitPrice) {
             product.expectedCostUnitPrice = product.expectedCostUnitPrice.toFixed(2);
         }
         return product;
     },
-    calculateUnitPrice: function (costUnitPrice, salePercentage) {
-        return costUnitPrice * (1 + (salePercentage / 100));
+    calculateUnitPrices: function (costUnitPrice, salePercentage, rebates) {
+        let salePercentageAfterRebate = salePercentage;
+        if (rebates && rebates.percentage && rebates.percentage.number) {
+            salePercentageAfterRebate = Math.max(salePercentage - rebates.percentage.number, 0);
+        }
+        return {
+            unitPrice: costUnitPrice * (1 + (salePercentage / 100)),
+            unitPriceAfterRebate: costUnitPrice * (1 + (salePercentageAfterRebate / 100))
+        }
     },
     formatInKg: function (format) {
-        if(format === null){
+        if (format === null) {
             return -1;
         }
         format = format.toLowerCase().replace(/\s/g, "");

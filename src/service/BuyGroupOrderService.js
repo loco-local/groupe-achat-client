@@ -53,7 +53,7 @@ const BuyGroupOrderService = {
                 orderItem.quantity = orderItem.expectedQuantity;
             }
             if (orderItem.unitPrice === null) {
-                orderItem.unitPrice = orderItem.expectedUnitPrice;
+                orderItem.unitPrice = orderItem.expectedUnitPriceAfterRebate;
             }
             if (orderItem.totalAfterRebateWithTaxes === null) {
                 orderItem.totalAfterRebateWithTaxes = orderItem.expectedTotalAfterRebateWithTaxes;
