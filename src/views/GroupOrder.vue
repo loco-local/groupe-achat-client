@@ -92,7 +92,7 @@ export default {
   mounted: async function () {
     this.buyGroupId = parseInt(this.$route.params.buyGroupId);
     this.buyGroupOrderId = parseInt(this.$route.params.orderId);
-    if (this.$router.currentRoute.name === 'GroupOrderMemberBills') {
+    if (['GroupOrderMemberBillsForMember', 'GroupOrderMemberBills'].indexOf(this.$router.currentRoute.name) > -1) {
       this.tab = 1;
     } else if (this.$router.currentRoute.name === 'GroupOrderProvidersOrders') {
       this.tab = 2;

@@ -9,6 +9,7 @@
             icon
             dark
             @click="leave"
+            v-if="$store.state.user.status === 'admin'"
         >
           <v-icon>mdi-close</v-icon>
         </v-btn>

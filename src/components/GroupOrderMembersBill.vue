@@ -80,10 +80,15 @@ export default {
   },
   mounted: async function () {
     this.isLoading = true;
-    this.userOrders = await BuyGroupOrderService.listMemberOrders(
-        this.buyGroupId,
-        this.buyGroupOrderId
-    );
+    if(this.$store.state.user.status === 'admin'){
+      this.userOrders = await BuyGroupOrderService.listMemberOrders(
+          this.buyGroupId,
+          this.buyGroupOrderId
+      );
+    }
+    if (this.$route.params.userId) {
+      await this.$refs.userBillDialog.enter(this.$route.params.userId);
+    }
     this.isLoading = false;
   },
   methods: {
