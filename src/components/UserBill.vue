@@ -15,6 +15,7 @@
           :showUnitPrice="true"
           :showExpectedCostUnitPrice="true"
           :canToggleAvailability="false"
+          :hideSearch="true"
       ></ProductsTable>
       <v-row>
         <v-col cols="12" class="text-right text-h5 mt-8 pr-8">

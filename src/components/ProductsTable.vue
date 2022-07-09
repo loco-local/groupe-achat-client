@@ -12,7 +12,7 @@
         v-model="selected"
         :search="search"
     >
-      <template v-slot:top>
+      <template v-slot:top v-if="!hideSearch">
         <v-text-field
             prepend-inner-icon="search"
             label="Recherche"
@@ -242,6 +242,10 @@ export default {
       default: false
     },
     showExpectedUnitPriceAfterRebate: {
+      type: Boolean,
+      default: false
+    },
+    hideSearch:{
       type: Boolean,
       default: false
     }
