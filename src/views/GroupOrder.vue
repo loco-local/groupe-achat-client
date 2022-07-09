@@ -35,9 +35,10 @@
           key="memberBills"
       >
         <GroupOrderMembersBill
-            v-if="tab === 1"
+            v-if="tab === 1 && buyGroup !== null"
             :buyGroupId="buyGroupId"
             :buyGroupOrderId="buyGroupOrderId"
+            :buyGroupPath="buyGroup.path"
         ></GroupOrderMembersBill>
       </v-tab-item>
       <v-tab-item
@@ -66,20 +67,15 @@ export default {
     GroupOrderMembersBill: () => import('@/components/GroupOrderMembersBill')
   },
   data: function () {
-    I18n.i18next.addResources("fr", "groupOrder", {
+    const text = {
       noUserOrder: "Aucunes commandes",
       memberBills: "Factures membres",
       allItems: "Tous les items commandés",
       ordersForProviders: "Commandes fournisseurs",
       allGroupOrders: "Toutes les commandes du groupe"
-    });
-    I18n.i18next.addResources("en", "groupOrder", {
-      noUserOrder: "Aucunes commandes",
-      memberBills: "Factures membres",
-      allItems: "Tous les items commandés",
-      ordersForProviders: "Commandes fournisseurs",
-      allGroupOrders: "Toutes les commandes du groupe"
-    });
+    };
+    I18n.i18next.addResources("fr", "groupOrder", text);
+    I18n.i18next.addResources("en", "groupOrder", text);
     return {
       userOrdersItems: [],
       isLoading: false,

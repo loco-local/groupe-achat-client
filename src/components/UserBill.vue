@@ -6,6 +6,12 @@
     <v-card-text v-if="!isLoading && !userOrderItems.length">
       {{ $t('userBill:noItems') }}
     </v-card-text>
+    <v-card-actions v-if="$store.state.user.status === 'admin'" class="mt-7 ml-6">
+      <v-btn :to="'/'+buyGroupPath+'/commande-membre/'+userId">
+        <v-icon left>edit</v-icon>
+        {{ $t('modify') }}
+      </v-btn>
+    </v-card-actions>
     <v-card-text v-if="!isLoading && userOrderItems.length">
       <ProductsTable
           :products="userOrderItems || []"
@@ -32,7 +38,7 @@ import I18n from "@/i18n";
 
 export default {
   name: "UserBill",
-  props: ['buyGroupId', 'buyGroupOrderId', 'userId'],
+  props: ['buyGroupId', 'buyGroupOrderId', 'buyGroupPath', 'userId'],
   components: {
     ProductsTable: () => import('@/components/ProductsTable')
   },

@@ -12,6 +12,7 @@ const Product = {
         if (product.expectedCostUnitPrice) {
             product.expectedCostUnitPrice = product.expectedCostUnitPrice.toFixed(2);
         }
+        product.quantity = product.expectedQuantity;
         return product;
     },
     calculateUnitPrices: function (costUnitPrice, salePercentage, rebates) {

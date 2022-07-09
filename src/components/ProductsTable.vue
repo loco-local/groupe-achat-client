@@ -97,7 +97,7 @@
             :placeholder="$t('product:unitPrice')"
             @keydown="enterKeyDownAction($event, item, changeCostUnitPrice)"
             @blur="changeCostUnitPrice($event, item)"
-            v-if="canChangeQuantity"
+            v-if="canEditCostUnitPrice"
             suffix="$"
             hide-details
             hide-spin-buttons

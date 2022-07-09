@@ -70,12 +70,16 @@
           v-else
           :products="products || []"
           :canToggleAvailability="false"
-          :canChangeExpectedQuantity="canChangeExpectedQuantity"
+          :canChangeExpectedQuantity="!canChangeExpectedQuantity"
           :hasExpectedQuantity="hasExpectedQuantity"
-          :showExpectedCostUnitPrice="true"
+          :hasQuantity="isAdminModificationFlow"
+          :canChangeQuantity="isAdminModificationFlow"
+          :showExpectedCostUnitPrice="!isAdminModificationFlow"
           :showTaxes="true"
-          :hideExpectedUnitPrice="true"
-          :showExpectedUnitPriceAfterRebate="true"
+          :hideExpectedUnitPrice="isAdminModificationFlow"
+          :showExpectedUnitPriceAfterRebate="!isAdminModificationFlow"
+          :showCostUnitPrice="isAdminModificationFlow"
+          :showUnitPrice="isAdminModificationFlow"
           @quantityUpdate="updateOrderQuantity"
           ref="productsTable"
       ></ProductsTable>
@@ -111,31 +115,35 @@ export default {
     });
     return {
       member: null,
+      memberId: null,
       products: [],
       orderItems: [],
       userOrderId: null,
       isLoading: false,
       isMemberLoading: true,
       canChangeExpectedQuantity: false,
-      hasExpectedQuantity: false
+      hasExpectedQuantity: false,
+      isAdminModificationFlow: false
     }
   },
   mounted: async function () {
     this.isLoading = true;
     this.isMemberLoading = true;
-    this.member = await MemberService.getForId(this.$store.state.user.id)
+    this.isAdminModificationFlow = this.$router.currentRoute.name === 'ProductsOrderOfMember';
+    this.memberId = this.isAdminModificationFlow ? this.$route.params.memberId : this.$store.state.user.id;
+    this.member = await MemberService.getForId(this.memberId);
     this.isMemberLoading = false;
   },
   methods: {
     setBuyGroup: async function (buyGroup) {
       if (buyGroup.relevantOrder) {
-        this.hasExpectedQuantity = true;
-        this.canChangeExpectedQuantity = buyGroup.relevantOrder.status === GroupOrder.STATUS.CURRENT;
+        this.hasExpectedQuantity = !this.isAdminModificationFlow;
+        this.canChangeExpectedQuantity = buyGroup.relevantOrder.status === GroupOrder.STATUS.CURRENT && !this.isAdminModificationFlow;
       }
       const userOrder = await MemberOrderService.get(
           buyGroup.id,
           buyGroup.relevantOrder.id,
-          this.$store.state.user.id,
+          this.memberId,
           true
       );
       this.userOrderId = userOrder.id;
@@ -145,32 +153,48 @@ export default {
           buyGroup.relevantOrder.salePercentage,
           this.member.rebates
       );
+
       this.orderItems.forEach((item) => {
         const matchingProduct = this.products.filter((product) => {
           return product.id === item.ProductId;
         });
         if (matchingProduct.length) {
           matchingProduct[0].expectedQuantity = item.expectedQuantity;
+          matchingProduct[0].quantity = item.quantity || item.expectedQuantity;
+
           matchingProduct[0].previousExpectedQuantity = item.expectedQuantity;
+          matchingProduct[0].previousQuantity = item.quantity;
+
+          matchingProduct[0].unitPrice = item.unitPrice || item.expectedUnitPrice;
+
           matchingProduct[0].expectedTotalAfterRebateWithTaxes = OrderItem.calculateTotal(
               item,
               item.expectedQuantity,
               item.expectedUnitPrice
-          )
+          );
+
+          matchingProduct[0].costUnitPrice = item.costUnitPrice || item.expectedCostUnitPrice;
+
+          matchingProduct[0].totalAfterRebateWithTaxes = item.totalAfterRebateWithTaxes || item.expectedTotalAfterRebateWithTaxes
+
           matchingProduct[0].tps = OrderItem.calculateTPS(
               item,
-              item.expectedQuantity,
-              item.expectedUnitPrice
+              this.isAdminModificationFlow ? item.quantity : item.expectedQuantity,
+              this.isAdminModificationFlow ? item.unitPrice : item.expectedUnitPrice
           )
           matchingProduct[0].tvq = OrderItem.calculateTVQ(
               item,
-              item.expectedQuantity,
-              item.expectedUnitPrice
+              this.isAdminModificationFlow ? item.quantity : item.expectedQuantity,
+              this.isAdminModificationFlow ? item.unitPrice : item.expectedUnitPrice
           )
         }
       });
       this.products = this.products.sort((a, b) => {
-        return (b.expectedQuantity || 0) - (a.expectedQuantity || 0);
+        if (this.isAdminModificationFlow) {
+          return (b.quantity || 0) - (a.quantity || 0);
+        } else {
+          return (b.expectedQuantity || 0) - (a.expectedQuantity || 0);
+        }
       });
       this.isLoading = false;
     },
@@ -180,23 +204,48 @@ export default {
       });
       if (!orderItem.length) {
         orderItem = {...updatedProduct};
-        orderItem.expectedQuantity = 0;
+        if (this.isAdminModificationFlow) {
+          orderItem.quantity = 0;
+        } else {
+          orderItem.expectedQuantity = 0;
+        }
         this.orderItems.push(
             orderItem
         )
       } else {
         orderItem = orderItem[0];
       }
-      orderItem.expectedQuantity = updatedProduct.expectedQuantity;
-      const prices = await MemberOrderService.setExpectedQuantity(
-          this.userOrderId,
-          updatedProduct.id,
-          orderItem.expectedQuantity
-      )
-      updatedProduct.expectedTotalAfterRebateWithTaxes = prices.expectedTotalAfterRebateWithTaxes;
+      if (this.isAdminModificationFlow) {
+        orderItem.quantity = updatedProduct.quantity;
+      } else {
+        orderItem.expectedQuantity = updatedProduct.expectedQuantity;
+      }
+      let prices;
+      if (this.isAdminModificationFlow) {
+        prices = await MemberOrderService.setQuantity(
+            this.userOrderId,
+            updatedProduct.id,
+            orderItem.quantity
+        )
+      } else {
+        prices = await MemberOrderService.setExpectedQuantity(
+            this.userOrderId,
+            updatedProduct.id,
+            orderItem.expectedQuantity
+        )
+      }
+      if (this.isAdminModificationFlow) {
+        updatedProduct.totalAfterRebateWithTaxes = prices.totalAfterRebateWithTaxes;
+        updatedProduct.quantity = prices.quantity;
+        updatedProduct.costUnitPrice = prices.costUnitPrice;
+        updatedProduct.unitPrice = prices.unitPrice;
+        updatedProduct.unitPriceAfterRebate = prices.unitPriceAfterRebate;
+      } else {
+        updatedProduct.expectedTotalAfterRebateWithTaxes = prices.expectedTotalAfterRebateWithTaxes;
+        updatedProduct.expectedQuantity = prices.expectedQuantity;
+      }
       updatedProduct.tps = prices.tps;
       updatedProduct.tvq = prices.tvq;
-      updatedProduct.expectedQuantity = prices.expectedQuantity;
       this.$set(this.products, this.products.indexOf(updatedProduct), updatedProduct);
       await this.$refs.productsTable.showQuantityChangedSuccess();
     }

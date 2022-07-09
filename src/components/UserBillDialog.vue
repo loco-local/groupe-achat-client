@@ -36,6 +36,7 @@
       <UserBill
           :buyGroupId="buyGroupId"
           :buyGroupOrderId="buyGroupOrderId"
+          :buyGroupPath="buyGroupPath"
           :userId="userId"
           @itemsDefined="setItems"
       ></UserBill>
@@ -49,7 +50,7 @@ import MemberOrder from "@/MemberOrder";
 
 export default {
   name: "UserBillDialog",
-  props: ['buyGroupId', 'buyGroupOrderId'],
+  props: ['buyGroupId', 'buyGroupOrderId', 'buyGroupPath'],
   components: {
     UserBill: () => import('@/components/UserBill')
   },

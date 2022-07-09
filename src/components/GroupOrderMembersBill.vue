@@ -47,6 +47,7 @@
     <UserBillDialog
         :buyGroupId="buyGroupId"
         :buyGroupOrderId="buyGroupOrderId"
+        :buyGroupPath="buyGroupPath"
         ref="userBillDialog"
     ></UserBillDialog>
   </v-card>
@@ -62,7 +63,7 @@ import LoadingFlow from "@/LoadingFlow";
 export default {
   name: "GroupOrderMemberBills",
   components: {UserBillDialog},
-  props: ['buyGroupId', 'buyGroupOrderId'],
+  props: ['buyGroupId', 'buyGroupOrderId', 'buyGroupPath'],
   data: function () {
     I18n.i18next.addResources("fr", "membersBill", {
       noBills: "Pas encore de commandes",

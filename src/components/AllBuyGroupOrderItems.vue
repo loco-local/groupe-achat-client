@@ -22,6 +22,7 @@
           :showUnitPrice="true"
           :hide-expected-unit-price="true"
           :show-expected-unit-price-after-rebate="true"
+          :canEditCostUnitPrice="true"
           ref="allOrderItemsTable"
       ></ProductsTable>
     </v-card-text>
