@@ -30,7 +30,11 @@ export default {
             totalWithoutTaxes: "Total avant tx",
             total: "Total",
             totalFinal: "Total Final",
-            expectedTotal: "Total Prévu"
+            expectedTotal: "Total Prévu",
+            rebates: "Rabais",
+            rebateOf: "rabais de",
+            rebateOnAllProducts: "sur tous les produits",
+            orderOf: "Commande de"
         };
         I18n.i18next.addResources("fr", "product", text);
         I18n.i18next.addResources("en", "product", text);

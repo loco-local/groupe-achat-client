@@ -5,27 +5,6 @@
                       class="mt-8"
                       v-if="!isMemberLoading"
     ></GroupOrderStatus>
-    <v-alert
-        text
-        dense
-        color="teal"
-        icon="mdi-clock-fast"
-        border="left"
-        class="mt-8 body-1"
-    >
-      {{ $t('products:info1') }}
-      <br>
-      {{ $t('products:info2') }}
-    </v-alert>
-    <v-card flat class="" color="transparent">
-      <!--      <v-card-title class="text-h4">-->
-      <!--        {{ $t('products:title') }}-->
-      <!--      </v-card-title>-->
-      <v-card-text class="font-weight-bold text-left body-1">
-        <span class="">{{ $t('total') }} : </span>
-        {{ total | currency }}
-      </v-card-text>
-    </v-card>
     <v-row>
       <v-col v-if="!isLoading && products.length === 0" cols="12" class="text-h6">
         <v-sheet height="400" class="grey--text">
@@ -37,11 +16,53 @@
       <!--        <ProductCard :product="product"></ProductCard>-->
       <!--      </v-col>-->
 
-      <v-row v-if="member !== null">
-        <v-col cols="12">
-          {{ member.rebates }}
+      <v-row v-if="member !== null" class="vh-center mt-6">
+        <v-col cols="12" xl="4">
+          <v-card>
+            <v-card-title class="text-center vh-center">
+              <span class="ml-2">
+                {{ member.firstname }}
+                {{ member.lastname }}
+              </span>
+            </v-card-title>
+            <div v-if="member.rebates && member.rebates.percentage && member.rebates.percentage.number">
+              <v-divider></v-divider>
+              <v-card-text class="vh-center text-h6 font-weight-regular">
+                {{ $t('product:rebateOf') }}
+                <strong class="ml-2 mr-2">
+                  {{ member.rebates.percentage.number }}%
+                </strong>
+                {{ $t('product:rebateOnAllProducts') }}
+              </v-card-text>
+            </div>
+          </v-card>
         </v-col>
       </v-row>
+      <v-col cols="12">
+        <v-alert
+            text
+            dense
+            color="teal"
+            icon="mdi-clock-fast"
+            border="left"
+            class="mt-8 body-1"
+        >
+          {{ $t('products:info1') }}
+          <br>
+          {{ $t('products:info2') }}
+        </v-alert>
+      </v-col>
+      <v-col cols="12">
+        <v-card flat class="" color="transparent">
+          <!--      <v-card-title class="text-h4">-->
+          <!--        {{ $t('products:title') }}-->
+          <!--      </v-card-title>-->
+          <v-card-text class="font-weight-bold text-left body-1">
+            <span class="">{{ $t('total') }} : </span>
+            {{ total | currency }}
+          </v-card-text>
+        </v-card>
+      </v-col>
       <v-col cols="12" class="vh-center" v-if="isLoading">
         <v-progress-circular indeterminate :size="80" :width="2"></v-progress-circular>
       </v-col>
