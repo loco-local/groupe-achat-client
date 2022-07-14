@@ -46,6 +46,7 @@
             :showSelect="true"
             :showHasTaxes="true"
             :showExpectedCostUnitPrice="true"
+            :showIsVisibleForSuperVolunteerOnly="true"
             @selectionChanged="updateSelection"
             @modify="enterUpdateProductFlow"
         ></ProductsTable>
@@ -160,7 +161,6 @@
                   <v-text-field
                       v-model="editedProduct.maker"
                       :label="$t('product:maker')"
-                      :rules="[rules.required]"
                   ></v-text-field>
                 </v-col>
                 <v-col
@@ -191,6 +191,17 @@
                   <v-checkbox
                       :label="$t('product:hasTVQ')"
                       v-model="editedProduct.hasTVQ"
+                  />
+                </v-col>
+                <v-col
+                    cols="12"
+                    sm="6"
+                >
+                  <v-checkbox
+                      :label="$t('product:isVisibleForSuperVolunteerOnly')"
+                      :hint="$t('product:isVisibleForSuperVolunteerOnlyHint')"
+                      persistent-hint
+                      v-model="editedProduct.isVisibleForSuperVolunteerOnly"
                   />
                 </v-col>
               </v-row>

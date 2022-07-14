@@ -1,13 +1,18 @@
 const Product = {
     format: function (product, salePercentage, rebates) {
         if (product.expectedUnitPrice === undefined) {
-            const unitPrices = Product.calculateUnitPrices(
-                product.expectedCostUnitPrice,
-                salePercentage,
-                rebates
-            );
-            product.expectedUnitPrice = unitPrices.unitPrice;
-            product.expectedUnitPriceAfterRebate = unitPrices.unitPriceAfterRebate;
+            if (product.isVisibleForSuperVolunteerOnly) {
+                product.expectedUnitPrice = product.expectedCostUnitPrice;
+                product.expectedUnitPriceAfterRebate = product.expectedCostUnitPrice;
+            } else {
+                const unitPrices = Product.calculateUnitPrices(
+                    product.expectedCostUnitPrice,
+                    salePercentage,
+                    rebates
+                );
+                product.expectedUnitPrice = unitPrices.unitPrice;
+                product.expectedUnitPriceAfterRebate = unitPrices.unitPriceAfterRebate;
+            }
         }
         if (product.expectedCostUnitPrice) {
             product.expectedCostUnitPrice = product.expectedCostUnitPrice.toFixed(2);

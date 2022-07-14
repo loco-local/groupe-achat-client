@@ -70,7 +70,7 @@
           v-else
           :products="products || []"
           :canToggleAvailability="false"
-          :canChangeExpectedQuantity="!canChangeExpectedQuantity"
+          :canChangeExpectedQuantity="canChangeExpectedQuantity"
           :hasExpectedQuantity="hasExpectedQuantity"
           :hasQuantity="isAdminModificationFlow"
           :canChangeQuantity="isAdminModificationFlow"
@@ -153,7 +153,9 @@ export default {
           buyGroup.relevantOrder.salePercentage,
           this.member.rebates
       );
-
+      this.products = this.products.filter((product) => {
+        return !(product.isVisibleForSuperVolunteerOnly && !this.isAdminModificationFlow);
+      });
       this.orderItems.forEach((item) => {
         const matchingProduct = this.products.filter((product) => {
           return product.id === item.ProductId;
@@ -191,7 +193,10 @@ export default {
       });
       this.products = this.products.sort((a, b) => {
         if (this.isAdminModificationFlow) {
-          return (b.quantity || 0) - (a.quantity || 0);
+          if(a.isVisibleForSuperVolunteerOnly === b.isVisibleForSuperVolunteerOnly){
+            return (b.quantity || 0) - (a.quantity || 0);
+          }
+          return a.isVisibleForSuperVolunteerOnly? -1 : 1;
         } else {
           return (b.expectedQuantity || 0) - (a.expectedQuantity || 0);
         }

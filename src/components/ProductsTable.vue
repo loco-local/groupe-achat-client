@@ -120,6 +120,14 @@
           {{ $t('no') }}
         </span>
       </template>
+      <template v-slot:item.isVisibleForSuperVolunteerOnly="{ item }" class="vh-center text-center">
+        <v-icon v-if="item.isVisibleForSuperVolunteerOnly">
+          check
+        </v-icon>
+        <span v-else>
+          <v-divider width="25"></v-divider>
+        </span>
+      </template>
       <template v-slot:item.isAvailable="{ item }" v-if="canToggleAvailability">
         <v-checkbox
             v-model="item.isAvailable"
@@ -246,6 +254,10 @@ export default {
       default: false
     },
     hideSearch:{
+      type: Boolean,
+      default: false
+    },
+    showIsVisibleForSuperVolunteerOnly:{
       type: Boolean,
       default: false
     }
@@ -389,6 +401,12 @@ export default {
             value: 'hasTVQ'
           }
       );
+    }
+    if(this.showIsVisibleForSuperVolunteerOnly){
+      headers.push({
+        text: this.$t('product:isVisibleForSuperVolunteerOnly'),
+        value: 'isVisibleForSuperVolunteerOnly'
+      });
     }
     if (this.canToggleAvailability) {
       headers.push({
