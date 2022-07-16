@@ -75,6 +75,11 @@ const routes = [
         component: () => import('../views/GroupOrder')
     },
     {
+        path: '/groupe/:buyGroupId/commande/:orderId/frais-pour-tous',
+        name: 'GroupOrderFeeOnAllBills',
+        component: () => import('../views/GroupOrder')
+    },
+    {
         path: '/:buyGroup/',
         name: 'Products',
         component: () => import('../views/Products')

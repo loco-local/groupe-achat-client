@@ -3,16 +3,24 @@ import Product from "@/Product"
 
 export default {
     listPutForward: async function (buyGroupId, salePercentage, rebates) {
-        const response = await Service.api().get("/buy-group/" + buyGroupId +"/products/forward");
-        return response.data.map((product)=>{
+        const response = await Service.api().get("/buy-group/" + buyGroupId + "/products/forward");
+        return response.data.map((product) => {
             return Product.format(
                 product, salePercentage, rebates
             )
         })
     },
     listDeprecated: async function (buyGroupId, salePercentage, rebates) {
-        const response = await Service.api().get("/buy-group/" + buyGroupId +"/products/deprecated");
-        return response.data.map((product)=>{
+        const response = await Service.api().get("/buy-group/" + buyGroupId + "/products/deprecated");
+        return response.data.map((product) => {
+            return Product.format(
+                product, salePercentage, rebates
+            )
+        })
+    },
+    listAdminRelated: async function (buyGroupId, salePercentage, rebates) {
+        const response = await Service.api().get("/buy-group/" + buyGroupId + "/products/admin-related");
+        return response.data.map((product) => {
             return Product.format(
                 product, salePercentage, rebates
             )

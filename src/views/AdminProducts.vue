@@ -46,7 +46,7 @@
             :showSelect="true"
             :showHasTaxes="true"
             :showExpectedCostUnitPrice="true"
-            :showIsVisibleForSuperVolunteerOnly="true"
+            :showIsAdminRelated="true"
             @selectionChanged="updateSelection"
             @modify="enterUpdateProductFlow"
         ></ProductsTable>
@@ -198,10 +198,10 @@
                     sm="6"
                 >
                   <v-checkbox
-                      :label="$t('product:isVisibleForSuperVolunteerOnly')"
-                      :hint="$t('product:isVisibleForSuperVolunteerOnlyHint')"
+                      :label="$t('product:isAdminRelated')"
+                      :hint="$t('product:isAdminRelatedHint')"
                       persistent-hint
-                      v-model="editedProduct.isVisibleForSuperVolunteerOnly"
+                      v-model="editedProduct.isAdminRelated"
                   />
                 </v-col>
               </v-row>

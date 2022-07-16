@@ -21,6 +21,7 @@
           :showUnitPrice="true"
           :showExpectedCostUnitPrice="true"
           :canToggleAvailability="false"
+          :show-taxes="true"
           :hideSearch="true"
       ></ProductsTable>
       <v-row>

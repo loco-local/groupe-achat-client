@@ -154,7 +154,7 @@ export default {
           this.member.rebates
       );
       this.products = this.products.filter((product) => {
-        return !(product.isVisibleForSuperVolunteerOnly && !this.isAdminModificationFlow);
+        return !(product.isAdminRelated && !this.isAdminModificationFlow);
       });
       this.orderItems.forEach((item) => {
         const matchingProduct = this.products.filter((product) => {
@@ -193,10 +193,10 @@ export default {
       });
       this.products = this.products.sort((a, b) => {
         if (this.isAdminModificationFlow) {
-          if(a.isVisibleForSuperVolunteerOnly === b.isVisibleForSuperVolunteerOnly){
+          if(a.isAdminRelated === b.isAdminRelated){
             return (b.quantity || 0) - (a.quantity || 0);
           }
-          return a.isVisibleForSuperVolunteerOnly? -1 : 1;
+          return a.isAdminRelated? -1 : 1;
         } else {
           return (b.expectedQuantity || 0) - (a.expectedQuantity || 0);
         }

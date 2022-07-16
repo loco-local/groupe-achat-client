@@ -13,9 +13,13 @@
       <v-tab key="allItems" @click="setRouteToAllItems">
         {{ $t('groupOrder:allItems') }}
       </v-tab>
-      <v-tab key="memberBills" @click="setRouteTomemberBills">
+      <v-tab key="memberBills" @click="setRouteToMemberBills">
         <v-icon left>receipt</v-icon>
         {{ $t('groupOrder:memberBills') }}
+      </v-tab>
+      <v-tab key="feeOnAllBills" @click="setRouteToFeeOnAllBills">
+        <v-icon left>receipt</v-icon>
+        {{ $t('groupOrder:feeOnAllBills') }}
       </v-tab>
       <v-tab key="providerOrders" @click="setRouteToProviderOrders">
         {{ $t('groupOrder:ordersForProviders') }}
@@ -42,6 +46,15 @@
         ></GroupOrderMembersBill>
       </v-tab-item>
       <v-tab-item
+          key="feeOnAllBills"
+      >
+        <FeeOnAllBills
+            v-if="tab === 2 && buyGroup !== null"
+            :buyGroupId="buyGroupId"
+            :buyGroupOrderId="buyGroupOrderId"
+        ></FeeOnAllBills>
+      </v-tab-item>
+      <v-tab-item
           key="providerOrders"
       >
         <v-card flat>
@@ -57,10 +70,12 @@
 <script>
 import I18n from "@/i18n";
 import AllBuyGroupOrderItems from "@/components/AllBuyGroupOrderItems";
+import FeeOnAllBills from "@/components/FeeOnAllBills";
 
 export default {
   name: "GroupOrder",
   components: {
+    FeeOnAllBills,
     AllBuyGroupOrderItems,
     Page: () => import('@/components/Page'),
     GroupOrderStatus: () => import('@/components/GroupOrderStatus'),
@@ -72,7 +87,9 @@ export default {
       memberBills: "Factures membres",
       allItems: "Tous les items commandés",
       ordersForProviders: "Commandes fournisseurs",
-      allGroupOrders: "Toutes les commandes du groupe"
+      allGroupOrders: "Toutes les commandes du groupe",
+      noAdminProducts: 'Aucun produit de type "Visible seulement pour les supers bénévoles"',
+      feeOnAllBills: "Frais pour toutes les factures"
     };
     I18n.i18next.addResources("fr", "groupOrder", text);
     I18n.i18next.addResources("en", "groupOrder", text);
@@ -90,8 +107,10 @@ export default {
     this.buyGroupOrderId = parseInt(this.$route.params.orderId);
     if (['GroupOrderMemberBillsForMember', 'GroupOrderMemberBills'].indexOf(this.$router.currentRoute.name) > -1) {
       this.tab = 1;
-    } else if (this.$router.currentRoute.name === 'GroupOrderProvidersOrders') {
+    } else if (this.$router.currentRoute.name === 'GroupOrderFeeOnAllBills') {
       this.tab = 2;
+    } else if (this.$router.currentRoute.name === 'GroupOrderProvidersOrders') {
+      this.tab = 3;
     }
   },
   methods: {
@@ -106,9 +125,14 @@ export default {
           this.basePath() + "/tous-les-items"
       );
     },
-    setRouteTomemberBills: function () {
+    setRouteToMemberBills: function () {
       this.$router.push(
           this.basePath() + "/factures-membres"
+      );
+    },
+    setRouteToFeeOnAllBills: function () {
+      this.$router.push(
+          this.basePath() + "/frais-pour-tous"
       );
     },
     setRouteToProviderOrders: function () {

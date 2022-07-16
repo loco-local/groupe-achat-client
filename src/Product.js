@@ -1,9 +1,9 @@
 const Product = {
     format: function (product, salePercentage, rebates) {
         if (product.expectedUnitPrice === undefined) {
-            if (product.isVisibleForSuperVolunteerOnly) {
-                product.expectedUnitPrice = product.expectedCostUnitPrice;
-                product.expectedUnitPriceAfterRebate = product.expectedCostUnitPrice;
+            if (product.isAdminRelated) {
+                product.unitPrice = product.expectedUnitPrice = product.expectedCostUnitPrice;
+                product.unitPriceAfterRebate = product.expectedUnitPriceAfterRebate = product.expectedCostUnitPrice;
             } else {
                 const unitPrices = Product.calculateUnitPrices(
                     product.expectedCostUnitPrice,

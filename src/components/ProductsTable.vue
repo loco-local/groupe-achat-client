@@ -120,8 +120,8 @@
           {{ $t('no') }}
         </span>
       </template>
-      <template v-slot:item.isVisibleForSuperVolunteerOnly="{ item }" class="vh-center text-center">
-        <v-icon v-if="item.isVisibleForSuperVolunteerOnly">
+      <template v-slot:item.isAdminRelated="{ item }" class="vh-center text-center">
+        <v-icon v-if="item.isAdminRelated">
           check
         </v-icon>
         <span v-else>
@@ -257,7 +257,7 @@ export default {
       type: Boolean,
       default: false
     },
-    showIsVisibleForSuperVolunteerOnly:{
+    showIsAdminRelated:{
       type: Boolean,
       default: false
     }
@@ -402,10 +402,10 @@ export default {
           }
       );
     }
-    if(this.showIsVisibleForSuperVolunteerOnly){
+    if(this.showIsAdminRelated){
       headers.push({
-        text: this.$t('product:isVisibleForSuperVolunteerOnly'),
-        value: 'isVisibleForSuperVolunteerOnly'
+        text: this.$t('product:isAdminRelated'),
+        value: 'isAdminRelated'
       });
     }
     if (this.canToggleAvailability) {
