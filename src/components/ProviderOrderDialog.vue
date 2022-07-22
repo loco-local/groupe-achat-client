@@ -9,16 +9,11 @@
             icon
             dark
             @click="leave"
-            v-if="$store.state.user.status === 'admin'"
         >
           <v-icon>mdi-close</v-icon>
         </v-btn>
         <v-toolbar-title>
-          {{ $t('userBill:billOf') }}
-          <span v-if="member" class="ml-1">
-            {{ member.firstname }}
-            {{ member.lastname }}
-          </span>
+          {{ $t('providerOrders:orderForProvider') }} {{ providerName }}
         </v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>
@@ -29,46 +24,45 @@
               :disabled="itemsLoading"
           >
             <v-icon left>file_download</v-icon>
-            {{ $t('userBill:download') }}
+            {{ $t('download') }}
           </v-btn>
         </v-toolbar-items>
       </v-toolbar>
-      <UserBill
+      <ProviderOrder
           :buyGroupId="buyGroupId"
           :buyGroupOrderId="buyGroupOrderId"
-          :buyGroupPath="buyGroupPath"
-          :userId="userId"
+          :providerName="providerName"
           @itemsDefined="setItems"
-      ></UserBill>
+      ></ProviderOrder>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
-import MemberService from "@/service/MemberService";
+
 import OrderItems from "@/OrderItems";
 
 export default {
-  name: "UserBillDialog",
+  name: "ProviderOrderDialog",
   props: ['buyGroupId', 'buyGroupOrderId', 'buyGroupPath'],
   components: {
-    UserBill: () => import('@/components/UserBill')
+    ProviderOrder: () => import('@/components/ProviderOrder')
   },
   data: function () {
     return {
       show: false,
-      member: null,
-      userId: null,
+      providerItems: null,
+      providerName: null,
+      total: null,
       itemsLoading: true
     }
   },
   mounted: function () {
   },
   methods: {
-    enter: async function (userId) {
-      this.userId = userId;
+    enter: async function (providerName) {
       this.show = true;
-      this.member = await MemberService.getForId(this.userId);
+      this.providerName = providerName;
       this.itemsLoading = true;
     },
     leave: function () {
@@ -77,23 +71,25 @@ export default {
       this.$router.push(
           path
       );
+      this.$emit('leave');
       this.show = false;
     },
-    setItems: function (items) {
-      this.items = items;
+    setItems: function (orderItemsByProvider) {
+      this.providerItems = orderItemsByProvider.providerOrders[this.providerName];
+
       this.itemsLoading = false;
     },
     exportToCsv: async function () {
-      OrderItems.exportToCsv(this.items, true);
+      OrderItems.exportToCsv(this.providerItems, false);
     }
   },
   watch: {
     '$route'(to) {
-      if (to.name !== "GroupOrderMemberBillsForMember") {
+      if (to.name !== "GroupOrderProvidersOrderForProvider") {
         this.show = false;
       }
     }
-  },
+  }
 }
 </script>
 

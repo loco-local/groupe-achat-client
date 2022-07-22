@@ -11,7 +11,7 @@
         <v-col cols="12">
           <v-btn class="mt-4" @click="downloadAllReceipts">
             <v-icon left>file_download</v-icon>
-            {{ $t('membersBill:downloadAll') }}
+            {{ $t('downloadAll') }}
           </v-btn>
         </v-col>
         <v-col cols="12" class="vh-center">
@@ -57,22 +57,19 @@
 import I18n from "@/i18n";
 import BuyGroupOrderService from "@/service/BuyGroupOrderService";
 import UserBillDialog from "@/components/UserBillDialog";
-import MemberOrder from "@/MemberOrder";
 import LoadingFlow from "@/LoadingFlow";
+import OrderItems from "@/OrderItems";
 
 export default {
   name: "GroupOrderMemberBills",
   components: {UserBillDialog},
   props: ['buyGroupId', 'buyGroupOrderId', 'buyGroupPath'],
   data: function () {
-    I18n.i18next.addResources("fr", "membersBill", {
-      noBills: "Pas encore de commandes",
-      downloadAll: "Tout télécharger"
-    });
-    I18n.i18next.addResources("en", "membersBill", {
-      noBills: "Pas encore de commandes",
-      downloadAll: "Tout télécharger"
-    });
+    const text = {
+      noBills: "Pas encore de commandes"
+    };
+    I18n.i18next.addResources("fr", "membersBill", text);
+    I18n.i18next.addResources("en", "membersBill", text);
     return {
       isLoading: true,
       userOrders: [],
@@ -81,7 +78,7 @@ export default {
   },
   mounted: async function () {
     this.isLoading = true;
-    if(this.$store.state.user.status === 'admin'){
+    if (this.$store.state.user.status === 'admin') {
       this.userOrders = await BuyGroupOrderService.listMemberOrders(
           this.buyGroupId,
           this.buyGroupOrderId
@@ -100,7 +97,7 @@ export default {
           this.buyGroupOrderId,
           memberId
       );
-      MemberOrder.exportToCsv(userOrderItems);
+      OrderItems.exportToCsv(userOrderItems, true);
       LoadingFlow.leave();
     },
     downloadAllReceipts: async function () {

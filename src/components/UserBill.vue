@@ -44,16 +44,13 @@ export default {
     ProductsTable: () => import('@/components/ProductsTable')
   },
   data: function () {
-    I18n.i18next.addResources("fr", "userBill", {
+    const text = {
       noItems: "Rien de commandé",
       billOf: "Facture de",
       download: "Télécharger"
-    });
-    I18n.i18next.addResources("en", "userBill", {
-      noItems: "Rien de commandé",
-      billOf: "Facture de",
-      download: "Télécharger"
-    });
+    }
+    I18n.i18next.addResources("fr", "userBill", text);
+    I18n.i18next.addResources("en", "userBill", text);
     return {
       userOrder: null,
       userOrderItems: null,

@@ -57,11 +57,10 @@
       <v-tab-item
           key="providerOrders"
       >
-        <v-card flat>
-          <v-card-text>
-            moufou
-          </v-card-text>
-        </v-card>
+        <ProviderOrders
+            :buyGroupId="buyGroupId"
+            :buyGroupOrderId="buyGroupOrderId"
+        ></ProviderOrders>
       </v-tab-item>
     </v-tabs-items>
   </Page>
@@ -71,10 +70,12 @@
 import I18n from "@/i18n";
 import AllBuyGroupOrderItems from "@/components/AllBuyGroupOrderItems";
 import FeeOnAllBills from "@/components/FeeOnAllBills";
+import ProviderOrders from "@/components/ProviderOrders";
 
 export default {
   name: "GroupOrder",
   components: {
+    ProviderOrders,
     FeeOnAllBills,
     AllBuyGroupOrderItems,
     Page: () => import('@/components/Page'),
@@ -109,7 +110,7 @@ export default {
       this.tab = 1;
     } else if (this.$router.currentRoute.name === 'GroupOrderFeeOnAllBills') {
       this.tab = 2;
-    } else if (this.$router.currentRoute.name === 'GroupOrderProvidersOrders') {
+    } else if (['GroupOrderProvidersOrderForProvider', 'GroupOrderProvidersOrders'].indexOf(this.$router.currentRoute.name) > -1) {
       this.tab = 3;
     }
   },

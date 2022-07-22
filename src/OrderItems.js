@@ -1,9 +1,10 @@
-import ExportToCsv from "@/ExportToCsv";
 import I18n from "@/i18n";
+import ExportToCsv from "@/ExportToCsv";
 import ProductTranslation from "@/ProductTranslation";
+
 ProductTranslation.setup();
-const MemberOrder = {
-    exportToCsv: function (items) {
+const OrderItems = {
+    exportToCsv: function (items, isForMember) {
         if (items.length === 0) {
             return;
         }
@@ -28,7 +29,8 @@ const MemberOrder = {
                 t('product:provider')
             ]
         ];
-        let fileName = items[0].personFullname + ".csv";
+        let fileName = isForMember ? items[0].personFullname : items[0].provider;
+        fileName += ".csv";
         items.forEach((item) => {
             data.push([
                 (item.expectedQuantity || 0).toLocaleString(),
@@ -86,5 +88,4 @@ const MemberOrder = {
         ExportToCsv.build(fileName, data);
     }
 }
-
-export default MemberOrder;
+export default OrderItems;
