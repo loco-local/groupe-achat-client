@@ -40,7 +40,7 @@
 
 <script>
 
-import OrderItems from "@/OrderItems";
+import OrderToCsv from "@/OrderToCsv";
 
 export default {
   name: "ProviderOrderDialog",
@@ -80,7 +80,7 @@ export default {
       this.itemsLoading = false;
     },
     exportToCsv: async function () {
-      OrderItems.exportToCsv(this.providerItems, false);
+      OrderToCsv.exportForProviderOrder(this.providerItems);
     }
   },
   watch: {

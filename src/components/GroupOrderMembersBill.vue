@@ -58,7 +58,7 @@ import I18n from "@/i18n";
 import BuyGroupOrderService from "@/service/BuyGroupOrderService";
 import UserBillDialog from "@/components/UserBillDialog";
 import LoadingFlow from "@/LoadingFlow";
-import OrderItems from "@/OrderItems";
+import OrderToCsv from "@/OrderToCsv";
 
 export default {
   name: "GroupOrderMemberBills",
@@ -97,7 +97,7 @@ export default {
           this.buyGroupOrderId,
           memberId
       );
-      OrderItems.exportToCsv(userOrderItems, true);
+      OrderToCsv.exportForMemberOrder(userOrderItems);
       LoadingFlow.leave();
     },
     downloadAllReceipts: async function () {

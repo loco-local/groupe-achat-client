@@ -4,11 +4,12 @@
       <ProductsTable
           :products="providerItems || []"
           :hasQuantity="true"
-          :hasExpectedQuantity="true"
+          :hasExpectedQuantity="false"
           :showCostUnitPrice="true"
-          :showUnitPrice="true"
-          :showExpectedCostUnitPrice="true"
+          :showUnitPrice="false"
+          :showExpectedCostUnitPrice="false"
           :canToggleAvailability="false"
+          :hideExpectedUnitPrice="true"
           :show-taxes="true"
           :hideSearch="true"
       ></ProductsTable>

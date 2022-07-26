@@ -58,7 +58,7 @@ import ProviderOrderDialog from "@/components/ProviderOrderDialog";
 import I18n from "@/i18n";
 import LoadingFlow from "@/LoadingFlow";
 import ProviderOrders from "@/ProviderOrders";
-import OrderItems from "@/OrderItems";
+import OrderToCsv from "@/OrderToCsv";
 
 export default {
   name: "ProviderOrders",
@@ -102,9 +102,8 @@ export default {
       });
     },
     downloadProviderOrder: function (providerName) {
-      OrderItems.exportToCsv(
-          this.providerOrders[providerName],
-          false
+      OrderToCsv.exportForProviderOrder(
+          this.providerOrders[providerName]
       )
     },
     viewProviderOrder: function (providerName) {

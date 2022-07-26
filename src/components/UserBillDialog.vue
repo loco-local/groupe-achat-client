@@ -46,7 +46,7 @@
 
 <script>
 import MemberService from "@/service/MemberService";
-import OrderItems from "@/OrderItems";
+import OrderToCsv from "@/OrderToCsv";
 
 export default {
   name: "UserBillDialog",
@@ -84,7 +84,7 @@ export default {
       this.itemsLoading = false;
     },
     exportToCsv: async function () {
-      OrderItems.exportToCsv(this.items, true);
+      OrderToCsv.exportForMemberOrder(this.items);
     }
   },
   watch: {

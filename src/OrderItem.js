@@ -17,5 +17,8 @@ const OrderItem = {
     calculateTPS(orderItem, quantity, price) {
         return orderItem.hasTPS ? price * 0.05 * quantity : 0;
     },
+    getQty(orderItem){
+        return orderItem.quantity === null ? orderItem.expectedQuantity : orderItem.quantity;
+    }
 }
 export default OrderItem;
