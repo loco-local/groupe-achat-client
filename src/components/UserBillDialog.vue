@@ -38,7 +38,7 @@
           :buyGroupOrderId="buyGroupOrderId"
           :buyGroupPath="buyGroupPath"
           :userId="userId"
-          @itemsDefined="setItems"
+          @dataDefined="setData"
       ></UserBill>
     </v-card>
   </v-dialog>
@@ -79,12 +79,13 @@ export default {
       );
       this.show = false;
     },
-    setItems: function (items) {
-      this.items = items;
+    setData: function (data) {
+      this.items = data.items;
+      this.buyGroupOrder = data.buyGroupOrder;
       this.itemsLoading = false;
     },
     exportToCsv: async function () {
-      OrderToCsv.exportForMemberOrder(this.items);
+      OrderToCsv.exportForMemberOrder(this.items, this.buyGroupOrder);
     }
   },
   watch: {

@@ -8,7 +8,8 @@ export default {
             path: "Chemin dans l'url",
             salePercentage: "Pourcentage de vente",
             additionalFees: "Frais additionels",
-            howToPay: "Comment payer"
+            howToPay: "Comment payer",
+            comment: "Commentaire pour toutes les factures"
         };
         I18n.i18next.addResources("fr", "group", text);
         I18n.i18next.addResources("en", "group", text);

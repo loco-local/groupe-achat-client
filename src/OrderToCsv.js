@@ -41,20 +41,26 @@ const OrderToCsv = {
         OrderToCsv._buildForProviderOrMemberOrder(
             items,
             false,
-            total
+            {
+                total: total
+            }
         );
     },
-    exportForMemberOrder: function (items) {
+    exportForMemberOrder: function (items, buyGroupOrder) {
         OrderToCsv._buildForProviderOrMemberOrder(
             items,
-            true
+            true,
+            {
+                buyGroupOrder: buyGroupOrder
+            }
         );
     },
-    _buildForProviderOrMemberOrder: function (items, isForMember, total) {
+    _buildForProviderOrMemberOrder: function (items, isForMember, optionalData) {
         if (items.length === 0) {
             return;
         }
-        if(total === undefined){
+        let total = optionalData.total;
+        if (total === undefined) {
             const memberOrder = items[0].MemberOrder;
             total = memberOrder.total || memberOrder.expectedTotal;
         }
@@ -84,7 +90,21 @@ const OrderToCsv = {
         lastLine.push(t('total'));
         lastLine.push(total);
         data.push(lastLine)
-        console.log(JSON.stringify(data))
+        if (optionalData.buyGroupOrder && optionalData.buyGroupOrder.howToPay !== null) {
+            data.push(OrderToCsv._buildEmptyLine(columns));
+            let line = OrderToCsv._buildEmptyLine(columns);
+            line.pop();
+            line.unshift(optionalData.buyGroupOrder.howToPay)
+            data.push(line);
+        }
+        if (optionalData.buyGroupOrder && optionalData.buyGroupOrder.comment !== null) {
+            data.push(OrderToCsv._buildEmptyLine(columns));
+            let line = OrderToCsv._buildEmptyLine(columns);
+            line.pop();
+            line.unshift(optionalData.buyGroupOrder.comment)
+            data.push(line);
+        }
+        // console.log(JSON.stringify(data))
         ExportToCsv.build(fileName, data);
     },
     _getLabelKeyForColumn: function (column) {

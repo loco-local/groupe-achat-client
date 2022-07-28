@@ -79,6 +79,12 @@ const BuyGroupOrderService = {
             "/buy-group/" + buyGroupId + "/orders/" + buyGroup.id,
             buyGroup
         );
+    },
+    getById: async function (id, buyGroupId) {
+        const response = await Service.api().get(
+            "/buy-group/" + buyGroupId + "/orders/" + id
+        );
+        return response.data;
     }
 }
 export default BuyGroupOrderService;

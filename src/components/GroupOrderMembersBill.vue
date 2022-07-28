@@ -97,7 +97,11 @@ export default {
           this.buyGroupOrderId,
           memberId
       );
-      OrderToCsv.exportForMemberOrder(userOrderItems);
+      const buyGroupOrder = await BuyGroupOrderService.getById(
+          this.buyGroupOrderId,
+          this.buyGroupId
+      );
+      OrderToCsv.exportForMemberOrder(userOrderItems, buyGroupOrder);
       LoadingFlow.leave();
     },
     downloadAllReceipts: async function () {

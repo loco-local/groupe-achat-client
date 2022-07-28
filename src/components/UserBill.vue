@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pb-8">
     <v-card-text v-if="isLoading" class="pt-8 pb-8 text-center">
       <v-progress-circular indeterminate :size="80" :width="2"></v-progress-circular>
     </v-card-text>
@@ -29,6 +29,16 @@
           Total: {{ orderTotal | currency }}
         </v-col>
       </v-row>
+      <v-row v-if="buyGroupOrder.howToPay !== null">
+        <v-col cols="12" class="text-left body-1 mt-8 pl-8">
+          {{ buyGroupOrder.howToPay }}
+        </v-col>
+      </v-row>
+      <v-row v-if="buyGroupOrder.comment !== null">
+        <v-col cols="12" class="text-left body-1 mt-8 pl-8">
+          {{ buyGroupOrder.comment }}
+        </v-col>
+      </v-row>
     </v-card-text>
   </div>
 </template>
@@ -54,6 +64,7 @@ export default {
     return {
       userOrder: null,
       userOrderItems: null,
+      buyGroupOrder: null,
       orderTotal: null,
       isLoading: true
     }
@@ -71,7 +82,14 @@ export default {
     } else {
       this.orderTotal = 0;
     }
-    this.$emit('itemsDefined', this.userOrderItems);
+    this.buyGroupOrder = await BuyGroupOrderService.getById(
+        this.buyGroupOrderId,
+        this.buyGroupId
+    );
+    this.$emit('dataDefined', {
+      items: this.userOrderItems,
+      buyGroupOrder: this.buyGroupOrder
+    });
     this.isLoading = false;
   }
 }

@@ -160,6 +160,14 @@
                       :label="$t('group:howToPay')"
                   ></v-textarea>
                 </v-col>
+                <v-col
+                    cols="12"
+                >
+                  <v-textarea
+                      v-model="editedOrder.comment"
+                      :label="$t('group:comment')"
+                  ></v-textarea>
+                </v-col>
               </v-row>
             </v-form>
           </v-container>

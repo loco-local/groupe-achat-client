@@ -85,7 +85,9 @@ export default {
                         female: "Femme",
                         genderPreferNotAnswer: "Préfère ne pas répondre",
                         yes: "oui",
-                        no: "non"
+                        no: "non",
+                        downloadAll:"Tout télécharger",
+                        download: "Télécharger"
                     }
                 },
                 fr: {
@@ -136,7 +138,9 @@ export default {
                         female: "Femme",
                         genderPreferNotAnswer: "Préfère ne pas répondre",
                         yes: "oui",
-                        no: "non"
+                        no: "non",
+                        downloadAll:"Tout télécharger",
+                        download: "Télécharger"
                     }
                 }
             }
