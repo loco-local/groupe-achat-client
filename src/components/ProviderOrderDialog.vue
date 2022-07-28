@@ -76,11 +76,14 @@ export default {
     },
     setItems: function (orderItemsByProvider) {
       this.providerItems = orderItemsByProvider.providerOrders[this.providerName];
-
+      this.total = orderItemsByProvider.providerTotals[this.providerName];
       this.itemsLoading = false;
     },
     exportToCsv: async function () {
-      OrderToCsv.exportForProviderOrder(this.providerItems);
+      OrderToCsv.exportForProviderOrder(
+          this.providerItems,
+          this.total
+      );
     }
   },
   watch: {

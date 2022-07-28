@@ -103,7 +103,8 @@ export default {
     },
     downloadProviderOrder: function (providerName) {
       OrderToCsv.exportForProviderOrder(
-          this.providerOrders[providerName]
+          this.providerOrders[providerName],
+          this.providerTotals[providerName]
       )
     },
     viewProviderOrder: function (providerName) {

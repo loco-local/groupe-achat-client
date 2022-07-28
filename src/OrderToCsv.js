@@ -37,10 +37,11 @@ const MEMBER_ORDER_COLUMNS = [
     "provider"
 ];
 const OrderToCsv = {
-    exportForProviderOrder: function (items) {
+    exportForProviderOrder: function (items, total) {
         OrderToCsv._buildForProviderOrMemberOrder(
             items,
-            false
+            false,
+            total
         );
     },
     exportForMemberOrder: function (items) {
@@ -49,9 +50,13 @@ const OrderToCsv = {
             true
         );
     },
-    _buildForProviderOrMemberOrder: function (items, isForMember) {
+    _buildForProviderOrMemberOrder: function (items, isForMember, total) {
         if (items.length === 0) {
             return;
+        }
+        if(total === undefined){
+            const memberOrder = items[0].MemberOrder;
+            total = memberOrder.total || memberOrder.expectedTotal;
         }
         const t = I18n.i18next.getFixedT();
         let columns = isForMember ? MEMBER_ORDER_COLUMNS : PROVIDER_ORDER_COLUMNS;
@@ -73,12 +78,11 @@ const OrderToCsv = {
             );
         });
         data.push(OrderToCsv._buildEmptyLine(columns));
-        const memberOrder = items[0].MemberOrder;
         let lastLine = OrderToCsv._buildEmptyLine(columns);
         lastLine.pop();
         lastLine.pop();
         lastLine.push(t('total'));
-        lastLine.push(memberOrder.total || memberOrder.expectedTotal);
+        lastLine.push(total);
         data.push(lastLine)
         console.log(JSON.stringify(data))
         ExportToCsv.build(fileName, data);

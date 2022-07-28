@@ -15,7 +15,7 @@ export default {
                 providerTotals[orderItem.provider] = 0;
                 providerOrders[orderItem.provider] = [];
             }
-            providerTotals[orderItem.provider] += orderItem.totalAfterRebateWithTaxes;
+            providerTotals[orderItem.provider] += orderItem.costUnitPrice * orderItem.quantity;
             const existingProduct = providerOrders[orderItem.provider].filter((existingOrderItem) => {
                 return existingOrderItem.ProductId === orderItem.ProductId
             });
