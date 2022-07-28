@@ -30,10 +30,17 @@
               </v-list-item-title>
               <v-list-item-subtitle class="mb-2">
                 {{ order.startDate | dayDate }}
-                  {{ $t('to') }}
+                {{ $t('to') }}
                 {{ order.endDate | dayDate }}
               </v-list-item-subtitle>
             </v-list-item-content>
+            <v-list-item-action>
+              <v-btn @click.prevent="enterUpdateOrderFlow(order)" icon>
+                <v-icon>
+                  edit
+                </v-icon>
+              </v-btn>
+            </v-list-item-action>
           </v-list-item>
           <v-divider></v-divider>
         </div>
@@ -69,10 +76,20 @@
                       transition="scale-transition"
                       offset-y
                       min-width="auto"
+                      v-if="!isSaveLoading"
                   >
                     <template v-slot:activator="{ on, attrs }">
+                      <!--                      <div v-bind="attrs"&ndash;&gt;-->
+                      <!--                        &lt;!&ndash;                          v-on="on"&ndash;&gt;>-->
+                      <!--                        <v-icon left>-->
+                      <!--                          mdi-calendar-->
+                      <!--                        </v-icon>-->
+                      <!--                        <strong class="mr-2">{{ $t('startDate') }}</strong>-->
+                      <!--                        {{ editedOrder.startDate | dayDate}}-->
+                      <!--                      </div>-->
                       <v-text-field
                           v-model="editedOrder.startDate"
+                          :value="editedOrder.startDate | dayDate"
                           :label="$t('startDate')"
                           prepend-icon="mdi-calendar"
                           readonly
@@ -97,6 +114,7 @@
                       transition="scale-transition"
                       offset-y
                       min-width="auto"
+                      v-if="!isSaveLoading"
                   >
                     <template v-slot:activator="{ on, attrs }">
                       <v-text-field
@@ -115,6 +133,32 @@
                         :rules="[rules.required]"
                     ></v-date-picker>
                   </v-menu>
+                </v-col>
+                <v-col
+                    cols="12"
+                >
+                  <v-text-field
+                      v-model="editedOrder.salePercentage"
+                      :label="$t('group:salePercentage')"
+                      prefix="%"
+                      type="number"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                    cols="12"
+                >
+                  <v-textarea
+                      v-model="editedOrder.additionalFees"
+                      :label="$t('group:additionalFees')"
+                  ></v-textarea>
+                </v-col>
+                <v-col
+                    cols="12"
+                >
+                  <v-textarea
+                      v-model="editedOrder.howToPay"
+                      :label="$t('group:howToPay')"
+                  ></v-textarea>
                 </v-col>
               </v-row>
             </v-form>
@@ -154,6 +198,9 @@
 import BuyGroupOrderService from "@/service/BuyGroupOrderService";
 import I18n from "@/i18n";
 import Rules from "@/Rules";
+import BuyGroupTranslation from "@/BuyGroupTranslation";
+import BuyGroupService from "@/service/BuyGroupService";
+import dateUtil from "@/dateUtil";
 
 export default {
 
@@ -163,18 +210,15 @@ export default {
     GroupOrderStatusText: () => import('@/components/GroupOrderStatusText')
   },
   data: () => {
-    I18n.i18next.addResources("fr", "groupOrders", {
+    BuyGroupTranslation.setup();
+    const text = {
       title: "Commandes du groupe",
       none: "Aucunes commandes passées",
       newOrder: "Nouvelle commande",
       orderOf: "Commande du"
-    });
-    I18n.i18next.addResources("en", "groupOrders", {
-      title: "Commandes du groupe",
-      none: "Aucunes commandes passées",
-      newOrder: "Nouvelle commande",
-      orderOf: "Commande du"
-    });
+    };
+    I18n.i18next.addResources("fr", "groupOrders", text);
+    I18n.i18next.addResources("en", "groupOrders", text);
     return {
       orders: [],
       isLoading: false,
@@ -184,10 +228,12 @@ export default {
       rules: Rules,
       isSaveLoading: false,
       startDateMenu: false,
-      endDateMenu: false
+      endDateMenu: false,
+      buyGroup: null
     }
   },
   mounted: async function () {
+    this.buyGroup = await BuyGroupService.getForId(this.$store.state.user.BuyGroupId);
     await this.resetList();
   },
   methods: {
@@ -201,13 +247,18 @@ export default {
         return
       }
       this.isSaveLoading = true;
+      this.editedOrder.startDate = new Date(this.editedOrder.startDate);
+      this.editedOrder.endDate = new Date(this.editedOrder.endDate);
       if (this.isNewOrderFlow) {
         await BuyGroupOrderService.create(
-            this.editedOrder
+            this.editedOrder,
+            this.$store.state.user.BuyGroupId
         );
+        await this.resetList();
       } else {
         await BuyGroupOrderService.update(
-            this.editedOrder
+            this.editedOrder,
+            this.$store.state.user.BuyGroupId
         );
       }
       this.isSaveLoading = false;
@@ -221,17 +272,25 @@ export default {
       this.editOrderDialog = false;
     },
     enterNewOrderFlow: async function () {
+      this.editedOrder = {};
+      this.editOrderDialog = true;
+      await this.$nextTick();
+      this.$refs.groupOrderForm.reset();
+      this.editedOrder = {
+        salePercentage: this.buyGroup.salePercentage,
+        additionalFees: this.buyGroup.additionalFees,
+        howToPay: this.buyGroup.howToPay,
+      };
+    },
+    enterUpdateOrderFlow: async function (order) {
       this.editedOrder = {}
       this.editOrderDialog = true;
       await this.$nextTick();
       this.$refs.groupOrderForm.reset();
-    },
-    enterUpdateOrderFlow: async function (order) {
       this.originalEditOrderValues = {...order};
       this.editedOrder = order;
-      this.editOrderDialog = true;
-      await this.$nextTick();
-      this.$refs.groupOrderForm.reset();
+      this.editedOrder.startDate = dateUtil.formatForDatePicker(this.editedOrder.startDate);
+      this.editedOrder.endDate = dateUtil.formatForDatePicker(this.editedOrder.endDate);
     },
   },
   computed: {

@@ -64,19 +64,19 @@ const BuyGroupOrderService = {
             return orderItem
         })
     },
-    create: async function (buyGroup) {
-        buyGroup.startDate = startOfDay(buyGroup.startDate);
-        buyGroup.endDate = endOfDay(buyGroup.endDate);
+    create: async function (buyGroupOrder, buyGroupId) {
+        buyGroupOrder.startDate = startOfDay(buyGroupOrder.startDate);
+        buyGroupOrder.endDate = endOfDay(buyGroupOrder.endDate);
         return Service.api().post(
-            "/buy-group-orders",
-            buyGroup
+            "/buy-group/" + buyGroupId + "/orders",
+            buyGroupOrder
         );
     },
-    update: async function (buyGroup) {
+    update: async function (buyGroup, buyGroupId) {
         buyGroup.startDate = startOfDay(buyGroup.startDate);
         buyGroup.endDate = endOfDay(buyGroup.endDate);
         return Service.api().put(
-            "/buy-group-orders/" + buyGroup.id,
+            "/buy-group/" + buyGroupId + "/orders/" + buyGroup.id,
             buyGroup
         );
     }

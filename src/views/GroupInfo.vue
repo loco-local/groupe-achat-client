@@ -45,6 +45,14 @@
                   :label="$t('group:additionalFees')"
               ></v-textarea>
             </v-col>
+            <v-col
+                cols="12"
+            >
+              <v-textarea
+                  v-model="buyGroup.howToPay"
+                  :label="$t('group:howToPay')"
+              ></v-textarea>
+            </v-col>
             <v-col cols="12" class="text-left">
               <v-btn color="primary"
                      :loading="isSaving"
@@ -64,6 +72,7 @@
 <script>
 import BuyGroupService from "@/service/BuyGroupService";
 import I18n from "@/i18n";
+import BuyGroupTranslation from "@/BuyGroupTranslation";
 
 export default {
   name: "GroupInfo",
@@ -71,20 +80,7 @@ export default {
     Page: () => import('@/components/Page')
   },
   data: function () {
-    I18n.i18next.addResources("fr", "group", {
-      title: "Votre groupe",
-      name: "Nom",
-      path: "Chemin dans l'url",
-      salePercentage: "Pourcentage de vente",
-      additionalFees: "Frais additionels"
-    });
-    I18n.i18next.addResources("en", "group", {
-      title: "Votre groupe",
-      name: "Nom",
-      path: "Chemin dans l'url",
-      salePercentage: "Pourcentage de vente",
-      additionalFees: "Frais additionels"
-    });
+    BuyGroupTranslation.setup();
     return {
       buyGroup: null,
       isLoading: true,

@@ -40,6 +40,17 @@ const dateUtil = {
             )
         }
     },
+    formatForDatePicker: function (value) {
+        if (value) {
+            return format(
+                new Date(String(value)),
+                'yyyy-MM-dd',
+                {
+                    locale: fr
+                }
+            )
+        }
+    },
     areDatesSameDay: function (d1, d2) {
         return d1.getFullYear() === d2.getFullYear() &&
             d1.getMonth() === d2.getMonth() &&
