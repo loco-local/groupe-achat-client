@@ -31,12 +31,20 @@
       </v-row>
       <v-row v-if="buyGroupOrder.howToPay !== null">
         <v-col cols="12" class="text-left body-1 mt-8 pl-8">
-          {{ buyGroupOrder.howToPay }}
+          <v-card outlined>
+            <v-card-text>
+              {{ buyGroupOrder.howToPay }}
+            </v-card-text>
+          </v-card>
         </v-col>
       </v-row>
       <v-row v-if="buyGroupOrder.comment !== null">
         <v-col cols="12" class="text-left body-1 mt-8 pl-8">
-          {{ buyGroupOrder.comment }}
+          <v-card outlined>
+            <v-card-text>
+              {{ buyGroupOrder.comment }}
+            </v-card-text>
+          </v-card>
         </v-col>
       </v-row>
     </v-card-text>

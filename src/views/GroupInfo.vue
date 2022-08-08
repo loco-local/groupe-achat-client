@@ -71,7 +71,6 @@
 
 <script>
 import BuyGroupService from "@/service/BuyGroupService";
-import I18n from "@/i18n";
 import BuyGroupTranslation from "@/BuyGroupTranslation";
 
 export default {
