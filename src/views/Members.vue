@@ -76,6 +76,7 @@
                   <v-text-field
                       v-model="editedMember.email"
                       :label="$t('member:email')"
+                      :rules="[rules.required]"
                   ></v-text-field>
                 </v-col>
                 <v-col
@@ -177,16 +178,12 @@ export default {
   },
   data: function () {
     Members.setupTranslation();
-    I18n.i18next.addResources("fr", "members", {
+    const text = {
       title: "Membres du groupe",
       noRebates: "Aucuns rabais"
-    });
-    I18n.i18next.addResources("en", "members", {
-      title: "Membres du groupe",
-      firstname: "Prénom",
-      lastname: "Nom",
-      noRebates: "Aucuns rabais"
-    });
+    };
+    I18n.i18next.addResources("fr", "members", text);
+    I18n.i18next.addResources("en", "members", text);
     return {
       isLoading: false,
       members: [],

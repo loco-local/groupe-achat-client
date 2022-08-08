@@ -21,7 +21,7 @@
             {{ $t('groupOrderStatus:addedToCost') }}.
           </v-card-text>
         </v-card>
-        <v-card  v-if="!isLoading" >
+        <v-card v-if="!isLoading">
           <v-card-title class="text-body-1 font-weight-bold vh-center pb-0">
             {{ $t('groupOrderStatus:additionalFees') }}
           </v-card-title>
@@ -46,14 +46,12 @@ export default {
   components: {GroupOrderStatusText},
   props: ['buyGroupPath', 'buyGroupId'],
   data: function () {
-    I18n.i18next.addResources("fr", "groupOrderStatus", {
+    const text = {
       addedToCost: "ajouté au prix coûtant",
       additionalFees: "Frais additionnels"
-    });
-    I18n.i18next.addResources("en", "groupOrderStatus", {
-      addedToCost: "ajouté au prix coûtant",
-      additionalFees: "Frais additionnels"
-    });
+    };
+    I18n.i18next.addResources("fr", "groupOrderStatus", text);
+    I18n.i18next.addResources("en", "groupOrderStatus", text);
     return {
       buyGroup: null,
       isLoading: true,

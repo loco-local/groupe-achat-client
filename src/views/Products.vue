@@ -103,16 +103,13 @@ export default {
     GroupOrderStatus: () => import('@/components/GroupOrderStatus')
   },
   data: function () {
-    I18n.i18next.addResources("fr", "products", {
+    const text = {
       "title": "Produits",
       info1: "Il n'y a pas de bouton de confirmation pour votre panier de commande.",
       info2: "À la date de fin de la commande, les dernières quantités que vous aurez inscrites seront commandées aux fournisseurs."
-    });
-    I18n.i18next.addResources("en", "products", {
-      "title": "Produits",
-      info1: "Il n'y a pas de bouton de confirmation pour votre panier de commande.",
-      info2: "À la date de fin de la commande, les dernières quantités que vous aurez inscrites seront commandées aux fournisseurs."
-    });
+    };
+    I18n.i18next.addResources("fr", "products", text);
+    I18n.i18next.addResources("en", "products", text);
     return {
       member: null,
       memberId: null,
@@ -193,10 +190,10 @@ export default {
       });
       this.products = this.products.sort((a, b) => {
         if (this.isAdminModificationFlow) {
-          if(a.isAdminRelated === b.isAdminRelated){
+          if (a.isAdminRelated === b.isAdminRelated) {
             return (b.quantity || 0) - (a.quantity || 0);
           }
-          return a.isAdminRelated? -1 : 1;
+          return a.isAdminRelated ? -1 : 1;
         } else {
           return (b.expectedQuantity || 0) - (a.expectedQuantity || 0);
         }

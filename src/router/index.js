@@ -90,6 +90,11 @@ const routes = [
         component: () => import('../views/Products')
     },
     {
+        path: '/:buyGroup/inscription',
+        name: 'Register',
+        component: () => import('../views/Register.vue')
+    },
+    {
         path: '/:buyGroup/commande-membre/:memberId',
         name: 'ProductsOrderOfMember',
         component: () => import('../views/Products')

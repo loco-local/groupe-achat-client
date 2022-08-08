@@ -67,7 +67,7 @@
             <v-subheader v-if="isAdmin">
               {{ $t('app:products') }}
             </v-subheader>
-            <v-list-item to="/produits/admin">
+            <v-list-item to="/produits/admin" v-if="isAdmin">
               <v-list-item-action>
                 <v-icon>list</v-icon>
               </v-list-item-action>
@@ -77,7 +77,7 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/produits/import">
+            <v-list-item to="/produits/import" v-if="isAdmin">
               <v-list-item-action>
                 <v-icon>import_export</v-icon>
               </v-list-item-action>

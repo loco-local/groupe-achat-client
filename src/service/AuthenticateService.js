@@ -2,11 +2,10 @@ import Service from '@/service/Service'
 import Store from '@/store'
 
 export default {
-    register: function (user, recaptchaToken) {
-        user.user_name = user.username;
-        user.staySignedIn = true;
-        user.recaptchaToken = recaptchaToken;
-        return Service.api().post("/users/", user);
+    register: function (member, recaptchaToken) {
+        member.staySignedIn = true;
+        member.recaptchaToken = recaptchaToken;
+        return Service.api().post("/register", member);
     },
     login: function (user, recaptchaToken) {
         user.staySignedIn = true;
