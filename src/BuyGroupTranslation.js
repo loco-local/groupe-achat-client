@@ -9,7 +9,8 @@ export default {
             salePercentage: "Pourcentage de vente",
             additionalFees: "Frais additionels",
             howToPay: "Comment payer",
-            comment: "Commentaire pour toutes les factures"
+            comment: "Commentaire pour toutes les factures",
+            subscriptionUrl: "URL d'inscription"
         };
         I18n.i18next.addResources("fr", "group", text);
         I18n.i18next.addResources("en", "group", text);

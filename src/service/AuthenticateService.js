@@ -18,5 +18,23 @@ export default {
             Store.dispatch('setUser', null),
             Store.dispatch('setXsrfToken', null)
         ]);
-    }
+    },
+    resetPassword: function (email) {
+        return Service.api().post(
+            "reset-password",
+            {
+                email: email,
+                locale: "fr"
+            }
+        );
+    },
+    changePassword: function (password, token) {
+        return Service.api().post(
+            "/change-password",
+            {
+                newPassword: password,
+                token: token
+            }
+        );
+    },
 };

@@ -15,6 +15,16 @@ const routes = [
         component: () => import('../views/Login.vue')
     },
     {
+        path: '/change-password/:token',
+        name: 'ChangePassword',
+        component: () => import('../views/ChangePassword.vue')
+    },
+    {
+        path: '/send-change-password-email',
+        name: 'SendChangePasswordEmail',
+        component: () => import('../views/SendChangePasswordEmail.vue')
+    },
+    {
         path: '/tableau-de-bord',
         name: 'Dashboard',
         component: () => import('../views/Dashboard.vue')

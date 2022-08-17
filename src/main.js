@@ -7,8 +7,11 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import vuetify from './plugins/vuetify'
 import CurrencyFilter from '@/currencyFilter'
 import DateUtil from '@/dateUtil'
+import VueClipboard from 'vue-clipboard2'
 
 Vue.config.productionTip = false
+
+Vue.use(VueClipboard);
 
 CurrencyFilter.setup();
 
