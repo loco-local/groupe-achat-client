@@ -132,12 +132,13 @@
 
 import I18n from "@/i18n";
 import LoadingFlow from "@/LoadingFlow";
+import MemberService from "@/service/MemberService";
 
 export default {
   name: 'App',
 
   data: () => {
-    I18n.i18next.addResources("fr", "app", {
+    const text = {
       products: "Produits",
       listProducts: "Lister",
       importProducts: "Importer",
@@ -145,20 +146,21 @@ export default {
       groupOrder: "Commandes",
       yourGroup: "Votre groupe",
       members: "Membres"
-    });
-    I18n.i18next.addResources("en", "app", {
-      products: "Produits",
-      listProducts: "Lister",
-      importProducts: "Importer",
-      logout: "Déconnecter",
-      groupOrder: "Commandes",
-      yourGroup: "Votre groupe",
-      members: "Membres"
-    });
+    };
+    I18n.i18next.addResources("fr", "app", text);
+    I18n.i18next.addResources("en", "app", text);
     return {
       isLoadingFlow: false,
       loadingFlows: LoadingFlow.loadingFlows
     };
+  },
+  mounted: async function () {
+    if (this.$store.state.user !== null) {
+      const member = await MemberService.getForId(this.$store.state.user.id);
+      if (member.status !== this.$store.state.user.status) {
+        this.$store.dispatch('setUser', member);
+      }
+    }
   },
   computed: {
     isAdmin: function () {
