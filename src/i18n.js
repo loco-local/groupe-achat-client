@@ -3,6 +3,7 @@ import Store from '@/store'
 import i18next from 'i18next'
 import VueI18Next from '@panter/vue-i18next'
 import I18nextBrowserLanguageDetector from 'i18next-browser-languagedetector'
+
 export default {
     setup: function () {
         Vue.use(VueI18Next);
@@ -49,6 +50,7 @@ export default {
                         member: "Membre",
                         admin: "Administrateur",
                         disabled: "Désactivé",
+                        pending: "En attente",
                         copy: "Copy",
                         to: "to",
                         order: "Order",
@@ -86,7 +88,7 @@ export default {
                         genderPreferNotAnswer: "Préfère ne pas répondre",
                         yes: "oui",
                         no: "non",
-                        downloadAll:"Tout télécharger",
+                        downloadAll: "Tout télécharger",
                         download: "Télécharger"
                     }
                 },
@@ -102,6 +104,7 @@ export default {
                         member: "Membre",
                         admin: "Administrateur",
                         disabled: "Désactivé",
+                        pending: "En attente",
                         copy: "Copier",
                         to: "au",
                         order: "Commande",
@@ -139,7 +142,7 @@ export default {
                         genderPreferNotAnswer: "Préfère ne pas répondre",
                         yes: "oui",
                         no: "non",
-                        downloadAll:"Tout télécharger",
+                        downloadAll: "Tout télécharger",
                         download: "Télécharger"
                     }
                 }

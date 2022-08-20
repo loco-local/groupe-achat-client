@@ -18,7 +18,7 @@
           <v-col cols="12" sm="8" md="4" lg="3" xl="2"
                  v-for="member in members" :key="member.id"
           >
-            <v-card @click="enterUpdateMemberFlow(member)">
+            <v-card @click="enterUpdateMemberFlow(member)" height="150">
               <v-card-title>
                 {{ member.fullname }}
               </v-card-title>
@@ -29,6 +29,18 @@
                 <span v-else>
 
                 </span>
+              </v-card-subtitle>
+              <v-card-subtitle>
+                <v-chip
+                    v-if="member.status==='pending'"
+                    class="ma-2"
+                    icon="clock"
+                    color="red"
+                    outlined
+                >
+                  <v-icon left small>schedule</v-icon>
+                  {{ $t('members:waitingApproval') }}
+                </v-chip>
               </v-card-subtitle>
             </v-card>
           </v-col>
@@ -121,6 +133,22 @@
                 </v-col>
                 <v-col
                     cols="12"
+                    lg="6"
+                >
+                  <v-select
+                      :items="status"
+                      v-model="editedMember.status"
+                      :label="$t('members:status')"
+                      required
+                      :item-text="getSelectText"
+                      item-value="value"
+                      :rules="[rules.required]"
+                      :disabled="$store.state.user.status !== 'admin'"
+                  >
+                  </v-select>
+                </v-col>
+                <v-col
+                    cols="12"
                 >
                   <h3>
                     Rabais
@@ -180,7 +208,9 @@ export default {
     Members.setupTranslation();
     const text = {
       title: "Membres du groupe",
-      noRebates: "Aucuns rabais"
+      noRebates: "Aucuns rabais",
+      waitingApproval: "En attente d'approbation",
+      status: "Status"
     };
     I18n.i18next.addResources("fr", "members", text);
     I18n.i18next.addResources("en", "members", text);
@@ -191,7 +221,22 @@ export default {
       editedMember: null,
       rules: Rules,
       originalEditMemberValues: null,
-      isSaveLoading: false
+      isSaveLoading: false,
+      status: [
+        {
+          value: "member"
+        },
+        {
+          value: "admin"
+        },
+        {
+          value: "disabled"
+        },
+        {
+          value: "pending",
+          disabled:true
+        }
+      ],
     }
   },
   mounted: async function () {
@@ -225,6 +270,9 @@ export default {
       this.originalEditMemberValues.rebates = JSON.parse(JSON.stringify(member.rebates))
       this.editedMember = member;
       this.editMemberDialog = true;
+    },
+    getSelectText: function (item) {
+      return this.$t(item.value);
     }
   }
 }

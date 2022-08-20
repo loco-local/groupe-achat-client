@@ -27,6 +27,12 @@ const Member = {
             }
         }
         return member;
+    },
+    isApproved: function (member) {
+        if (member === null || member === undefined) {
+            return false;
+        }
+        return member.status !== "pending" && member.status !== "disabled";
     }
 }
 export default Member;

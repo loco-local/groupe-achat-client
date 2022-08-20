@@ -88,6 +88,7 @@
 <script>
 import BuyGroupService from "@/service/BuyGroupService";
 import BuyGroupTranslation from "@/BuyGroupTranslation";
+import BuyGroup from "@/BuyGroup";
 
 export default {
   name: "GroupInfo",
@@ -120,10 +121,7 @@ export default {
   },
   computed: {
     subscriptionUrl: function () {
-      return window.location.href.substring(
-          0,
-          window.location.href.lastIndexOf(window.location.pathname)
-      ) + "/" + this.buyGroup.path + "/inscription"
+      return BuyGroup.getSubscriptionUrl(this.buyGroup.path)
     }
   }
 }

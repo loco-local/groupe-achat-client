@@ -178,6 +178,9 @@ export default {
       await this.$store.dispatch('setToken', response.data.token);
       await this.$store.dispatch('setUser', response.data.member);
       await this.$nextTick();
+      await this.$router.push({
+        name: 'Dashboard'
+      });
       this.isPendingRegistrationFlow = true;
       this.registerLoading = false;
     }

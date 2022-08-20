@@ -94,6 +94,7 @@ import MemberOrderService from "@/service/MemberOrderService";
 import GroupOrder from "@/GroupOrder";
 import OrderItem from "@/OrderItem";
 import MemberService from "@/service/MemberService";
+import Member from "@/Member";
 
 export default {
   name: "Products",
@@ -135,7 +136,7 @@ export default {
     setBuyGroup: async function (buyGroup) {
       if (buyGroup.relevantOrder) {
         this.hasExpectedQuantity = !this.isAdminModificationFlow;
-        this.canChangeExpectedQuantity = buyGroup.relevantOrder.status === GroupOrder.STATUS.CURRENT && !this.isAdminModificationFlow;
+        this.canChangeExpectedQuantity = Member.isApproved(this.$store.state.user) && buyGroup.relevantOrder.status === GroupOrder.STATUS.CURRENT && !this.isAdminModificationFlow;
       }
       const userOrder = await MemberOrderService.get(
           buyGroup.id,
