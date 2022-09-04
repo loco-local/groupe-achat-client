@@ -6,14 +6,16 @@
           color="white"
       >
         <div class="d-flex align-center">
-          <v-img
-              alt="Vuetify Logo"
-              class="shrink mr-2"
-              contain
-              :src="require('@/assets/logo-loco-horizontal-initiale.png')"
-              transition="scale-transition"
-              width="40"
-          />
+          <router-link to="/">
+            <v-img
+                alt="Logo Groupe d'achat"
+                class="shrink mr-2"
+                contain
+                :src="require('@/assets/logo-loco-horizontal-initiale.png')"
+                transition="scale-transition"
+                width="40"
+            />
+          </router-link>
         </div>
         <v-toolbar-title class="text-h5 pt-2 pb-2 ml-2">
           Groupe d'achat
