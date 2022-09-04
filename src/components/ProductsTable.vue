@@ -5,6 +5,7 @@
         :items="products"
         :options="tableOptions"
         :no-data-text="$t('productTable:noProducts')"
+        :no-results-text="$t('productTable:noProducts')"
         class="elevation-1 mt-8 productsTable body-1"
         :loading="loading"
         :loading-text="$t('productTable:loadingText')"
@@ -290,7 +291,7 @@ export default {
       updatePrice: "Prix mis à jour",
       nothing: "Rien de changé",
       loadingText: "Liste de produits en chargement",
-      noProducts: "Pas de produits",
+      noProducts: "Pas de produits disponibles",
       quantityUpdated: "Quantité mise à jour",
       costUnitPriceUpdated: "Prix coûtant mis à jour"
     });

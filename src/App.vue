@@ -18,7 +18,9 @@
           </router-link>
         </div>
         <v-toolbar-title class="text-h5 pt-2 pb-2 ml-2">
-          Groupe d'achat
+          <router-link to="/" style="text-decoration: none; color: inherit;">
+            Groupe d'achat
+          </router-link>
         </v-toolbar-title>
         <v-spacer></v-spacer>
 

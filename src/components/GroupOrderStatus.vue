@@ -5,30 +5,39 @@
         <v-card-text v-if="isLoading">
           <v-progress-circular indeterminate :size="80" :width="2"></v-progress-circular>
         </v-card-text>
-        <v-card-title v-if="!isLoading" class="vh-center">
-          <span class="mr-2">{{ $t('order') }}</span>
-          <GroupOrderStatusText :status="buyGroup.relevantOrder.status"></GroupOrderStatusText>
-        </v-card-title>
-        <v-card-subtitle v-if="!isLoading" class="body-1">
-          {{ buyGroup.relevantOrder.startDate | dayNoYearDate }} {{ $t('to') }}
-          {{ buyGroup.relevantOrder.endDate | dayDate }}
-        </v-card-subtitle>
-        <v-card v-if="!isLoading">
-          <v-card-text class="body-1">
-            <strong>
-              {{ buyGroup.relevantOrder.salePercentage }}%
-            </strong>
-            {{ $t('groupOrderStatus:addedToCost') }}.
-          </v-card-text>
-        </v-card>
-        <v-card v-if="!isLoading">
-          <v-card-title class="text-body-1 font-weight-bold vh-center pb-0">
-            {{ $t('groupOrderStatus:additionalFees') }}
-          </v-card-title>
-          <v-card-text class="pt-0 body-1">
-            {{ buyGroup.relevantOrder.additionalFees }}
-          </v-card-text>
-        </v-card>
+        <div v-if="!isLoading">
+          <div v-if="buyGroup.relevantOrder">
+            <v-card-title class="vh-center">
+              <span class="mr-2">{{ $t('order') }}</span>
+              <GroupOrderStatusText :status="buyGroup.relevantOrder.status"></GroupOrderStatusText>
+            </v-card-title>
+            <v-card-subtitle class="body-1">
+              {{ buyGroup.relevantOrder.startDate | dayNoYearDate }} {{ $t('to') }}
+              {{ buyGroup.relevantOrder.endDate | dayDate }}
+            </v-card-subtitle>
+            <v-card>
+              <v-card-text class="body-1">
+                <strong>
+                  {{ buyGroup.relevantOrder.salePercentage }}%
+                </strong>
+                {{ $t('groupOrderStatus:addedToCost') }}.
+              </v-card-text>
+            </v-card>
+            <v-card>
+              <v-card-title class="text-body-1 font-weight-bold vh-center pb-0">
+                {{ $t('groupOrderStatus:additionalFees') }}
+              </v-card-title>
+              <v-card-text class="pt-0 body-1">
+                {{ buyGroup.relevantOrder.additionalFees }}
+              </v-card-text>
+            </v-card>
+          </div>
+          <div v-else>
+            <v-card-text class="body-1">
+              {{$t('groupOrderStatus:noOrders')}}
+            </v-card-text>
+          </div>
+        </div>
       </v-card>
     </v-col>
   </v-row>
@@ -48,7 +57,8 @@ export default {
   data: function () {
     const text = {
       addedToCost: "ajouté au prix coûtant",
-      additionalFees: "Frais additionnels"
+      additionalFees: "Frais additionnels",
+      noOrders: "Pas de commande en vue"
     };
     I18n.i18next.addResources("fr", "groupOrderStatus", text);
     I18n.i18next.addResources("en", "groupOrderStatus", text);

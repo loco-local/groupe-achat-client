@@ -7,7 +7,7 @@
     ></GroupOrderStatus>
     <v-row>
       <v-col v-if="!isLoading && products.length === 0" cols="12" class="text-h6">
-        <v-sheet height="400" class="grey--text">
+        <v-sheet class="grey--text mb-4">
           {{ $t('products:noResults') }}
         </v-sheet>
       </v-col>
@@ -110,7 +110,8 @@ export default {
     const text = {
       "title": "Produits",
       info1: "Il n'y a pas de bouton de confirmation pour votre panier de commande.",
-      info2: "À la date de fin de la commande, les dernières quantités que vous aurez inscrites seront commandées aux fournisseurs."
+      info2: "À la date de fin de la commande, les dernières quantités que vous aurez inscrites seront commandées aux fournisseurs.",
+      noResults:"Pas de produits disponibles"
     };
     I18n.i18next.addResources("fr", "products", text);
     I18n.i18next.addResources("en", "products", text);
@@ -140,6 +141,9 @@ export default {
       if (buyGroup.relevantOrder) {
         this.hasExpectedQuantity = !this.isAdminModificationFlow;
         this.canChangeExpectedQuantity = Member.isApproved(this.$store.state.user) && buyGroup.relevantOrder.status === GroupOrder.STATUS.CURRENT && !this.isAdminModificationFlow;
+      }else{
+        this.isLoading = false;
+        return
       }
       const userOrder = await MemberOrderService.get(
           buyGroup.id,
