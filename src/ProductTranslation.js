@@ -36,7 +36,8 @@ export default {
             rebateOnAllProducts: "sur tous les produits",
             orderOf: "Commande de",
             isAdminRelated: "Visible pour super bénévoles seulement",
-            isAdminRelatedHint: 'Exemple "Frais de transport". Si coché, le "prix coûtant" sera chargé au membre et les rabais ne s\'appliqueront pas'
+            isAdminRelatedHint: 'Exemple "Frais de transport". Si coché, le "prix coûtant" sera chargé au membre et les rabais ne s\'appliqueront pas',
+            allMembersQuantity: "Qté des membres"
         };
         I18n.i18next.addResources("fr", "product", text);
         I18n.i18next.addResources("en", "product", text);

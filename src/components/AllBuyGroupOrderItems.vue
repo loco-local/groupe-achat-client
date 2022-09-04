@@ -23,6 +23,7 @@
           :hide-expected-unit-price="true"
           :show-expected-unit-price-after-rebate="true"
           :canEditCostUnitPrice="true"
+          :showAllMembersQuantity="true"
           ref="allOrderItemsTable"
       ></ProductsTable>
     </v-card-text>
@@ -32,6 +33,7 @@
 <script>
 import BuyGroupOrderService from "@/service/BuyGroupOrderService";
 import MemberOrderService from "@/service/MemberOrderService";
+import MemberOrdersQuantity from "@/MemberOrdersQuantity";
 
 export default {
   name: "AllBuyGroupOrderItems",
@@ -47,10 +49,23 @@ export default {
   },
   mounted: async function () {
     this.isLoading = true;
+    const allMemberOrders = await BuyGroupOrderService.listMemberOrdersItemsQuantities(
+        this.buyGroupId,
+        this.buyGroupOrderId
+    );
+    this.memberOrdersQuantities = new MemberOrdersQuantity(
+        allMemberOrders
+    );
+    const allMembersQuantities = this.memberOrdersQuantities.buildQuantities(allMemberOrders);
     this.userOrdersItems = await BuyGroupOrderService.listMemberOrderItems(
         this.buyGroupId,
         this.buyGroupOrderId
     );
+    this.userOrdersItems.forEach((memberOrderItem) => {
+      if (allMembersQuantities[memberOrderItem.ProductId]) {
+        memberOrderItem.allMembersQuantity = allMembersQuantities[memberOrderItem.ProductId]
+      }
+    })
     this.isLoading = false;
   },
   methods: {
@@ -76,7 +91,19 @@ export default {
       updatedItem.totalAfterRebateWithTaxes = prices.totalAfterRebateWithTaxes;
       updatedItem.tps = prices.tps;
       updatedItem.tvq = prices.tvq;
+      updatedItem.allMembersQuantity = this.memberOrdersQuantities.updateMemberQuantity(
+          updatedItem.MemberOrder.MemberId,
+          updatedItem.quantity,
+          updatedItem.ProductId
+      );
       this.$set(this.userOrdersItems, this.userOrdersItems.indexOf(updatedItem), updatedItem);
+      this.memberOrdersQuantities.setMemberOrders(this.userOrdersItems);
+      this.userOrdersItems.forEach((orderItem) => {
+        if (orderItem.ProductId === updatedItem.ProductId) {
+          orderItem.allMembersQuantity = this.memberOrdersQuantities.getQuantities()[orderItem.ProductId];
+          this.$set(this.userOrdersItems, this.userOrdersItems.indexOf(orderItem), orderItem);
+        }
+      })
       await this.$refs.allOrderItemsTable.showQuantityChangedSuccess();
     }
   }

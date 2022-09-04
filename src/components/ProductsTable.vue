@@ -35,6 +35,14 @@
         ></v-text-field>
         <span v-else>{{ item.expectedQuantity }}</span>
       </template>
+      <template v-slot:item.allMembersQuantity="{ item }" v-if="showAllMembersQuantity">
+        <span v-if="item.allMembersQuantity % 1 === 0" class="">
+          {{ item.allMembersQuantity }}
+        </span>
+        <span v-else class="red--text font-weight-bold">
+          {{ item.allMembersQuantity }}
+        </span>
+      </template>
       <template v-slot:item.quantity="{ item }" v-if="hasQuantity">
         <v-text-field
             type="number"
@@ -253,11 +261,15 @@ export default {
       type: Boolean,
       default: false
     },
-    hideSearch:{
+    hideSearch: {
       type: Boolean,
       default: false
     },
-    showIsAdminRelated:{
+    showIsAdminRelated: {
+      type: Boolean,
+      default: false
+    },
+    showAllMembersQuantity: {
       type: Boolean,
       default: false
     }
@@ -305,7 +317,7 @@ export default {
         value: 'expectedUnitPrice'
       });
     }
-    if(this.showExpectedUnitPriceAfterRebate){
+    if (this.showExpectedUnitPriceAfterRebate) {
       headers.push({
         text: this.$t('product:expectedUnitPrice'),
         value: 'expectedUnitPriceAfterRebate'
@@ -360,6 +372,12 @@ export default {
         value: 'quantity'
       });
     }
+    if (this.showAllMembersQuantity) {
+      headers.unshift({
+        text: this.$t('product:allMembersQuantity'),
+        value: 'allMembersQuantity'
+      });
+    }
     if (this.hasExpectedQuantity) {
       headers.unshift({
         text: this.$t('product:expectedQuantityShort'),
@@ -402,7 +420,7 @@ export default {
           }
       );
     }
-    if(this.showIsAdminRelated){
+    if (this.showIsAdminRelated) {
       headers.push({
         text: this.$t('product:isAdminRelated'),
         value: 'isAdminRelated'
@@ -483,7 +501,7 @@ export default {
       await this.$emit('costUnitPriceUpdate', product)
     },
     changeExpectedQuantity: async function (event, product) {
-      if (product.expectedQuantity.trim() === "") {
+      if (String(product.expectedQuantity).trim() === "") {
         product.expectedQuantity = 0;
       }
       if (isNaN(product.expectedQuantity)) {

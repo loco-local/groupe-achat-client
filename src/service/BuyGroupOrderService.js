@@ -27,6 +27,10 @@ const BuyGroupOrderService = {
             response.data
         );
     },
+    listMemberOrdersItemsQuantities: async function (buyGroupId, buyGroupOrderId) {
+        const response = await Service.api().get("/buy-group/" + buyGroupId + "/orders/" + buyGroupOrderId + "/memberOrders/items/quantities");
+        return response.data;
+    },
     listOrderItemsOfMember: async function (buyGroupId, buyGroupOrderId, memberId) {
         const response = await Service.api().get(
             "/buy-group/" + buyGroupId + "/orders/" + buyGroupOrderId + "/member/" + memberId + " /order-items"

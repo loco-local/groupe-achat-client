@@ -80,6 +80,7 @@
           :showExpectedUnitPriceAfterRebate="!isAdminModificationFlow"
           :showCostUnitPrice="isAdminModificationFlow"
           :showUnitPrice="isAdminModificationFlow"
+          :showAllMembersQuantity="true"
           @quantityUpdate="updateOrderQuantity"
           ref="productsTable"
       ></ProductsTable>
@@ -95,6 +96,8 @@ import GroupOrder from "@/GroupOrder";
 import OrderItem from "@/OrderItem";
 import MemberService from "@/service/MemberService";
 import Member from "@/Member";
+import BuyGroupOrderService from "@/service/BuyGroupOrderService";
+import MemberOrdersQuantity from "@/MemberOrdersQuantity";
 
 export default {
   name: "Products",
@@ -154,6 +157,14 @@ export default {
       this.products = this.products.filter((product) => {
         return !(product.isAdminRelated && !this.isAdminModificationFlow);
       });
+      const allMemberOrders = Member.isApproved(this.$store.state.user) ? await BuyGroupOrderService.listMemberOrdersItemsQuantities(
+          buyGroup.id,
+          buyGroup.relevantOrder.id
+      ) : {};
+      this.memberOrdersQuantities = new MemberOrdersQuantity(
+          allMemberOrders
+      );
+      const allMembersQuantities = this.memberOrdersQuantities.buildQuantities(allMemberOrders);
       this.orderItems.forEach((item) => {
         const matchingProduct = this.products.filter((product) => {
           return product.id === item.ProductId;
@@ -189,7 +200,12 @@ export default {
           )
         }
       });
-      this.products = this.products.sort((a, b) => {
+      this.products = this.products.map((product) => {
+        if (allMembersQuantities[product.id]) {
+          product.allMembersQuantity = allMembersQuantities[product.id]
+        }
+        return product;
+      }).sort((a, b) => {
         if (this.isAdminModificationFlow) {
           if (a.isAdminRelated === b.isAdminRelated) {
             return (b.quantity || 0) - (a.quantity || 0);
@@ -218,10 +234,13 @@ export default {
       } else {
         orderItem = orderItem[0];
       }
+      let updatedQuantity = 0;
       if (this.isAdminModificationFlow) {
         orderItem.quantity = updatedProduct.quantity;
+        updatedQuantity = updatedProduct.quantity;
       } else {
         orderItem.expectedQuantity = updatedProduct.expectedQuantity;
+        updatedQuantity = updatedProduct.expectedQuantity;
       }
       let prices;
       if (this.isAdminModificationFlow) {
@@ -249,6 +268,11 @@ export default {
       }
       updatedProduct.tps = prices.tps;
       updatedProduct.tvq = prices.tvq;
+      updatedProduct.allMembersQuantity = this.memberOrdersQuantities.updateMemberQuantity(
+          this.member.id,
+          updatedQuantity,
+          updatedProduct.id
+      );
       this.$set(this.products, this.products.indexOf(updatedProduct), updatedProduct);
       await this.$refs.productsTable.showQuantityChangedSuccess();
     }
