@@ -1,3 +1,4 @@
+import {format} from 'date-fns'
 const STATUS = {
     CURRENT: "CURRENT",
     FINISHED: "FINISHED",
@@ -8,6 +9,8 @@ const GroupOrder = {
     format: function (groupOrder) {
         groupOrder.startDate = new Date(groupOrder.startDate);
         groupOrder.endDate = new Date(groupOrder.endDate);
+        groupOrder.startDateFormattedForInput = format(groupOrder.startDate, "yyyy-MM-dd")
+        groupOrder.endDateFormattedForInput = format(groupOrder.endDate, "yyyy-MM-dd")
         groupOrder.status = GroupOrder.calculateStatus(groupOrder);
         return groupOrder;
     },

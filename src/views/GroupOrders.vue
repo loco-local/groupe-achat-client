@@ -88,8 +88,7 @@
                       <!--                        {{ editedOrder.startDate | dayDate}}-->
                       <!--                      </div>-->
                       <v-text-field
-                          v-model="editedOrder.startDate"
-                          :value="editedOrder.startDate | dayDate"
+                          v-model="editedOrder.startDateFormattedForInput"
                           :label="$t('startDate')"
                           prepend-icon="mdi-calendar"
                           readonly
@@ -99,7 +98,7 @@
                       ></v-text-field>
                     </template>
                     <v-date-picker
-                        v-model="editedOrder.startDate"
+                        v-model="editedOrder.startDateFormattedForInput"
                         @input="startDateMenu = false"
                     ></v-date-picker>
                   </v-menu>
@@ -118,7 +117,7 @@
                   >
                     <template v-slot:activator="{ on, attrs }">
                       <v-text-field
-                          v-model="editedOrder.endDate"
+                          v-model="editedOrder.endDateFormattedForInput"
                           :label="$t('endDate')"
                           prepend-icon="mdi-calendar"
                           readonly
@@ -128,7 +127,7 @@
                       ></v-text-field>
                     </template>
                     <v-date-picker
-                        v-model="editedOrder.endDate"
+                        v-model="editedOrder.endDateFormattedForInput"
                         @input="endDateMenu = false"
                         :rules="[rules.required]"
                     ></v-date-picker>
@@ -255,8 +254,8 @@ export default {
         return
       }
       this.isSaveLoading = true;
-      this.editedOrder.startDate = new Date(this.editedOrder.startDate);
-      this.editedOrder.endDate = new Date(this.editedOrder.endDate);
+      this.editedOrder.startDate = new Date(this.editedOrder.startDateFormattedForInput.replaceAll("-", "/"));
+      this.editedOrder.endDate = new Date(this.editedOrder.endDateFormattedForInput.replaceAll("-", "/"));
       if (this.isNewOrderFlow) {
         await BuyGroupOrderService.create(
             this.editedOrder,
