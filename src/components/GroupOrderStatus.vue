@@ -32,9 +32,15 @@
               </v-card-text>
             </v-card>
           </div>
-          <div v-else>
+          <div v-if="!buyGroup.relevantOrder && latestOrder === null">
             <v-card-text class="body-1">
-              {{$t('groupOrderStatus:noOrders')}}
+              {{ $t('groupOrderStatus:noOrders') }}
+            </v-card-text>
+          </div>
+          <div v-if="latestOrder !== null">
+            <v-card-text class="body-1">
+              {{ $t('groupOrderStatus:latestOrder') }}
+              {{ latestOrder.endDate | dayDate }}
             </v-card-text>
           </div>
         </div>
@@ -58,12 +64,14 @@ export default {
     const text = {
       addedToCost: "ajouté au prix coûtant",
       additionalFees: "Frais additionnels",
-      noOrders: "Pas de commande en vue"
+      noOrders: "Pas de commande en vue",
+      latestOrder: "La dernière commande c'est terminé le"
     };
     I18n.i18next.addResources("fr", "groupOrderStatus", text);
     I18n.i18next.addResources("en", "groupOrderStatus", text);
     return {
       buyGroup: null,
+      latestOrder: null,
       isLoading: true,
     }
   },
@@ -73,9 +81,18 @@ export default {
         await BuyGroupService.getForId(this.buyGroupId) :
         await BuyGroupService.getForPath(this.buyGroupPath);
     const unfinishedGroupOrders = await BuyGroupOrderService.listUnfinished(this.buyGroup.id);
-    this.buyGroup.relevantOrder = GroupOrder.mostRelevantUnfinishedOrder(
-        unfinishedGroupOrders
-    );
+    if (unfinishedGroupOrders.length === 0) {
+      const allOrders = await BuyGroupOrderService.list(this.buyGroup.id);
+      if (allOrders.length) {
+        this.latestOrder = GroupOrder.latestOrder(
+            allOrders
+        );
+      }
+    } else {
+      this.buyGroup.relevantOrder = GroupOrder.mostRelevantUnfinishedOrder(
+          unfinishedGroupOrders
+      );
+    }
     await this.$emit('buyGroupDefined', this.buyGroup);
     this.isLoading = false;
   }

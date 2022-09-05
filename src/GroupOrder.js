@@ -1,4 +1,5 @@
-import {format} from 'date-fns'
+import {format, startOfDay} from 'date-fns'
+
 const STATUS = {
     CURRENT: "CURRENT",
     FINISHED: "FINISHED",
@@ -15,16 +16,15 @@ const GroupOrder = {
         return groupOrder;
     },
     calculateStatus: function (groupOrder) {
-        const today = new Date();
-        if (groupOrder.startDate < today) {
+        const today = startOfDay(new Date());
+        if (groupOrder.startDate <= today && groupOrder.endDate >= today) {
             return STATUS.CURRENT
         }
         if (groupOrder.endDate < today) {
             return STATUS.FINISHED
         }
         return STATUS.TO_COME;
-    }
-    ,
+    },
     mostRelevantUnfinishedOrder: function (orders) {
         return orders.sort((a, b) => {
             if (a.status === STATUS.CURRENT) {
@@ -35,8 +35,12 @@ const GroupOrder = {
             }
             return a.startDate - b.startDate;
         })[0];
-    }
-    ,
+    },
+    latestOrder: function (orders) {
+        return orders.sort((a, b) => {
+            return b.endDate - a.endDate;
+        })[0];
+    },
 }
 
 export default GroupOrder;

@@ -160,10 +160,11 @@ export default {
       }
       this.showAllMembersQuantity = hasRelevantOrder && this.$store.state.user !== null;
       const salePercentage = buyGroup.relevantOrder ? buyGroup.relevantOrder.salePercentage : buyGroup.salePercentage;
+      let rebates = this.member === null ? {} : this.member.rebates;
       this.products = await ProductService.listPutForward(
           buyGroup.id,
           salePercentage,
-          this.member.rebates
+          rebates
       );
       this.products = this.products.filter((product) => {
         return !(product.isAdminRelated && !this.isAdminModificationFlow);

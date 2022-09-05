@@ -208,6 +208,7 @@ import Rules from "@/Rules";
 import BuyGroupTranslation from "@/BuyGroupTranslation";
 import BuyGroupService from "@/service/BuyGroupService";
 import dateUtil from "@/dateUtil";
+import GroupOrder from "@/GroupOrder";
 
 export default {
 
@@ -256,6 +257,7 @@ export default {
       this.isSaveLoading = true;
       this.editedOrder.startDate = new Date(this.editedOrder.startDateFormattedForInput.replaceAll("-", "/"));
       this.editedOrder.endDate = new Date(this.editedOrder.endDateFormattedForInput.replaceAll("-", "/"));
+      this.editedOrder.status = GroupOrder.calculateStatus(this.editedOrder);
       if (this.isNewOrderFlow) {
         await BuyGroupOrderService.create(
             this.editedOrder,
