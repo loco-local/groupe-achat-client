@@ -111,7 +111,7 @@ export default {
       "title": "Produits",
       info1: "Il n'y a pas de bouton de confirmation pour votre panier de commande.",
       info2: "À la date de fin de la commande, les dernières quantités que vous aurez inscrites seront commandées aux fournisseurs.",
-      noResults:"Pas de produits disponibles"
+      noResults: "Pas de produits disponibles"
     };
     I18n.i18next.addResources("fr", "products", text);
     I18n.i18next.addResources("en", "products", text);
@@ -132,8 +132,14 @@ export default {
     this.isLoading = true;
     this.isMemberLoading = true;
     this.isAdminModificationFlow = this.$router.currentRoute.name === 'ProductsOrderOfMember';
-    this.memberId = this.isAdminModificationFlow ? this.$route.params.memberId : this.$store.state.user.id;
-    this.member = await MemberService.getForId(this.memberId);
+    if (this.isAdminModificationFlow) {
+      this.memberId = this.$route.params.memberId;
+    } else if (this.$store.state.user !== null) {
+      this.memberId = this.$store.state.user.id;
+    }
+    if(this.memberId !== null){
+      this.member = await MemberService.getForId(this.memberId);
+    }
     this.isMemberLoading = false;
   },
   methods: {
@@ -141,7 +147,7 @@ export default {
       if (buyGroup.relevantOrder) {
         this.hasExpectedQuantity = !this.isAdminModificationFlow;
         this.canChangeExpectedQuantity = Member.isApproved(this.$store.state.user) && buyGroup.relevantOrder.status === GroupOrder.STATUS.CURRENT && !this.isAdminModificationFlow;
-      }else{
+      } else {
         this.isLoading = false;
         return
       }
