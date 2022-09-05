@@ -80,7 +80,7 @@
           :showExpectedUnitPriceAfterRebate="!isAdminModificationFlow"
           :showCostUnitPrice="isAdminModificationFlow"
           :showUnitPrice="isAdminModificationFlow"
-          :showAllMembersQuantity="true"
+          :showAllMembersQuantity="showAllMembersQuantity"
           @quantityUpdate="updateOrderQuantity"
           ref="productsTable"
       ></ProductsTable>
@@ -125,7 +125,8 @@ export default {
       isMemberLoading: true,
       canChangeExpectedQuantity: false,
       hasExpectedQuantity: false,
-      isAdminModificationFlow: false
+      isAdminModificationFlow: false,
+      showAllMembersQuantity: true
     }
   },
   mounted: async function () {
@@ -137,44 +138,47 @@ export default {
     } else if (this.$store.state.user !== null) {
       this.memberId = this.$store.state.user.id;
     }
-    if(this.memberId !== null){
+    if (this.memberId !== null) {
       this.member = await MemberService.getForId(this.memberId);
     }
     this.isMemberLoading = false;
   },
   methods: {
     setBuyGroup: async function (buyGroup) {
-      if (buyGroup.relevantOrder) {
+      const hasRelevantOrder = buyGroup.relevantOrder !== undefined && buyGroup.relevantOrder !== null;
+      if (hasRelevantOrder) {
         this.hasExpectedQuantity = !this.isAdminModificationFlow;
         this.canChangeExpectedQuantity = Member.isApproved(this.$store.state.user) && buyGroup.relevantOrder.status === GroupOrder.STATUS.CURRENT && !this.isAdminModificationFlow;
-      } else {
-        this.isLoading = false;
-        return
+        const userOrder = await MemberOrderService.get(
+            buyGroup.id,
+            buyGroup.relevantOrder.id,
+            this.memberId,
+            true
+        );
+        this.userOrderId = userOrder.id;
+        this.orderItems = await MemberOrderService.listForOrderId(userOrder.id);
       }
-      const userOrder = await MemberOrderService.get(
-          buyGroup.id,
-          buyGroup.relevantOrder.id,
-          this.memberId,
-          true
-      );
-      this.userOrderId = userOrder.id;
-      this.orderItems = await MemberOrderService.listForOrderId(userOrder.id);
+      this.showAllMembersQuantity = hasRelevantOrder && this.$store.state.user !== null;
+      const salePercentage = buyGroup.relevantOrder ? buyGroup.relevantOrder.salePercentage : buyGroup.salePercentage;
       this.products = await ProductService.listPutForward(
           buyGroup.id,
-          buyGroup.relevantOrder.salePercentage,
+          salePercentage,
           this.member.rebates
       );
       this.products = this.products.filter((product) => {
         return !(product.isAdminRelated && !this.isAdminModificationFlow);
       });
-      const allMemberOrders = Member.isApproved(this.$store.state.user) ? await BuyGroupOrderService.listMemberOrdersItemsQuantities(
-          buyGroup.id,
-          buyGroup.relevantOrder.id
-      ) : {};
-      this.memberOrdersQuantities = new MemberOrdersQuantity(
-          allMemberOrders
-      );
-      const allMembersQuantities = this.memberOrdersQuantities.buildQuantities(allMemberOrders);
+      let allMembersQuantities = {};
+      if (hasRelevantOrder) {
+        const allMemberOrders = Member.isApproved(this.$store.state.user) ? await BuyGroupOrderService.listMemberOrdersItemsQuantities(
+            buyGroup.id,
+            buyGroup.relevantOrder.id
+        ) : {};
+        this.memberOrdersQuantities = new MemberOrdersQuantity(
+            allMemberOrders
+        );
+        allMembersQuantities = this.memberOrdersQuantities.buildQuantities(allMemberOrders);
+      }
       this.orderItems.forEach((item) => {
         const matchingProduct = this.products.filter((product) => {
           return product.id === item.ProductId;
