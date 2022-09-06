@@ -145,8 +145,8 @@ export default {
   },
   methods: {
     setBuyGroup: async function (buyGroup) {
-      const hasRelevantOrder = buyGroup.relevantOrder !== undefined && buyGroup.relevantOrder !== null;
-      if (hasRelevantOrder) {
+      const hasCurrentOrder = buyGroup.relevantOrder !== undefined && buyGroup.relevantOrder !== null && GroupOrder.isCurrent(buyGroup.relevantOrder);
+      if (hasCurrentOrder) {
         this.hasExpectedQuantity = !this.isAdminModificationFlow;
         this.canChangeExpectedQuantity = Member.isApproved(this.$store.state.user) && buyGroup.relevantOrder.status === GroupOrder.STATUS.CURRENT && !this.isAdminModificationFlow;
         const userOrder = await MemberOrderService.get(
@@ -158,7 +158,7 @@ export default {
         this.userOrderId = userOrder.id;
         this.orderItems = await MemberOrderService.listForOrderId(userOrder.id);
       }
-      this.showAllMembersQuantity = hasRelevantOrder && this.$store.state.user !== null;
+      this.showAllMembersQuantity = hasCurrentOrder && this.$store.state.user !== null;
       const salePercentage = buyGroup.relevantOrder ? buyGroup.relevantOrder.salePercentage : buyGroup.salePercentage;
       let rebates = this.member === null ? {} : this.member.rebates;
       this.products = await ProductService.listPutForward(
@@ -170,7 +170,7 @@ export default {
         return !(product.isAdminRelated && !this.isAdminModificationFlow);
       });
       let allMembersQuantities = {};
-      if (hasRelevantOrder) {
+      if (hasCurrentOrder) {
         const allMemberOrders = Member.isApproved(this.$store.state.user) ? await BuyGroupOrderService.listMemberOrdersItemsQuantities(
             buyGroup.id,
             buyGroup.relevantOrder.id

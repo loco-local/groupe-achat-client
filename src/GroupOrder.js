@@ -25,6 +25,9 @@ const GroupOrder = {
         }
         return STATUS.TO_COME;
     },
+    isCurrent: function (groupOrder) {
+        return GroupOrder.calculateStatus(groupOrder) === STATUS.CURRENT;
+    },
     mostRelevantUnfinishedOrder: function (orders) {
         return orders.sort((a, b) => {
             if (a.status === STATUS.CURRENT) {
