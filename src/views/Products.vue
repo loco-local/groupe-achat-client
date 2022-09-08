@@ -38,7 +38,7 @@
           </v-card>
         </v-col>
       </v-row>
-      <v-col cols="12">
+      <v-col cols="12" v-if="memberId !== null">
         <v-alert
             text
             dense
@@ -57,7 +57,7 @@
           <!--      <v-card-title class="text-h4">-->
           <!--        {{ $t('products:title') }}-->
           <!--      </v-card-title>-->
-          <v-card-text class="font-weight-bold text-left body-1">
+          <v-card-text class="font-weight-bold text-left body-1" v-if="memberId !== null">
             <span class="">{{ $t('total') }} : </span>
             {{ total | currency }}
           </v-card-text>
@@ -145,20 +145,22 @@ export default {
   },
   methods: {
     setBuyGroup: async function (buyGroup) {
-      const hasCurrentOrder = buyGroup.relevantOrder !== undefined && buyGroup.relevantOrder !== null && GroupOrder.isCurrent(buyGroup.relevantOrder);
-      if (hasCurrentOrder) {
-        this.hasExpectedQuantity = !this.isAdminModificationFlow;
-        this.canChangeExpectedQuantity = Member.isApproved(this.$store.state.user) && buyGroup.relevantOrder.status === GroupOrder.STATUS.CURRENT && !this.isAdminModificationFlow;
-        const userOrder = await MemberOrderService.get(
-            buyGroup.id,
-            buyGroup.relevantOrder.id,
-            this.memberId,
-            true
-        );
-        this.userOrderId = userOrder.id;
-        this.orderItems = await MemberOrderService.listForOrderId(userOrder.id);
+      const hasRelevantOrder = buyGroup.relevantOrder !== undefined && buyGroup.relevantOrder !== null;
+      if (hasRelevantOrder) {
+        this.hasExpectedQuantity = !this.isAdminModificationFlow && this.memberId !== null;
+        this.canChangeExpectedQuantity = Member.isApproved(this.$store.state.user) && GroupOrder.isCurrent(buyGroup) && !this.isAdminModificationFlow;
+        if (this.memberId !== null) {
+          const userOrder = await MemberOrderService.get(
+              buyGroup.id,
+              buyGroup.relevantOrder.id,
+              this.memberId,
+              true
+          );
+          this.userOrderId = userOrder.id;
+          this.orderItems = await MemberOrderService.listForOrderId(userOrder.id);
+        }
       }
-      this.showAllMembersQuantity = hasCurrentOrder && this.$store.state.user !== null;
+      this.showAllMembersQuantity = hasRelevantOrder && this.$store.state.user !== null;
       const salePercentage = buyGroup.relevantOrder ? buyGroup.relevantOrder.salePercentage : buyGroup.salePercentage;
       let rebates = this.member === null ? {} : this.member.rebates;
       this.products = await ProductService.listPutForward(
@@ -170,11 +172,11 @@ export default {
         return !(product.isAdminRelated && !this.isAdminModificationFlow);
       });
       let allMembersQuantities = {};
-      if (hasCurrentOrder) {
+      if (hasRelevantOrder) {
         const allMemberOrders = Member.isApproved(this.$store.state.user) ? await BuyGroupOrderService.listMemberOrdersItemsQuantities(
             buyGroup.id,
             buyGroup.relevantOrder.id
-        ) : {};
+        ) : [];
         this.memberOrdersQuantities = new MemberOrdersQuantity(
             allMemberOrders
         );
