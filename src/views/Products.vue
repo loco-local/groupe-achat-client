@@ -198,7 +198,9 @@ export default {
           matchingProduct[0].expectedTotalAfterRebateWithTaxes = OrderItem.calculateTotal(
               item,
               item.expectedQuantity,
-              item.expectedUnitPrice
+              item.expectedUnitPrice,
+              item.quantity,
+              item.costUnitPrice
           );
 
           matchingProduct[0].costUnitPrice = item.costUnitPrice || item.expectedCostUnitPrice;
@@ -300,7 +302,9 @@ export default {
         return OrderItem.calculateTotal(
             orderItem,
             orderItem.expectedQuantity,
-            orderItem.expectedUnitPrice
+            orderItem.expectedUnitPrice,
+            orderItem.quantity,
+            orderItem.costUnitPrice
         ) + total;
       }, 0)
     }

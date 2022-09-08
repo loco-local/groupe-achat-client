@@ -48,7 +48,9 @@ const BuyGroupOrderService = {
             orderItem.total = OrderItem.calculateTotal(
                 orderItem,
                 orderItem.expectedQuantity,
-                orderItem.expectedUnitPrice
+                orderItem.expectedUnitPrice,
+                orderItem.quantity,
+                orderItem.costUnitPrice
             )
             if (orderItem.MemberOrder && orderItem.MemberOrder.Member) {
                 orderItem.personFullname = orderItem.MemberOrder.Member.firstname + " " + orderItem.MemberOrder.Member.lastname;
