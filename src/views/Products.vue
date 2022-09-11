@@ -148,7 +148,7 @@ export default {
       const hasRelevantOrder = buyGroup.relevantOrder !== undefined && buyGroup.relevantOrder !== null;
       if (hasRelevantOrder) {
         this.hasExpectedQuantity = !this.isAdminModificationFlow && this.memberId !== null;
-        this.canChangeExpectedQuantity = Member.isApproved(this.$store.state.user) && GroupOrder.isCurrent(buyGroup) && !this.isAdminModificationFlow;
+        this.canChangeExpectedQuantity = Member.isApproved(this.$store.state.user) && GroupOrder.isCurrent(buyGroup.relevantOrder) && !this.isAdminModificationFlow;
         if (this.memberId !== null) {
           const userOrder = await MemberOrderService.get(
               buyGroup.id,

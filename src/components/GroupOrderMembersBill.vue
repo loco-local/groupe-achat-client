@@ -14,6 +14,17 @@
             {{ $t('downloadAll') }}
           </v-btn>
         </v-col>
+        <v-col cols="12">
+          <v-btn class="ml-4"
+                 v-clipboard="emailsOfParticipants()"
+                 v-clipboard:success="copyEmailsSuccess"
+          >
+            <v-icon left>
+              content_copy
+            </v-icon>
+            {{ $t('membersBill:emailOfParticipatingMembers') }}
+          </v-btn>
+        </v-col>
         <v-col cols="12" class="vh-center">
           <v-list width="475">
             <div v-for="userOrder in userOrders" :key="userOrder.id">
@@ -50,6 +61,25 @@
         :buyGroupPath="buyGroupPath"
         ref="userBillDialog"
     ></UserBillDialog>
+    <v-snackbar
+        v-model="emailCopySnackbar"
+        top
+        :timeout="7000"
+    >
+        <span class="body-1">
+          {{ $t('membersBill:emailsCopied') }}
+        </span>
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="emailCopySnackbar = false"
+        >
+          {{ $t('close') }}
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-card>
 </template>
 
@@ -66,14 +96,17 @@ export default {
   props: ['buyGroupId', 'buyGroupOrderId', 'buyGroupPath'],
   data: function () {
     const text = {
-      noBills: "Pas encore de commandes"
+      noBills: "Pas encore de commandes",
+      emailOfParticipatingMembers: "Courriel des membres participants",
+      emailsCopied: "Les courriels sont copiés dans votre presse papier"
     };
     I18n.i18next.addResources("fr", "membersBill", text);
     I18n.i18next.addResources("en", "membersBill", text);
     return {
       isLoading: true,
       userOrders: [],
-      userBillModal: false
+      userBillModal: false,
+      emailCopySnackbar: false
     }
   },
   mounted: async function () {
@@ -90,6 +123,15 @@ export default {
     this.isLoading = false;
   },
   methods: {
+    copyEmailsSuccess: function () {
+      this.emailCopySnackbar = true;
+    },
+    emailsOfParticipants: function () {
+      return this.userOrders.map((userOrder) => {
+        const member = userOrder.Member;
+        return member.firstname + " " + member.lastname + " <" + member.email + ">"
+      }).join(", ");
+    },
     downloadReceipt: async function (memberId) {
       LoadingFlow.enter();
       const userOrderItems = await BuyGroupOrderService.listOrderItemsOfMember(
