@@ -1,4 +1,4 @@
-import {format, startOfDay} from 'date-fns'
+import {format, startOfDay, endOfDay} from 'date-fns'
 
 const STATUS = {
     CURRENT: "CURRENT",
@@ -17,10 +17,12 @@ const GroupOrder = {
     },
     calculateStatus: function (groupOrder) {
         const today = startOfDay(new Date());
-        if (groupOrder.startDate <= today && groupOrder.endDate >= today) {
+        const startDate = startOfDay(groupOrder.startDate);
+        const endDate = endOfDay(groupOrder.endDate);
+        if (startDate <= today && endDate >= today) {
             return STATUS.CURRENT
         }
-        if (groupOrder.endDate < today) {
+        if (endDate < today) {
             return STATUS.FINISHED
         }
         return STATUS.TO_COME;

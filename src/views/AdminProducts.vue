@@ -113,12 +113,32 @@
                 </v-col>
                 <v-col
                     cols="12"
+                    sm="12"
+                    md="12"
+                >
+                  <v-text-field
+                      v-model="editedProduct.category"
+                      :label="$t('product:category')"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                    cols="12"
                     sm="6"
                     md="4"
                 >
                   <v-text-field
                       v-model="editedProduct.format"
                       :label="$t('product:format')"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                >
+                  <v-text-field
+                      v-model="editedProduct.qtyInBox"
+                      :label="$t('product:qtyInBox')"
                   ></v-text-field>
                 </v-col>
                 <v-col
@@ -195,7 +215,7 @@
                 </v-col>
                 <v-col
                     cols="12"
-                    sm="6"
+                    sm="12"
                 >
                   <v-checkbox
                       :label="$t('product:isAdminRelated')"
@@ -305,6 +325,8 @@ export default {
         this.editedProduct.maker = this.originalEditProductValues.maker;
         this.editedProduct.provider = this.originalEditProductValues.provider;
         this.editedProduct.isAvailable = this.originalEditProductValues.isAvailable;
+        this.editedProduct.qtyInBox = this.originalEditProductValues.qtyInBox;
+        this.editedProduct.category = this.originalEditProductValues.category;
         this.editedProduct.hasTPS = this.originalEditProductValues.hasTPS;
         this.editedProduct.hasTVQ = this.originalEditProductValues.hasTVQ;
       }
