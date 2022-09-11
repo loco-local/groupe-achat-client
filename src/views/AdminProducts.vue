@@ -273,7 +273,7 @@ export default {
     ProductsTable: () => import('@/components/ProductsTable'),
   },
   data: function () {
-    I18n.i18next.addResources("fr", "productsAdmin", {
+    const text = {
       "title": "Produits",
       "import": "Importer Produits",
       putForward: "Valorisé",
@@ -282,18 +282,9 @@ export default {
       deprecatedInfinitive: "Déprécier",
       newProduct: "Ajouter Produit",
       onlyBigFormat: "2.5 litres/kilo ou plus gros"
-
-    });
-    I18n.i18next.addResources("en", "productsAdmin", {
-      "title": "Produits",
-      "import": "Importer Produits",
-      putForward: "Valorisé",
-      putForwardInfinitive: "Valoriser",
-      deprecate: "Déprécié",
-      deprecatedInfinitive: "Déprécier",
-      newProduct: "Ajouter Produit",
-      onlyBigFormat: "2.5 litres/kilo ou plus gros"
-    });
+    };
+    I18n.i18next.addResources("fr", "productsAdmin", text);
+    I18n.i18next.addResources("en", "productsAdmin", text);
     return {
       productsPutForward: null,
       productsDeprecated: null,
@@ -337,6 +328,7 @@ export default {
         return
       }
       this.isSaveLoading = true;
+      this.editedProduct.expectedCostUnitPrice = parseFloat(this.editedProduct.expectedCostUnitPrice);
       if (this.isNewProductFlow) {
         await ProductService.createProduct(this.editedProduct);
       } else {

@@ -16,7 +16,7 @@ MemberOrdersQuantity.prototype.buildQuantities = function (memberId, updatedQuan
                 quantity = memberOrderItem.expectedQuantity
             }
         }
-        productQuantities[memberOrderItem.ProductId] = parseFloat(quantity) + parseFloat(productQuantities[memberOrderItem.ProductId]);
+        productQuantities[memberOrderItem.ProductId] = (parseFloat(quantity) + parseFloat(productQuantities[memberOrderItem.ProductId])).toFixed(2);
         return productQuantities;
     }, {})
     return this.quantities;
@@ -28,7 +28,7 @@ MemberOrdersQuantity.prototype.updateMemberQuantity = function (memberId, update
     const productQuantities = this.buildQuantities(
         memberId, updatedQuantity, productId
     );
-    return productQuantities[productId];
+    return productQuantities[productId]
 }
 MemberOrdersQuantity.prototype.setMemberOrders = function (memberOrders) {
     this.memberOrders = memberOrders;
