@@ -147,21 +147,12 @@
                     md="4"
                 >
                   <v-text-field
+                      type="number"
                       v-model="editedProduct.expectedCostUnitPrice"
                       :label="$t('product:expectedCostUnitPrice')"
                       :rules="[rules.required]"
                   ></v-text-field>
                 </v-col>
-                <!--                <v-col-->
-                <!--                    cols="12"-->
-                <!--                    sm="6"-->
-                <!--                    md="4"-->
-                <!--                >-->
-                <!--                  <v-text-field-->
-                <!--                      v-model="editedProduct.category"-->
-                <!--                      :label="$t('product:category')"-->
-                <!--                  ></v-text-field>-->
-                <!--                </v-col>-->
                 <v-col
                     cols="12"
                     sm="6"
@@ -328,7 +319,9 @@ export default {
         return
       }
       this.isSaveLoading = true;
+      console.log(this.editedProduct.expectedCostUnitPrice)
       this.editedProduct.expectedCostUnitPrice = parseFloat(this.editedProduct.expectedCostUnitPrice);
+      console.log(this.editedProduct.expectedCostUnitPrice)
       if (this.isNewProductFlow) {
         await ProductService.createProduct(this.editedProduct);
       } else {
