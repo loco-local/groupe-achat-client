@@ -143,15 +143,17 @@
                 </v-col>
                 <v-col
                     cols="12"
-                    sm="6"
-                    md="4"
                 >
-                  <v-text-field
-                      type="number"
-                      v-model="editedProduct.expectedCostUnitPrice"
-                      :label="$t('product:expectedCostUnitPrice')"
-                      :rules="[rules.required]"
-                  ></v-text-field>
+                  <v-row>
+                    <v-col cols="12" sm="6" md="6">
+                      <v-text-field
+                          type="number"
+                          v-model="editedProduct.expectedCostUnitPrice"
+                          :label="$t('product:expectedCostUnitPrice')"
+                          :rules="[rules.required]"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
                 </v-col>
                 <v-col
                     cols="12"
