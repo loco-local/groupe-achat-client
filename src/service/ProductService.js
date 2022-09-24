@@ -67,10 +67,11 @@ export default {
             '/products/' + productId + "/unavailable")
     },
     createProduct: async function (product) {
-        return await Service.api().post(
+        const response = await Service.api().post(
             '/products/',
             product
-        )
+        );
+        return response.data;
     },
     internalCodeExists: async function (internalCode) {
         const response = await Service.api().post(

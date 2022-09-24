@@ -248,26 +248,70 @@
           </v-btn>
         </v-card-actions>
       </v-card>
-      <v-snackbar
-          v-model="internalCodeExistsSnackbar"
-          top
-          :timeout="7000"
-      >
+    </v-dialog>
+    <v-snackbar
+        v-model="internalCodeExistsSnackbar"
+        top
+        :timeout="7000"
+    >
         <span class="body-1">
           {{ $t('productsAdmin:internalCodeExists') }}
         </span>
-        <template v-slot:action="{ attrs }">
-          <v-btn
-              color="white"
-              text
-              v-bind="attrs"
-              @click="internalCodeExistsSnackbar = false"
-          >
-            {{ $t('close') }}
-          </v-btn>
-        </template>
-      </v-snackbar>
-    </v-dialog>
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="internalCodeExistsSnackbar = false"
+        >
+          {{ $t('close') }}
+        </v-btn>
+      </template>
+    </v-snackbar>
+    <v-snackbar
+        v-model="productCreatedSnackbar"
+        top
+        color="success"
+        :timeout="14000"
+    >
+        <span class="body-1">
+          {{ $t('productsAdmin:productCreated') }}
+          <span v-if="createdProduct !== null">
+            {{ createdProduct.name }}
+            {{ createdProduct.internalCode }}
+          </span>
+        </span>
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="productCreatedSnackbar = false"
+        >
+          {{ $t('close') }}
+        </v-btn>
+      </template>
+    </v-snackbar>
+    <v-snackbar
+        v-model="productUpdatedSnackbar"
+        top
+        color="success"
+        :timeout="14000"
+    >
+        <span class="body-1">
+          {{ $t('productsAdmin:productUpdated') }}
+        </span>
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="productUpdatedSnackbar = false"
+        >
+          {{ $t('close') }}
+        </v-btn>
+      </template>
+    </v-snackbar>
   </Page>
 </template>
 
@@ -294,7 +338,9 @@ export default {
       deprecatedInfinitive: "Déprécier",
       newProduct: "Ajouter Produit",
       onlyBigFormat: "2.5 litres/kilo ou plus gros",
-      internalCodeExists: "Ce code interne existe déjà, il ne peut pas être utilisé"
+      internalCodeExists: "Ce code interne existe déjà, il ne peut pas être utilisé",
+      productCreated: "Le produit a été ajouté",
+      productUpdated: "Le produit a été mis à jour"
     };
     I18n.i18next.addResources("fr", "productsAdmin", text);
     I18n.i18next.addResources("en", "productsAdmin", text);
@@ -312,7 +358,10 @@ export default {
       isSaveLoading: false,
       onlyBigFormat: false,
       buyGroup: null,
-      internalCodeExistsSnackbar: false
+      internalCodeExistsSnackbar: false,
+      productCreatedSnackbar: false,
+      productUpdatedSnackbar: false,
+      createdProduct: null
     }
   },
   mounted: async function () {
@@ -350,9 +399,11 @@ export default {
           this.internalCodeExistsSnackbar = true;
           return;
         }
-        await ProductService.createProduct(this.editedProduct);
+        this.createdProduct = await ProductService.createProduct(this.editedProduct);
+        this.productCreatedSnackbar = true;
       } else {
         await ProductService.modifyProduct(this.editedProduct);
+        this.productUpdatedSnackbar = true;
       }
       this.isSaveLoading = false;
       this.editProductDialog = false;
