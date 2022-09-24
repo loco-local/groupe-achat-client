@@ -276,10 +276,10 @@
     >
         <span class="body-1">
           {{ $t('productsAdmin:productCreated') }}
-          <span v-if="createdProduct !== null">
+          <strong v-if="createdProduct !== null">
             {{ createdProduct.name }}
             {{ createdProduct.internalCode }}
-          </span>
+          </strong>
         </span>
       <template v-slot:action="{ attrs }">
         <v-btn
