@@ -24,7 +24,7 @@
         >
           {{ $t('productsAdmin:deprecatedInfinitive') }}
         </v-btn>
-        <v-row>
+        <v-row class="mb-12">
           <v-col cols="12" class="text-right pb-0 ">
             <v-fab-transition>
               <v-btn
@@ -139,6 +139,7 @@
                   <v-text-field
                       v-model="editedProduct.qtyInBox"
                       :label="$t('product:qtyInBox')"
+                      type="number"
                   ></v-text-field>
                 </v-col>
                 <v-col
@@ -400,6 +401,7 @@ export default {
           return;
         }
         this.createdProduct = await ProductService.createProduct(this.editedProduct);
+        this.productsPutForward.unshift(this.createdProduct);
         this.productCreatedSnackbar = true;
       } else {
         await ProductService.modifyProduct(this.editedProduct);
