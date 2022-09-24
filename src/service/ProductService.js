@@ -72,6 +72,15 @@ export default {
             product
         )
     },
+    internalCodeExists: async function (internalCode) {
+        const response = await Service.api().post(
+            '/products/internalCode/exists',
+            {
+                internalCode: internalCode
+            }
+        );
+        return response.data.exists;
+    },
     modifyProduct: async function (product) {
         return await Service.api().put(
             '/products/' + product.id,

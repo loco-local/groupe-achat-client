@@ -248,6 +248,25 @@
           </v-btn>
         </v-card-actions>
       </v-card>
+      <v-snackbar
+          v-model="internalCodeExistsSnackbar"
+          top
+          :timeout="7000"
+      >
+        <span class="body-1">
+          {{ $t('productsAdmin:internalCodeExists') }}
+        </span>
+        <template v-slot:action="{ attrs }">
+          <v-btn
+              color="white"
+              text
+              v-bind="attrs"
+              @click="internalCodeExistsSnackbar = false"
+          >
+            {{ $t('close') }}
+          </v-btn>
+        </template>
+      </v-snackbar>
     </v-dialog>
   </Page>
 </template>
@@ -274,7 +293,8 @@ export default {
       deprecate: "Déprécié",
       deprecatedInfinitive: "Déprécier",
       newProduct: "Ajouter Produit",
-      onlyBigFormat: "2.5 litres/kilo ou plus gros"
+      onlyBigFormat: "2.5 litres/kilo ou plus gros",
+      internalCodeExists: "Ce code interne existe déjà, il ne peut pas être utilisé"
     };
     I18n.i18next.addResources("fr", "productsAdmin", text);
     I18n.i18next.addResources("en", "productsAdmin", text);
@@ -291,7 +311,8 @@ export default {
       rules: Rules,
       isSaveLoading: false,
       onlyBigFormat: false,
-      buyGroup: null
+      buyGroup: null,
+      internalCodeExistsSnackbar: false
     }
   },
   mounted: async function () {
@@ -321,10 +342,14 @@ export default {
         return
       }
       this.isSaveLoading = true;
-      console.log(this.editedProduct.expectedCostUnitPrice)
       this.editedProduct.expectedCostUnitPrice = parseFloat(this.editedProduct.expectedCostUnitPrice);
-      console.log(this.editedProduct.expectedCostUnitPrice)
       if (this.isNewProductFlow) {
+        const internalCodeExists = await ProductService.internalCodeExists(this.editedProduct.internalCode);
+        if (internalCodeExists) {
+          this.isSaveLoading = false;
+          this.internalCodeExistsSnackbar = true;
+          return;
+        }
         await ProductService.createProduct(this.editedProduct);
       } else {
         await ProductService.modifyProduct(this.editedProduct);
