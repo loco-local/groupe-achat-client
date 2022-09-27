@@ -118,7 +118,7 @@
                 >
                   <v-autocomplete
                       v-model="editedProduct.category"
-                      :search-input.sync="categoryText"
+                      :search-input.sync="categorySearchText"
                       ref="categoryInput"
                       :items="categories"
                       :label="$t('product:category')"
@@ -126,7 +126,7 @@
                     <v-list-item slot="no-data" @click="selectNewCategory()">
                       <v-list-item-content>
                         <v-list-item-title>
-                          {{ $t('productsAdmin:newCategory') }} "{{ categoryText }}"
+                          {{ $t('productsAdmin:newCategory') }} "{{ categorySearchText }}"
                         </v-list-item-title>
                       </v-list-item-content>
                     </v-list-item>
@@ -190,13 +190,24 @@
                 </v-col>
                 <v-col
                     cols="12"
-                    sm="6"
-                    md="4"
+                    sm="12"
+                    md="12"
                 >
-                  <v-text-field
+                  <v-autocomplete
                       v-model="editedProduct.provider"
+                      :search-input.sync="providerSearchText"
+                      ref="providerInput"
+                      :items="providers"
                       :label="$t('product:provider')"
-                  ></v-text-field>
+                  >
+                    <v-list-item slot="no-data" @click="selectNewProvider()">
+                      <v-list-item-content>
+                        <v-list-item-title>
+                          {{ $t('productsAdmin:newProvider') }} "{{ providerSearchText }}"
+                        </v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </v-autocomplete>
                 </v-col>
                 <v-col
                     cols="12"
@@ -353,7 +364,8 @@ export default {
       internalCodeExists: "Ce code interne existe déjà, il ne peut pas être utilisé",
       productCreated: "Le produit a été ajouté",
       productUpdated: "Le produit a été mis à jour",
-      newCategory: "nouvelle catégorie"
+      newCategory: "nouvelle catégorie",
+      newProvider: "nouveau fournisseur"
     };
     I18n.i18next.addResources("fr", "productsAdmin", text);
     I18n.i18next.addResources("en", "productsAdmin", text);
@@ -376,7 +388,9 @@ export default {
       productUpdatedSnackbar: false,
       createdProduct: null,
       categories: [],
-      categoryText: null
+      categorySearchText: null,
+      providers: [],
+      providerSearchText: null
     }
   },
   mounted: async function () {
@@ -385,9 +399,14 @@ export default {
     }
   },
   methods: {
+    selectNewProvider: async function () {
+      this.providers.push(this.providerSearchText);
+      this.editedProduct.provider = this.providerSearchText;
+      await this.$refs.providerInput.blur();
+    },
     selectNewCategory: async function () {
-      this.categories.push(this.categoryText);
-      this.editedProduct.category = this.categoryText;
+      this.categories.push(this.categorySearchText);
+      this.editedProduct.category = this.categorySearchText;
       await this.$refs.categoryInput.blur();
     },
     cancelSave: function () {
@@ -483,10 +502,13 @@ export default {
             this.buyGroup.salePercentage
         );
         const categoriesSet = new Set();
+        const providersSet = new Set();
         this.productsPutForward.forEach((product) => {
           categoriesSet.add(product.category)
+          providersSet.add(product.provider);
         })
         this.categories = Array.from(categoriesSet);
+        this.providers = Array.from(providersSet);
       } else {
         this.productsDeprecated = await ProductService.listDeprecated(
             this.$store.state.user.BuyGroupId,
