@@ -155,9 +155,10 @@
                 </v-col>
                 <v-col
                     cols="12"
+                    sm="6"
                 >
                   <v-row>
-                    <v-col cols="12" sm="6" md="6">
+                    <v-col cols="12">
                       <v-text-field
                           type="number"
                           v-model="editedProduct.expectedCostUnitPrice"
@@ -170,7 +171,6 @@
                 <v-col
                     cols="12"
                     sm="6"
-                    md="4"
                 >
                   <v-text-field
                       v-model="editedProduct.internalCode"
@@ -180,18 +180,25 @@
                 </v-col>
                 <v-col
                     cols="12"
-                    sm="6"
-                    md="4"
                 >
-                  <v-text-field
+                  <v-autocomplete
                       v-model="editedProduct.maker"
+                      :search-input.sync="makerSearchText"
+                      ref="makerInput"
+                      :items="makers"
                       :label="$t('product:maker')"
-                  ></v-text-field>
+                  >
+                    <v-list-item slot="no-data" @click="selectNewMaker()">
+                      <v-list-item-content>
+                        <v-list-item-title>
+                          {{ $t('productsAdmin:newMaker') }} "{{ makerSearchText }}"
+                        </v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </v-autocomplete>
                 </v-col>
                 <v-col
                     cols="12"
-                    sm="12"
-                    md="12"
                 >
                   <v-autocomplete
                       v-model="editedProduct.provider"
@@ -365,7 +372,8 @@ export default {
       productCreated: "Le produit a été ajouté",
       productUpdated: "Le produit a été mis à jour",
       newCategory: "nouvelle catégorie",
-      newProvider: "nouveau fournisseur"
+      newProvider: "nouveau fournisseur",
+      newMaker: "nouveau fabriquant"
     };
     I18n.i18next.addResources("fr", "productsAdmin", text);
     I18n.i18next.addResources("en", "productsAdmin", text);
@@ -390,7 +398,9 @@ export default {
       categories: [],
       categorySearchText: null,
       providers: [],
-      providerSearchText: null
+      providerSearchText: null,
+      makers: [],
+      makerSearchText: null
     }
   },
   mounted: async function () {
@@ -399,6 +409,11 @@ export default {
     }
   },
   methods: {
+    selectNewMaker: async function () {
+      this.makers.push(this.makerSearchText);
+      this.editedProduct.maker = this.makerSearchText;
+      await this.$refs.makerInput.blur();
+    },
     selectNewProvider: async function () {
       this.providers.push(this.providerSearchText);
       this.editedProduct.provider = this.providerSearchText;
@@ -503,12 +518,15 @@ export default {
         );
         const categoriesSet = new Set();
         const providersSet = new Set();
+        const makersSet = new Set();
         this.productsPutForward.forEach((product) => {
           categoriesSet.add(product.category)
           providersSet.add(product.provider);
+          makersSet.add(product.maker);
         })
         this.categories = Array.from(categoriesSet);
         this.providers = Array.from(providersSet);
+        this.makers = Array.from(makersSet);
       } else {
         this.productsDeprecated = await ProductService.listDeprecated(
             this.$store.state.user.BuyGroupId,
