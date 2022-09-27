@@ -116,10 +116,21 @@
                     sm="12"
                     md="12"
                 >
-                  <v-text-field
+                  <v-autocomplete
                       v-model="editedProduct.category"
+                      :search-input.sync="categoryText"
+                      ref="categoryInput"
+                      :items="categories"
                       :label="$t('product:category')"
-                  ></v-text-field>
+                  >
+                    <v-list-item slot="no-data" @click="selectNewCategory()">
+                      <v-list-item-content>
+                        <v-list-item-title>
+                          {{ $t('productsAdmin:newCategory') }} "{{ categoryText }}"
+                        </v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </v-autocomplete>
                 </v-col>
                 <v-col
                     cols="12"
@@ -341,7 +352,8 @@ export default {
       onlyBigFormat: "2.5 litres/kilo ou plus gros",
       internalCodeExists: "Ce code interne existe déjà, il ne peut pas être utilisé",
       productCreated: "Le produit a été ajouté",
-      productUpdated: "Le produit a été mis à jour"
+      productUpdated: "Le produit a été mis à jour",
+      newCategory: "nouvelle catégorie"
     };
     I18n.i18next.addResources("fr", "productsAdmin", text);
     I18n.i18next.addResources("en", "productsAdmin", text);
@@ -362,7 +374,9 @@ export default {
       internalCodeExistsSnackbar: false,
       productCreatedSnackbar: false,
       productUpdatedSnackbar: false,
-      createdProduct: null
+      createdProduct: null,
+      categories: [],
+      categoryText: null
     }
   },
   mounted: async function () {
@@ -371,6 +385,11 @@ export default {
     }
   },
   methods: {
+    selectNewCategory: async function () {
+      this.categories.push(this.categoryText);
+      this.editedProduct.category = this.categoryText;
+      await this.$refs.categoryInput.blur();
+    },
     cancelSave: function () {
       if (!this.isNewProductFlow) {
         this.editedProduct.name = this.originalEditProductValues.name;
@@ -463,6 +482,11 @@ export default {
             this.$store.state.user.BuyGroupId,
             this.buyGroup.salePercentage
         );
+        const categoriesSet = new Set();
+        this.productsPutForward.forEach((product) => {
+          categoriesSet.add(product.category)
+        })
+        this.categories = Array.from(categoriesSet);
       } else {
         this.productsDeprecated = await ProductService.listDeprecated(
             this.$store.state.user.BuyGroupId,
