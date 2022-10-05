@@ -76,7 +76,7 @@
           :canChangeQuantity="isAdminModificationFlow"
           :showExpectedCostUnitPrice="!isAdminModificationFlow"
           :showTaxes="true"
-          :hideExpectedUnitPrice="isAdminModificationFlow"
+          :hideExpectedUnitPrice="true"
           :showExpectedUnitPriceAfterRebate="!isAdminModificationFlow"
           :showCostUnitPrice="isAdminModificationFlow"
           :showUnitPrice="isAdminModificationFlow"
