@@ -12,6 +12,7 @@
         :show-select="showSelect"
         v-model="selected"
         :search="search"
+        :custom-filter="searchIgnoreAccents"
     >
       <template v-slot:top v-if="!hideSearch">
         <v-text-field
@@ -195,6 +196,7 @@ import ProductTranslation from "@/ProductTranslation";
 import I18n from "@/i18n";
 import ProductService from "@/service/ProductService";
 import Product from "@/Product";
+import latinize from 'latinize';
 
 const ENTER_KEY_CODE = 13;
 export default {
@@ -473,6 +475,12 @@ export default {
     }
   },
   methods: {
+    searchIgnoreAccents(value, search) {
+      return value != null &&
+          search != null &&
+          typeof value === 'string' &&
+          latinize(value.toString().toLowerCase()).indexOf(latinize(search.toLowerCase())) !== -1
+    },
     enterKeyDownAction: function (event, entity, action) {
       if (event.keyCode === ENTER_KEY_CODE) {
         action(event, entity);
