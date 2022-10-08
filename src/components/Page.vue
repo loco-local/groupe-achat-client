@@ -14,8 +14,14 @@
 </template>
 
 <script>
+
+import RedirectIfWrongPage from "@/RedirectIfWrongPage";
+
 export default {
-  name: "Page"
+  name: "Page",
+  mounted: async function () {
+    await RedirectIfWrongPage.do();
+  }
 }
 </script>
 

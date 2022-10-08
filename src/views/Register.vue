@@ -22,7 +22,7 @@
             outlined
             type="success"
         >
-          {{$t('register:completed')}}.
+          {{ $t('register:completed') }}.
         </v-alert>
       </div>
       <div v-if="!isLoading && !isPendingRegistrationFlow">
@@ -137,6 +137,7 @@ import Members from "@/Member";
 import I18n from "@/i18n";
 import BuyGroupService from "@/service/BuyGroupService";
 import AuthenticateService from "@/service/AuthenticateService";
+import RedirectIfWrongPage from "@/RedirectIfWrongPage";
 
 export default {
   name: "Register",
@@ -161,6 +162,10 @@ export default {
     }
   },
   mounted: async function () {
+    const isRedirect = await RedirectIfWrongPage.do();
+    if (isRedirect) {
+      return;
+    }
     this.isLoading = true;
     this.buyGroup = await BuyGroupService.getForPath(
         this.$route.params.buyGroup

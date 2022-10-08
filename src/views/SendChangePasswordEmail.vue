@@ -40,6 +40,7 @@
 import i18n from '@/i18n'
 import Rules from '@/Rules'
 import AuthenticateService from "@/service/AuthenticateService";
+import RedirectIfWrongPage from "@/RedirectIfWrongPage";
 
 export default {
   name: 'SendChangePasswordEmail',
@@ -85,7 +86,11 @@ export default {
       });
     }
   },
-  mounted: function () {
+  mounted: async function () {
+    const isRedirect = await RedirectIfWrongPage.do();
+    if (isRedirect) {
+      return;
+    }
   }
 }
 </script>

@@ -57,6 +57,7 @@ import LoadingFlow from "@/LoadingFlow";
 import AuthenticateService from "@/service/AuthenticateService";
 import Rules from "@/Rules";
 import I18n from "@/i18n";
+import RedirectIfWrongPage from "@/RedirectIfWrongPage";
 // import Vue from 'vue'
 // import {VueReCaptcha} from "vue-recaptcha-v3"
 
@@ -91,6 +92,9 @@ export default {
         password: ""
       },
     };
+  },
+  mounted() {
+    RedirectIfWrongPage.do();
   },
   methods: {
     login: async function () {

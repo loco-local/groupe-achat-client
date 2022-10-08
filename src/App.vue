@@ -161,8 +161,10 @@ export default {
   mounted: async function () {
     if (this.$store.state.user !== null) {
       const member = await MemberService.getForId(this.$store.state.user.id);
-      if (member.status !== this.$store.state.user.status) {
-        this.$store.dispatch('setUser', member);
+      if (member === false) {
+        // this.logout();
+      } else if (member.status !== this.$store.state.user.status) {
+        await this.$store.dispatch('setUser', member);
       }
     }
   },
