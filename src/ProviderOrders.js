@@ -15,18 +15,31 @@ export default {
                 providerTotals[orderItem.provider] = 0;
                 providerOrders[orderItem.provider] = [];
             }
-            orderItem.tps = OrderItem.calculateTPS(orderItem, orderItem.quantity, orderItem.costUnitPrice);
-            orderItem.tvq = OrderItem.calculateTVQ(orderItem, orderItem.quantity, orderItem.costUnitPrice);
-            orderItem.costTotal = orderItem.costUnitPrice * orderItem.quantity + orderItem.tps + orderItem.tvq;
-            providerTotals[orderItem.provider] += orderItem.costTotal;
             const existingProduct = providerOrders[orderItem.provider].filter((existingOrderItem) => {
                 return existingOrderItem.ProductId === orderItem.ProductId
             });
+            orderItem.quantity = OrderItem.getQty(orderItem);
+            orderItem.tps = OrderItem.calculateTPS(
+                orderItem,
+                orderItem.quantity,
+                orderItem.costUnitPrice
+            );
+            orderItem.tvq = OrderItem.calculateTVQ(
+                orderItem,
+                orderItem.quantity,
+                orderItem.costUnitPrice
+            );
+            orderItem.costTotal = orderItem.costUnitPrice * orderItem.quantity + orderItem.tps + orderItem.tvq;
             if (existingProduct.length) {
-                existingProduct[0].quantity = OrderItem.getQty(existingProduct[0]) + OrderItem.getQty(orderItem);
+                console.log(existingProduct[0].costTotal + " " + orderItem.costTotal)
+                existingProduct[0].quantity = OrderItem.getQty(existingProduct[0]) + orderItem.quantity;
+                existingProduct[0].tps = existingProduct[0].tps + orderItem.tps;
+                existingProduct[0].tvq = existingProduct[0].tvq + orderItem.tvq;
+                existingProduct[0].costTotal = existingProduct[0].costTotal + orderItem.costTotal;
             } else {
                 providerOrders[orderItem.provider].push(orderItem);
             }
+            providerTotals[orderItem.provider] += orderItem.costTotal;
             return providerOrders;
         }, {});
         return {
