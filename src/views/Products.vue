@@ -126,7 +126,8 @@ export default {
       canChangeExpectedQuantity: false,
       hasExpectedQuantity: false,
       isAdminModificationFlow: false,
-      showAllMembersQuantity: true
+      showAllMembersQuantity: true,
+      total: 0.0
     }
   },
   mounted: async function () {
@@ -144,6 +145,14 @@ export default {
     this.isMemberLoading = false;
   },
   methods: {
+    rebuildTotal: function (orderItems) {
+      this.total = orderItems.reduce((total, orderItem) => {
+        let orderItemTotal = (orderItem.totalAfterRebateWithTaxes === null || orderItem.totalAfterRebateWithTaxes === undefined) ?
+            orderItem.expectedTotalAfterRebateWithTaxes : orderItem.totalAfterRebateWithTaxes;
+        orderItemTotal = parseFloat(orderItemTotal);
+        return parseFloat((orderItemTotal || 0.0) + total);
+      }, 0)
+    },
     setBuyGroup: async function (buyGroup) {
       const hasRelevantOrder = buyGroup.relevantOrder !== undefined && buyGroup.relevantOrder !== null;
       if (hasRelevantOrder) {
@@ -195,13 +204,7 @@ export default {
 
           matchingProduct[0].unitPrice = item.unitPrice || item.expectedUnitPrice;
 
-          matchingProduct[0].expectedTotalAfterRebateWithTaxes = OrderItem.calculateTotal(
-              item,
-              item.expectedQuantity,
-              item.expectedUnitPrice,
-              item.quantity,
-              item.costUnitPrice
-          );
+          matchingProduct[0].expectedTotalAfterRebateWithTaxes = item.expectedTotalAfterRebateWithTaxes;
 
           matchingProduct[0].costUnitPrice = item.costUnitPrice || item.expectedCostUnitPrice;
 
@@ -234,22 +237,21 @@ export default {
           return (b.expectedQuantity || 0) - (a.expectedQuantity || 0);
         }
       });
+      this.rebuildTotal(this.orderItems);
       this.isLoading = false;
     },
     updateOrderQuantity: async function (updatedProduct) {
       let orderItem = this.orderItems.filter((orderItem) => {
         return orderItem.ProductId === updatedProduct.id;
       });
-      if (!orderItem.length) {
+      const isNewItem = !orderItem.length;
+      if (isNewItem) {
         orderItem = {...updatedProduct};
         if (this.isAdminModificationFlow) {
           orderItem.quantity = 0;
         } else {
           orderItem.expectedQuantity = 0;
         }
-        this.orderItems.push(
-            orderItem
-        )
       } else {
         orderItem = orderItem[0];
       }
@@ -276,13 +278,13 @@ export default {
         )
       }
       if (this.isAdminModificationFlow) {
-        updatedProduct.totalAfterRebateWithTaxes = prices.totalAfterRebateWithTaxes;
+        orderItem.totalAfterRebateWithTaxes = updatedProduct.totalAfterRebateWithTaxes = prices.totalAfterRebateWithTaxes;
         updatedProduct.quantity = prices.quantity;
         updatedProduct.costUnitPrice = prices.costUnitPrice;
         updatedProduct.unitPrice = prices.unitPrice;
         updatedProduct.unitPriceAfterRebate = prices.unitPriceAfterRebate;
       } else {
-        updatedProduct.expectedTotalAfterRebateWithTaxes = prices.expectedTotalAfterRebateWithTaxes;
+        orderItem.expectedTotalAfterRebateWithTaxes = updatedProduct.expectedTotalAfterRebateWithTaxes = prices.expectedTotalAfterRebateWithTaxes;
         updatedProduct.expectedQuantity = prices.expectedQuantity;
       }
       updatedProduct.tps = prices.tps;
@@ -293,20 +295,13 @@ export default {
           updatedProduct.id
       );
       this.$set(this.products, this.products.indexOf(updatedProduct), updatedProduct);
+      if (isNewItem) {
+        this.orderItems.push(
+            orderItem
+        )
+      }
+      this.rebuildTotal(this.orderItems);
       await this.$refs.productsTable.showQuantityChangedSuccess();
-    }
-  },
-  computed: {
-    total: function () {
-      return this.orderItems.reduce((total, orderItem) => {
-        return OrderItem.calculateTotal(
-            orderItem,
-            orderItem.expectedQuantity,
-            orderItem.expectedUnitPrice,
-            orderItem.quantity,
-            orderItem.costUnitPrice
-        ) + total;
-      }, 0)
     }
   }
 }
