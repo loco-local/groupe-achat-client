@@ -13,6 +13,7 @@ export default {
             unitPrice: "Prix Unitaire Final",
             expectedCostUnitPrice: "Prix Coûtant Prévu",
             costUnitPrice: "Prix Coûtant Final",
+            costUnitPriceForProvider: "Price coûtant",
             category: "Catégorie",
             internalCode: "Code interne",
             maker: "Fabricant",

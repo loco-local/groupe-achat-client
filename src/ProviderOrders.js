@@ -15,7 +15,10 @@ export default {
                 providerTotals[orderItem.provider] = 0;
                 providerOrders[orderItem.provider] = [];
             }
-            providerTotals[orderItem.provider] += orderItem.costUnitPrice * orderItem.quantity;
+            orderItem.tps = OrderItem.calculateTPS(orderItem, orderItem.quantity, orderItem.costUnitPrice);
+            orderItem.tvq = OrderItem.calculateTVQ(orderItem, orderItem.quantity, orderItem.costUnitPrice);
+            orderItem.costTotal = orderItem.costUnitPrice * orderItem.quantity + orderItem.tps + orderItem.tvq;
+            providerTotals[orderItem.provider] += orderItem.costTotal;
             const existingProduct = providerOrders[orderItem.provider].filter((existingOrderItem) => {
                 return existingOrderItem.ProductId === orderItem.ProductId
             });

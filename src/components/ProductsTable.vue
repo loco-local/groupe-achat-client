@@ -64,6 +64,14 @@
           {{ item.expectedTotalAfterRebateWithTaxes | currency }}
         </span>
       </template>
+      <template v-slot:item.costTotal="{ item }" v-if="onlyShowCostTotal">
+        <span v-if="item.costTotal === undefined">
+            <v-divider></v-divider>
+        </span>
+        <span v-else>
+          {{ item.costTotal | currency }}
+        </span>
+      </template>
       <template v-slot:item.totalAfterRebateWithTaxes="{ item }" v-if="hasQuantity">
         <span v-if="item.totalAfterRebateWithTaxes === undefined">
             <v-divider></v-divider>
@@ -275,6 +283,10 @@ export default {
     showAllMembersQuantity: {
       type: Boolean,
       default: false
+    },
+    onlyShowCostTotal: {
+      type: Boolean,
+      default: false
     }
   },
   data: function () {
@@ -399,16 +411,22 @@ export default {
           }
       );
     }
-    if (this.hasQuantity) {
+    if (this.hasQuantity && !this.onlyShowCostTotal) {
       headers.unshift({
         text: this.$t('product:totalFinal'),
         value: 'totalAfterRebateWithTaxes'
       });
     }
-    if (this.hasExpectedQuantity) {
+    if (this.hasExpectedQuantity && !this.onlyShowCostTotal) {
       headers.unshift({
         text: this.$t('product:expectedTotal'),
         value: 'expectedTotalAfterRebateWithTaxes'
+      });
+    }
+    if (this.onlyShowCostTotal) {
+      headers.unshift({
+        text: this.$t('product:totalFinal'),
+        value: 'costTotal'
       });
     }
     if (this.showHasTaxes) {

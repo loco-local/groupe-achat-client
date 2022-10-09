@@ -5,14 +5,13 @@ import ProductTranslation from "@/ProductTranslation";
 ProductTranslation.setup();
 const PROVIDER_ORDER_COLUMNS = [
     "quantity",
-    "totalAfterRebateWithTaxes",
+    "costTotal",
     "tps",
     "tvq",
     "name",
     "format",
     "qtyInBox",
-    "expectedUnitPrice",
-    "unitPrice",
+    "costUnitPrice",
     "category",
     "internalCode",
     "maker",
@@ -117,6 +116,10 @@ const OrderToCsv = {
                 return 'product:totalFinal';
             case "totalAfterRebate" :
                 return "product:totalWithoutTaxes"
+            case "costTotal":
+                return 'product:totalFinal';
+            case "costUnitPrice":
+                return 'product:costUnitPriceForProvider'
             default:
                 return 'product:' + column;
         }
@@ -131,6 +134,8 @@ const OrderToCsv = {
                 return (item.expectedTotalAfterRebateWithTaxes || 0).toFixed(2).toLocaleString();
             case "totalAfterRebateWithTaxes" :
                 return (item.totalAfterRebateWithTaxes || item.expectedTotalAfterRebateWithTaxes || 0).toFixed(2).toLocaleString();
+            case "costTotal":
+                return (item.costTotal || 0).toFixed(2).toLocaleString();
             case "tps" :
                 return (item.tps || 0).toFixed(2).toLocaleString();
             case "tvq" :
