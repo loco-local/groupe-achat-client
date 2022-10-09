@@ -31,15 +31,18 @@ const GroupOrder = {
         return GroupOrder.calculateStatus(groupOrder) === STATUS.CURRENT;
     },
     mostRelevantUnfinishedOrder: function (orders) {
+        return GroupOrder.sortByMostRelevantOrders(orders)[0];
+    },
+    sortByMostRelevantOrders: function (orders) {
         return orders.sort((a, b) => {
             if (a.status === STATUS.CURRENT) {
-                return 1;
+                return -1;
             }
             if (b.status === STATUS.CURRENT) {
-                return -1
+                return 1
             }
-            return a.startDate - b.startDate;
-        })[0];
+            return b.startDate - a.startDate;
+        })
     },
     latestOrder: function (orders) {
         return orders.sort((a, b) => {
