@@ -248,6 +248,9 @@ export default {
     resetList: async function () {
       this.isLoading = true;
       this.orders = await BuyGroupOrderService.list(this.$store.state.user.BuyGroupId);
+      this.orders = this.orders.sort((a, b) => {
+        return b.endDate - a.endDate;
+      });
       this.isLoading = false;
     },
     save: async function () {
