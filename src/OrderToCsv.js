@@ -129,11 +129,16 @@ const OrderToCsv = {
             case "expectedQuantity" :
                 return (item.expectedQuantity || 0).toLocaleString()
             case "quantity" :
-                return (item.quantity || item.expectedQuantity).toLocaleString();
+                return (
+                    item.quantity === undefined || item.quantity === null ? item.expectedQuantity : item.quantity
+                ).toLocaleString();
             case "expectedTotalAfterRebateWithTaxes" :
                 return (item.expectedTotalAfterRebateWithTaxes || 0).toFixed(2).toLocaleString();
             case "totalAfterRebateWithTaxes" :
-                return (item.totalAfterRebateWithTaxes || item.expectedTotalAfterRebateWithTaxes || 0).toFixed(2).toLocaleString();
+                return (
+                    item.totalAfterRebateWithTaxes === undefined || item.totalAfterRebateWithTaxes === null ?
+                        item.expectedTotalAfterRebateWithTaxes || 0 : item.totalAfterRebateWithTaxes
+                ).toFixed(2).toLocaleString();
             case "costTotal":
                 return (item.costTotal || 0).toFixed(2).toLocaleString();
             case "tps" :
@@ -141,7 +146,10 @@ const OrderToCsv = {
             case "tvq" :
                 return (item.tvq || 0).toFixed(2).toLocaleString();
             case "totalAfterRebate" :
-                return (item.totalAfterRebate || item.expectedTotalAfterRebate || 0).toFixed(2).toLocaleString();
+                return (
+                    item.totalAfterRebate === undefined || item.totalAfterRebate === null ?
+                        item.expectedTotalAfterRebate || 0 : item.totalAfterRebate
+                ).toFixed(2).toLocaleString();
             case "expectedUnitPrice" :
                 return (item.expectedUnitPrice || 0).toFixed(2).toLocaleString();
             case "unitPrice" :
