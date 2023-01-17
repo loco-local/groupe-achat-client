@@ -35,6 +35,9 @@ const QuantityInterpreter = {
         return quantity % 1 === 0;
     },
     convertDecimalToFraction: function (decimal, orderItem) {
+        if(orderItem.format === null){
+            return 1;
+        }
         const total = QuantityInterpreter.getQty(orderItem.format) * orderItem.qtyInBox;
         return QuantityInterpreter._roundNumber(decimal * total, 2);
     },

@@ -189,7 +189,7 @@ export default {
         this.memberOrdersQuantities = new MemberOrdersQuantity(
             allMemberOrders
         );
-        allMembersQuantities = this.memberOrdersQuantities.buildQuantities(allMemberOrders);
+        allMembersQuantities = this.memberOrdersQuantities.buildQuantities();
       }
       this.orderItems.forEach((item) => {
         const matchingProduct = this.products.filter((product) => {
@@ -247,6 +247,7 @@ export default {
       const isNewItem = !orderItem.length;
       if (isNewItem) {
         orderItem = {...updatedProduct};
+        orderItem.ProductId = updatedProduct.id;
         if (this.isAdminModificationFlow) {
           orderItem.quantity = 0;
         } else {
@@ -255,13 +256,10 @@ export default {
       } else {
         orderItem = orderItem[0];
       }
-      let updatedQuantity = 0;
       if (this.isAdminModificationFlow) {
         orderItem.quantity = updatedProduct.quantity;
-        updatedQuantity = updatedProduct.quantity;
       } else {
         orderItem.expectedQuantity = updatedProduct.expectedQuantity;
-        updatedQuantity = updatedProduct.expectedQuantity;
       }
       let prices;
       if (this.isAdminModificationFlow) {
@@ -285,22 +283,22 @@ export default {
         updatedProduct.unitPriceAfterRebate = prices.unitPriceAfterRebate;
       } else {
         orderItem.expectedTotalAfterRebateWithTaxes = updatedProduct.expectedTotalAfterRebateWithTaxes = prices.expectedTotalAfterRebateWithTaxes;
-        updatedProduct.expectedQuantity = prices.expectedQuantity;
+        updatedProduct.expectedQuantity = orderItem.expectedQuantity = prices.expectedQuantity;
       }
       updatedProduct.tps = prices.tps;
       updatedProduct.tvq = prices.tvq;
-      console.log(this.member.id + " " + updatedQuantity + " " + updatedProduct.id)
-      updatedProduct.allMembersQuantity = this.memberOrdersQuantities.updateMemberQuantity(
-          this.member.id,
-          updatedQuantity,
-          updatedProduct.id
-      );
-      this.$set(this.products, this.products.indexOf(updatedProduct), updatedProduct);
       if (isNewItem) {
         this.orderItems.push(
             orderItem
         )
       }
+      orderItem.MemberOrder = {
+        MemberId: this.member.id
+      }
+      this.memberOrdersQuantities.updateMemberOrder(orderItem);
+      this.memberOrdersQuantities.buildQuantities();
+      updatedProduct.allMembersQuantity = this.memberOrdersQuantities.getAllMembersQuantityForProductId(updatedProduct.id);
+      this.$set(this.products, this.products.indexOf(updatedProduct), updatedProduct);
       this.rebuildTotal(this.orderItems);
       await this.$refs.productsTable.showQuantityChangedSuccess();
     }

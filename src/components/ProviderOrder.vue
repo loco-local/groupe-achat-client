@@ -5,6 +5,7 @@
           :products="providerItems || []"
           :hasQuantity="true"
           :hasExpectedQuantity="false"
+          :showDecimalQuantityNotFractions="true"
           :showCostUnitPrice="true"
           :showUnitPrice="false"
           :showExpectedCostUnitPrice="false"

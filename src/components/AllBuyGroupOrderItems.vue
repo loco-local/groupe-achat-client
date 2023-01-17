@@ -57,7 +57,7 @@ export default {
     this.memberOrdersQuantities = new MemberOrdersQuantity(
         allMemberOrders
     );
-    const allMembersQuantities = this.memberOrdersQuantities.buildQuantities(allMemberOrders);
+    const allMembersQuantities = this.memberOrdersQuantities.buildQuantities();
     this.userOrdersItems = await BuyGroupOrderService.listMemberOrderItems(
         this.buyGroupId,
         this.buyGroupOrderId
@@ -92,16 +92,12 @@ export default {
       updatedItem.totalAfterRebateWithTaxes = prices.totalAfterRebateWithTaxes;
       updatedItem.tps = prices.tps;
       updatedItem.tvq = prices.tvq;
-      updatedItem.allMembersQuantity = this.memberOrdersQuantities.updateMemberQuantity(
-          updatedItem.MemberOrder.MemberId,
-          updatedItem.quantity,
-          updatedItem.ProductId
-      );
       this.$set(this.userOrdersItems, this.userOrdersItems.indexOf(updatedItem), updatedItem);
-      this.memberOrdersQuantities.setMemberOrders(this.userOrdersItems);
+      this.memberOrdersQuantities.updateMemberOrder(updatedItem);
+      this.memberOrdersQuantities.buildQuantities();
       this.userOrdersItems.forEach((orderItem) => {
         if (orderItem.ProductId === updatedItem.ProductId) {
-          orderItem.allMembersQuantity = this.memberOrdersQuantities.getQuantities()[orderItem.ProductId];
+          orderItem.allMembersQuantity = this.memberOrdersQuantities.getAllMembersQuantityForProductId(orderItem.ProductId);
           this.$set(this.userOrdersItems, this.userOrdersItems.indexOf(orderItem), orderItem);
         }
       })

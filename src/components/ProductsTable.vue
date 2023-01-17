@@ -26,45 +26,63 @@
         ></v-text-field>
       </template>
       <template v-slot:item.expectedQuantity="{ item }" v-if="hasExpectedQuantity">
-        <v-text-field
-            v-model="item.expectedQuantityInput"
-            :placeholder="$t('quantityShort')"
-            @keydown="enterKeyDownAction($event, item, changeExpectedQuantity)"
-            @blur="changeExpectedQuantity($event, item)"
-            v-if="canChangeExpectedQuantity"
-            style="width:70px;"
-            :hint="item.expectedQuantityHint"
-        ></v-text-field>
-        <div v-else>
-          <span class="text-no-wrap">{{ item.expectedQuantityInput }}</span>
-          <br>
-          <small class="">{{ item.expectedQuantityPercentage }}%</small>
+        <div v-if="showDecimalQuantityNotFractions">
+          <span class="text-no-wrap">{{ item.expectedQuantity.toFixed(2) }}</span>
         </div>
-
+        <div v-else>
+          <v-text-field
+              v-model="item.expectedQuantityInput"
+              :placeholder="$t('quantityShort')"
+              @keydown="enterKeyDownAction($event, item, changeExpectedQuantity)"
+              @blur="changeExpectedQuantity($event, item)"
+              v-if="canChangeExpectedQuantity"
+              style="width:70px;"
+              :hint="item.expectedQuantityHint"
+              :persistent-hint="true"
+          ></v-text-field>
+          <div v-else>
+            <span class="text-no-wrap">{{ item.expectedQuantityInput }}</span>
+            <br>
+            <small class="" v-if="item.expectedQuantityPercentage">{{ item.expectedQuantityPercentage }}%</small>
+          </div>
+        </div>
       </template>
       <template v-slot:item.allMembersQuantity="{ item }" v-if="showAllMembersQuantity">
-        <span v-if="item.allMembersQuantity % 1 === 0" class="">
-          {{ item.allMembersQuantity }}
-        </span>
-        <span v-else class="red--text font-weight-bold">
-          {{ item.allMembersQuantity }}
-        </span>
+        <div v-if="item.allMembersQuantity !== undefined && item.allMembersQuantity.remainingFraction > 0">
+          <span class="">
+            Il reste
+          </span>
+          <br>
+          <span class="">
+<!--            {{ item.allMembersQuantity.total }}-->
+            {{ item.allMembersQuantity.remainingFraction }}
+            {{ item.allMembersQuantity.format }}
+          </span>
+        </div>
+        <!--        <span v-else class="red&#45;&#45;text font-weight-bold">-->
+        <!--          {{ item.allMembersQuantity.total }}-->
+        <!--        </span>-->
       </template>
       <template v-slot:item.quantity="{ item }" v-if="hasQuantity">
-        <v-text-field
-            v-model="item.quantityInput"
-            :placeholder="$t('quantityShort')"
-            @keydown="enterKeyDownAction($event, item, changeQuantity)"
-            @blur="changeQuantity($event, item)"
-            v-if="canChangeQuantity"
-            :hint="item.quantityHint"
-            persistent-hint
-            style="width:70px;"
-        ></v-text-field>
+        <div v-if="showDecimalQuantityNotFractions">
+          <span class="text-no-wrap">{{ item.quantity.toFixed(2) }}</span>
+        </div>
         <div v-else>
-          <span class="text-no-wrap">{{ item.quantityInput }}</span>
-          <br>
-          <small class="">{{ item.quantityPercentage }}%</small>
+          <v-text-field
+              v-model="item.quantityInput"
+              :placeholder="$t('quantityShort')"
+              @keydown="enterKeyDownAction($event, item, changeQuantity)"
+              @blur="changeQuantity($event, item)"
+              v-if="canChangeQuantity"
+              :hint="item.quantityHint"
+              :persistent-hint="true"
+              style="width:70px;"
+          ></v-text-field>
+          <div v-else>
+            <span class="text-no-wrap">{{ item.quantityInput }}</span>
+            <br>
+            <small class="" v-if="item.quantityPercentage">{{ item.quantityPercentage }}%</small>
+          </div>
         </div>
       </template>
       <template v-slot:item.expectedTotalAfterRebateWithTaxes="{ item }" v-if="hasExpectedQuantity">
@@ -261,6 +279,10 @@ export default {
       default: false
     },
     canChangeQuantity: {
+      type: Boolean,
+      default: false
+    },
+    showDecimalQuantityNotFractions: {
       type: Boolean,
       default: false
     },

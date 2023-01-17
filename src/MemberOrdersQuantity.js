@@ -1,41 +1,68 @@
+import QuantityInterpreter from "@/QuantityInterpreter";
+
 export default function MemberOrdersQuantity(memberOrderItems) {
     this.memberOrderItems = memberOrderItems;
 }
 
-MemberOrdersQuantity.prototype.buildQuantities = function (memberId, updatedQuantity, productId) {
-    let isItemForUpdatedQuantityFound = updatedQuantity === undefined ? true : false;
-    this.quantities = this.memberOrderItems.reduce((productQuantities, memberOrderItem) => {
-        if (productQuantities[memberOrderItem.ProductId] === undefined) {
-            productQuantities[memberOrderItem.ProductId] = 0;
+MemberOrdersQuantity.prototype.buildQuantities = function () {
+    this.quantities = this.memberOrderItems.reduce((totals, memberOrderItem) => {
+        if (totals[memberOrderItem.ProductId] === undefined) {
+            totals[memberOrderItem.ProductId] = {
+                total: 0,
+                memberOrderItem: memberOrderItem
+            };
         }
         let quantity;
-        if (memberOrderItem.MemberOrder.MemberId === memberId && memberOrderItem.ProductId === productId) {
-            quantity = updatedQuantity;
-            isItemForUpdatedQuantityFound = true;
-        } else {
-            quantity = memberOrderItem.quantity;
-            if (quantity === null) {
-                quantity = memberOrderItem.expectedQuantity
-            }
+        quantity = memberOrderItem.quantity;
+        if (quantity === null || quantity === undefined) {
+            quantity = memberOrderItem.expectedQuantity
         }
-        productQuantities[memberOrderItem.ProductId] = (parseFloat(quantity) + parseFloat(productQuantities[memberOrderItem.ProductId])).toFixed(2);
-        return productQuantities;
+        totals[memberOrderItem.ProductId].total = parseFloat(quantity) + parseFloat(totals[memberOrderItem.ProductId].total);
+        return totals;
     }, {})
-    if (!isItemForUpdatedQuantityFound) {
-        this.quantities[productId] = parseFloat(this.quantities[productId] || 0) + parseFloat(updatedQuantity);
-    }
-    return this.quantities;
-}
-MemberOrdersQuantity.prototype.getQuantities = function () {
+    this.quantities = Object.values(this.quantities).reduce((quantities, quantity) => {
+        let remainingDecimal = 1 - quantity.total % 1;
+        if (remainingDecimal === 1) {
+            remainingDecimal = 0;
+        }
+        const format = QuantityInterpreter.getFormat(quantity.memberOrderItem.format);
+        quantities[quantity.memberOrderItem.ProductId] = {
+            total: quantity.total,
+            totalInFraction: QuantityInterpreter.convertDecimalToFraction(
+                quantity.total, quantity.memberOrderItem
+            ),
+            remainingFraction: QuantityInterpreter.convertDecimalToFraction(
+                remainingDecimal, quantity.memberOrderItem
+            ),
+            format: format
+        }
+        return quantities;
+    }, {});
     return this.quantities;
 };
-MemberOrdersQuantity.prototype.updateMemberQuantity = function (memberId, updatedQuantity, productId) {
+MemberOrdersQuantity.prototype.updateMemberQuantity = function (memberId, updatedQuantity, orderItem) {
     const productQuantities = this.buildQuantities(
-        memberId, updatedQuantity, productId
+        memberId, updatedQuantity, orderItem
     );
-    return productQuantities[productId]
+    return productQuantities[orderItem.ProductId]
 }
-MemberOrdersQuantity.prototype.setMemberOrders = function (memberOrders) {
-    this.memberOrderItems = memberOrders;
+MemberOrdersQuantity.prototype.getAllMembersQuantityForProductId = function (productId) {
+    return this.quantities[productId];
+}
+MemberOrdersQuantity.prototype.updateMemberOrder = function (memberOrderItem) {
+    const index = this.memberOrderItems.findIndex((orderItem) => {
+        return orderItem.MemberOrder.MemberId === memberOrderItem.MemberOrder.MemberId &&
+            orderItem.ProductId === memberOrderItem.ProductId;
+    })
+    if (index === -1) {
+        this.memberOrderItems.push(memberOrderItem);
+    } else {
+        this._replaceOrderItemAtIndex(index, memberOrderItem);
+    }
+}
+MemberOrdersQuantity.prototype._replaceOrderItemAtIndex = function (index, memberOrderItem) {
+    const ret = this.memberOrderItems.slice(0);
+    ret[index] = memberOrderItem;
+    this.memberOrderItems = ret;
 }
 
