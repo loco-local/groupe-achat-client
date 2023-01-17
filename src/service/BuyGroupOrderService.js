@@ -1,5 +1,5 @@
 import Service from "@/service/Service";
-import {startOfDay, endOfDay} from 'date-fns'
+import {endOfDay, startOfDay} from 'date-fns'
 import OrderItem from "@/OrderItem";
 import GroupOrder from "@/GroupOrder";
 
@@ -42,9 +42,7 @@ const BuyGroupOrderService = {
     _formattedOrderItems: function (orderItems) {
         return orderItems.map((orderItem) => {
             orderItem.name = orderItem.description;
-            orderItem.previousExpectedQuantity = orderItem.expectedQuantity;
             orderItem.previousCostUnitPrice = orderItem.costUnitPrice;
-            orderItem.previousQuantity = orderItem.quantity;
             orderItem.total = OrderItem.calculateTotal(
                 orderItem,
                 orderItem.expectedQuantity,
@@ -67,6 +65,9 @@ const BuyGroupOrderService = {
             if (orderItem.costUnitPrice === null) {
                 orderItem.costUnitPrice = orderItem.expectedCostUnitPrice.toFixed(2);
             }
+            OrderItem.defineQuantitiesFraction(orderItem);
+            orderItem.previousExpectedQuantityInput = orderItem.expectedQuantityInput;
+            orderItem.previousQuantityInput = orderItem.quantityInput;
             return orderItem
         })
     },

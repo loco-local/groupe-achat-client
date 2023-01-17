@@ -199,9 +199,6 @@ export default {
           matchingProduct[0].expectedQuantity = item.expectedQuantity;
           matchingProduct[0].quantity = item.quantity || item.expectedQuantity;
 
-          matchingProduct[0].previousExpectedQuantity = item.expectedQuantity;
-          matchingProduct[0].previousQuantity = item.quantity;
-
           matchingProduct[0].unitPrice = item.unitPrice || item.expectedUnitPrice;
 
           matchingProduct[0].expectedTotalAfterRebateWithTaxes = item.expectedTotalAfterRebateWithTaxes;
@@ -220,6 +217,9 @@ export default {
               this.isAdminModificationFlow ? item.quantity : item.expectedQuantity,
               this.isAdminModificationFlow ? item.unitPrice : item.expectedUnitPrice
           )
+          OrderItem.defineQuantitiesFraction(matchingProduct[0]);
+          matchingProduct[0].previousExpectedQuantityInput = matchingProduct[0].expectedQuantityInput;
+          matchingProduct[0].previousQuantityInput = matchingProduct[0].quantityInput;
         }
       });
       this.products = this.products.map((product) => {
@@ -289,6 +289,7 @@ export default {
       }
       updatedProduct.tps = prices.tps;
       updatedProduct.tvq = prices.tvq;
+      console.log(this.member.id + " " + updatedQuantity + " " + updatedProduct.id)
       updatedProduct.allMembersQuantity = this.memberOrdersQuantities.updateMemberQuantity(
           this.member.id,
           updatedQuantity,

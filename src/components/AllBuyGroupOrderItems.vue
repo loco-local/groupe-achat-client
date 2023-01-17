@@ -24,6 +24,7 @@
           :show-expected-unit-price-after-rebate="true"
           :canEditCostUnitPrice="true"
           :showAllMembersQuantity="true"
+          :hideCategory="true"
           ref="allOrderItemsTable"
       ></ProductsTable>
     </v-card-text>

@@ -17,7 +17,11 @@ const Product = {
         if (product.expectedCostUnitPrice) {
             product.expectedCostUnitPrice = product.expectedCostUnitPrice.toFixed(2);
         }
+        if (product.qtyInBox === null || product.qtyInBox === undefined) {
+            product.qtyInBox = 1;
+        }
         product.quantity = product.expectedQuantity;
+        product.expectedQuantityPercentage = 0;
         return product;
     },
     calculateUnitPrices: function (costUnitPrice, salePercentage, rebates) {

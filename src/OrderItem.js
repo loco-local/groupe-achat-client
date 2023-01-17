@@ -1,3 +1,5 @@
+import QuantityInterpreter from "@/QuantityInterpreter";
+
 const OrderItem = {
     calculateTotal: function (orderItem, expectedQuantity, expectedUnitPrice, quantity, unitPrice) {
         let finalQuantity;
@@ -30,6 +32,50 @@ const OrderItem = {
     },
     getQty(orderItem) {
         return orderItem.quantity === null ? orderItem.expectedQuantity : orderItem.quantity;
+    },
+    defineQuantitiesFraction(orderItem) {
+        OrderItem.defineExpectedQuantityFraction(orderItem);
+        OrderItem.defineQuantityFraction(orderItem);
+    },
+    defineExpectedQuantityFraction(orderItem) {
+        OrderItem.defineExpectedOrFinalQuantityFraction(
+            orderItem,
+            true
+        );
+    },
+    defineQuantityFraction(orderItem) {
+        OrderItem.defineExpectedOrFinalQuantityFraction(
+            orderItem,
+            false
+        );
+    },
+    defineExpectedOrFinalQuantityFraction(orderItem, isForExpectedQuantity) {
+        const propertyName = isForExpectedQuantity ? 'expectedQuantity' : 'quantity'
+        const inputPropertyName = propertyName + 'Input';
+        const percentagePropertyName = propertyName + 'Percentage';
+        let inputStr = String(orderItem[inputPropertyName]);
+        if (orderItem[inputPropertyName] !== undefined) {
+            let format = QuantityInterpreter.getFormat(inputStr);
+            if (format === "unit") {
+                orderItem[propertyName] = QuantityInterpreter.getQty(inputStr);
+            } else {
+                orderItem[propertyName] = QuantityInterpreter.convertFractionToDecimal(
+                    QuantityInterpreter.getQty(inputStr),
+                    orderItem
+                )
+            }
+        }
+        const productFormat = QuantityInterpreter.getFormat(orderItem.format);
+        if (productFormat === "unit") {
+            orderItem[inputPropertyName] = orderItem[propertyName];
+        } else {
+            orderItem[inputPropertyName] = QuantityInterpreter.convertDecimalToFraction(
+                orderItem[propertyName],
+                orderItem
+            ) + " " + productFormat;
+            orderItem[percentagePropertyName] = Math.round(orderItem[propertyName] * 100);
+            orderItem[propertyName + 'Hint'] = percentagePropertyName <= 0 ? "" : orderItem[percentagePropertyName] + "%";
+        }
     }
 }
 export default OrderItem;

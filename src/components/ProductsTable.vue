@@ -27,15 +27,20 @@
       </template>
       <template v-slot:item.expectedQuantity="{ item }" v-if="hasExpectedQuantity">
         <v-text-field
-            type="number"
-            v-model="item.expectedQuantity"
+            v-model="item.expectedQuantityInput"
             :placeholder="$t('quantityShort')"
             @keydown="enterKeyDownAction($event, item, changeExpectedQuantity)"
             @blur="changeExpectedQuantity($event, item)"
             v-if="canChangeExpectedQuantity"
-            style="max-width: 50px;"
+            style="width:70px;"
+            :hint="item.expectedQuantityHint"
         ></v-text-field>
-        <span v-else>{{ item.expectedQuantity }}</span>
+        <div v-else>
+          <span class="text-no-wrap">{{ item.expectedQuantityInput }}</span>
+          <br>
+          <small class="">{{ item.expectedQuantityPercentage }}%</small>
+        </div>
+
       </template>
       <template v-slot:item.allMembersQuantity="{ item }" v-if="showAllMembersQuantity">
         <span v-if="item.allMembersQuantity % 1 === 0" class="">
@@ -47,14 +52,20 @@
       </template>
       <template v-slot:item.quantity="{ item }" v-if="hasQuantity">
         <v-text-field
-            type="number"
-            v-model="item.quantity"
+            v-model="item.quantityInput"
             :placeholder="$t('quantityShort')"
             @keydown="enterKeyDownAction($event, item, changeQuantity)"
             @blur="changeQuantity($event, item)"
             v-if="canChangeQuantity"
+            :hint="item.quantityHint"
+            persistent-hint
+            style="width:70px;"
         ></v-text-field>
-        <span v-else>{{ item.quantity }}</span>
+        <div v-else>
+          <span class="text-no-wrap">{{ item.quantityInput }}</span>
+          <br>
+          <small class="">{{ item.quantityPercentage }}%</small>
+        </div>
       </template>
       <template v-slot:item.expectedTotalAfterRebateWithTaxes="{ item }" v-if="hasExpectedQuantity">
         <span v-if="item.expectedTotalAfterRebateWithTaxes === undefined">
@@ -119,6 +130,7 @@
             suffix="$"
             hide-details
             hide-spin-buttons
+            style="max-width:63px;"
         ></v-text-field>
         <span v-else>{{ item.costUnitPrice | currency }}</span>
       </template>
@@ -196,6 +208,28 @@
         </v-btn>
       </template>
     </v-snackbar>
+    <v-snackbar
+        v-model="wrongFormatSnackbar"
+        top
+        :timeout="7000"
+    >
+        <span class="body-1">
+          {{ $t('productTable:wrongFormat1') }}
+          '{{ inputFormat }}'
+          {{ $t('productTable:wrongFormat2') }}
+          '{{ productFormat }}'
+        </span>
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="wrongFormatSnackbar = false"
+        >
+          {{ $t('close') }}
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -205,6 +239,8 @@ import I18n from "@/i18n";
 import ProductService from "@/service/ProductService";
 import Product from "@/Product";
 import latinize from 'latinize';
+import QuantityInterpreter from "@/QuantityInterpreter";
+import OrderItem from "@/OrderItem";
 
 const ENTER_KEY_CODE = 13;
 export default {
@@ -225,6 +261,10 @@ export default {
       default: false
     },
     canChangeQuantity: {
+      type: Boolean,
+      default: false
+    },
+    hideCategory: {
       type: Boolean,
       default: false
     },
@@ -291,24 +331,19 @@ export default {
   },
   data: function () {
     ProductTranslation.setup();
-    I18n.i18next.addResources("fr", "productTable", {
+    const text = {
       create: "Nouveau",
       updatePrice: "Prix mis à jour",
       nothing: "Rien de changé",
       loadingText: "Liste de produits en chargement",
       noProducts: "Pas de produits",
       quantityUpdated: "Quantité mise à jour",
-      costUnitPriceUpdated: "Prix coûtant mis à jour"
-    });
-    I18n.i18next.addResources("en", "productTable", {
-      create: "Nouveau",
-      updatePrice: "Prix mis à jour",
-      nothing: "Rien de changé",
-      loadingText: "Liste de produits en chargement",
-      noProducts: "Pas de produits disponibles",
-      quantityUpdated: "Quantité mise à jour",
-      costUnitPriceUpdated: "Prix coûtant mis à jour"
-    });
+      costUnitPriceUpdated: "Prix coûtant mis à jour",
+      wrongFormat1: "Le format entré",
+      wrongFormat2: "ne correspond pas au format du produit"
+    };
+    I18n.i18next.addResources("fr", "productTable", text);
+    I18n.i18next.addResources("en", "productTable", text);
     let headers = [
       {
         text: this.$t('product:name'),
@@ -362,11 +397,15 @@ export default {
           }
       )
     }
-    headers = headers.concat([
+    if (!this.hideCategory) {
+      headers.push(
           {
             text: this.$t('product:category'),
             value: 'category'
-          },
+          }
+      )
+    }
+    headers = headers.concat([
           {
             text: this.$t('product:internalCode'),
             value: 'internalCode'
@@ -484,7 +523,10 @@ export default {
       headers: headers,
       showEditButton: showEditButton,
       quantityUpdateSnackbar: false,
-      costUnitPriceUpdateSnackbar: false
+      costUnitPriceUpdateSnackbar: false,
+      wrongFormatSnackbar: false,
+      inputFormat: "",
+      productFormat: ""
     }
   },
   watch: {
@@ -504,20 +546,6 @@ export default {
         action(event, entity);
       }
     },
-    changeQuantity: async function (event, product) {
-      if (isNaN(product.quantity)) {
-        return;
-      }
-      if (parseFloat(product.previousQuantity) === parseFloat(product.quantity)) {
-        return;
-      }
-      if (parseFloat(product.quantity) < 0) {
-        event.target.value = product.quantity = product.previousQuantity;
-        return;
-      }
-      await this.$emit('quantityUpdate', product)
-      product.previousQuantity = product.quantity;
-    },
     async changeCostUnitPrice(event, product) {
       if (isNaN(product.costUnitPrice)) {
         return;
@@ -527,22 +555,78 @@ export default {
       }
       await this.$emit('costUnitPriceUpdate', product)
     },
+    changeQuantity: async function (event, product) {
+      await this._tryToChangeExpectedOrFinalQuantity(
+          event,
+          product,
+          false
+      );
+    },
     changeExpectedQuantity: async function (event, product) {
-      if (String(product.expectedQuantity).trim() === "") {
-        product.expectedQuantity = 0;
+      await this._tryToChangeExpectedOrFinalQuantity(
+          event,
+          product,
+          true
+      );
+    },
+    _tryToChangeExpectedOrFinalQuantity: async function (event, product, isForExpected) {
+      const propertyName = isForExpected ? 'expectedQuantity' : 'quantity';
+      const propertyNameUpper = isForExpected ? 'ExpectedQuantity' : 'Quantity';
+      const inputPropertyName = propertyName + 'Input';
+      const previousPropertyName = 'previous' + propertyNameUpper + 'Input'
+      const hasChanged = await this._changeExpectedOrFinalQuantity(event, product, isForExpected);
+      if (hasChanged === false) {
+        if (product[previousPropertyName] === undefined) {
+          product[previousPropertyName] = "";
+        }
+        event.target.value = product[inputPropertyName] = product[previousPropertyName];
+        if (product[previousPropertyName] !== "") {
+          if (isForExpected) {
+            OrderItem.defineExpectedQuantityFraction(product);
+          } else {
+            OrderItem.defineQuantityFraction(product);
+          }
+        }
+      } else {
+        product[previousPropertyName] = product[inputPropertyName];
       }
-      if (isNaN(product.expectedQuantity)) {
-        return;
+    },
+    _changeExpectedOrFinalQuantity: async function (event, product, isForExpected) {
+      const propertyName = isForExpected ? 'expectedQuantity' : 'quantity';
+      const inputPropertyName = propertyName + 'Input';
+      const propertyNameUpper = isForExpected ? 'ExpectedQuantity' : 'Quantity';
+      const previousPropertyName = 'previous' + propertyNameUpper + 'Input';
+      if (String(product[inputPropertyName]).trim() === "") {
+        product[propertyName] = 0;
       }
-      if (parseFloat(product.previousExpectedQuantity) === parseFloat(product.expectedQuantity)) {
-        return;
+      const inputFormat = QuantityInterpreter.getFormat(String(product[inputPropertyName]));
+      if (inputFormat === 'unit') {
+        if (isNaN(product[inputPropertyName])) {
+          return false;
+        }
+      } else {
+        const productFormat = QuantityInterpreter.getFormat(product.format)
+        if (productFormat !== inputFormat) {
+          this.inputFormat = inputFormat;
+          this.productFormat = productFormat;
+          this.wrongFormatSnackbar = true;
+          return false;
+        }
       }
-      if (parseFloat(product.expectedQuantity) < 0) {
-        event.target.value = product.expectedQuantity = product.previousExpectedQuantity;
-        return;
+      if (product[previousPropertyName] == product[inputPropertyName]) {
+        return false;
       }
+      const qty = QuantityInterpreter.getQty(String(product[inputPropertyName]));
+      if (qty < 0) {
+        return false;
+      }
+      if (isForExpected) {
+        OrderItem.defineExpectedQuantityFraction(product);
+      } else {
+        OrderItem.defineQuantityFraction(product);
+      }
+
       await this.$emit('quantityUpdate', product)
-      product.previousExpectedQuantity = product.expectedQuantity;
     },
     showQuantityChangedSuccess: async function () {
       const timeout = this.quantityUpdateSnackbar ? 500 : 0;

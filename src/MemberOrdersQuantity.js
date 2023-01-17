@@ -1,15 +1,17 @@
-export default function MemberOrdersQuantity(memberOrders) {
-    this.memberOrders = memberOrders;
+export default function MemberOrdersQuantity(memberOrderItems) {
+    this.memberOrderItems = memberOrderItems;
 }
 
 MemberOrdersQuantity.prototype.buildQuantities = function (memberId, updatedQuantity, productId) {
-    this.quantities = this.memberOrders.reduce((productQuantities, memberOrderItem) => {
+    let isItemForUpdatedQuantityFound = updatedQuantity === undefined ? true : false;
+    this.quantities = this.memberOrderItems.reduce((productQuantities, memberOrderItem) => {
         if (productQuantities[memberOrderItem.ProductId] === undefined) {
             productQuantities[memberOrderItem.ProductId] = 0;
         }
         let quantity;
         if (memberOrderItem.MemberOrder.MemberId === memberId && memberOrderItem.ProductId === productId) {
             quantity = updatedQuantity;
+            isItemForUpdatedQuantityFound = true;
         } else {
             quantity = memberOrderItem.quantity;
             if (quantity === null) {
@@ -19,6 +21,9 @@ MemberOrdersQuantity.prototype.buildQuantities = function (memberId, updatedQuan
         productQuantities[memberOrderItem.ProductId] = (parseFloat(quantity) + parseFloat(productQuantities[memberOrderItem.ProductId])).toFixed(2);
         return productQuantities;
     }, {})
+    if (!isItemForUpdatedQuantityFound) {
+        this.quantities[productId] = parseFloat(this.quantities[productId] || 0) + parseFloat(updatedQuantity);
+    }
     return this.quantities;
 }
 MemberOrdersQuantity.prototype.getQuantities = function () {
@@ -31,6 +36,6 @@ MemberOrdersQuantity.prototype.updateMemberQuantity = function (memberId, update
     return productQuantities[productId]
 }
 MemberOrdersQuantity.prototype.setMemberOrders = function (memberOrders) {
-    this.memberOrders = memberOrders;
+    this.memberOrderItems = memberOrders;
 }
 

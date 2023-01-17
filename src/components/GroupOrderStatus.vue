@@ -65,7 +65,7 @@ export default {
       addedToCost: "ajouté au prix coûtant",
       additionalFees: "Frais additionnels",
       noOrders: "Pas de commande en vue",
-      latestOrder: "La dernière commande c'est terminé le"
+      latestOrder: "La dernière commande s'est terminé le"
     };
     I18n.i18next.addResources("fr", "groupOrderStatus", text);
     I18n.i18next.addResources("en", "groupOrderStatus", text);
