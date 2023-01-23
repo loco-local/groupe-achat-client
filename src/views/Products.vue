@@ -60,7 +60,7 @@
           <v-card-text class="font-weight-bold text-left body-1" v-if="memberId !== null">
             <v-card>
               <v-card-title>
-                {{$t('products:summary')}}
+                {{ $t('products:summary') }}
               </v-card-title>
               <v-card-subtitle class="font-weight-bold">
                 <span class="">{{ $t('total') }} : </span>
@@ -71,9 +71,25 @@
                   <v-chip outlined class="mr-4 mb-4" label @click="searchItem(orderItem)">
                     {{ orderItem.description }}
                     <v-divider vertical class="ml-2 mr-2"></v-divider>
-                    {{orderItem.expectedQuantityInput}}
+                    {{ orderItem.expectedQuantityInput }}
                     <v-divider vertical class="ml-2 mr-2"></v-divider>
                     {{ orderItem.total | currency }}
+                  </v-chip>
+                  <!--                  <span class="ml-2 mr-2">|</span>-->
+                </div>
+              </v-card-text>
+            </v-card>
+            <v-card class="mt-8">
+              <v-card-title>
+                {{ $t('products:toDivide') }}
+              </v-card-title>
+              <v-card-text class="body-1">
+                <div v-for="(item) in itemsToDivide " :key="item.ProductId" class="d-inline">
+                  <v-chip outlined class="mr-4 mb-4" label @click="searchItem(item)">
+                    {{ item.name }}
+                    <v-divider vertical class="ml-2 mr-2"></v-divider>
+                    {{ item.allMembersQuantity.remainingFraction }}
+                    {{ item.allMembersQuantity.format }}
                   </v-chip>
                   <!--                  <span class="ml-2 mr-2">|</span>-->
                 </div>
@@ -136,7 +152,8 @@ export default {
       info1: "Il n'y a pas de bouton de confirmation pour votre panier de commande.",
       info2: "À la date de fin de la commande, les dernières quantités que vous aurez inscrites seront commandées aux fournisseurs.",
       noResults: "Pas de produits disponibles",
-      summary: "Résumé"
+      summary: "Résumé",
+      toDivide: "Quantitées à diviser"
     };
     I18n.i18next.addResources("fr", "products", text);
     I18n.i18next.addResources("en", "products", text);
@@ -145,6 +162,7 @@ export default {
       memberId: null,
       products: [],
       orderItems: [],
+      itemsToDivide: [],
       userOrderId: null,
       isLoading: false,
       isMemberLoading: true,
@@ -170,7 +188,12 @@ export default {
     this.isMemberLoading = false;
   },
   methods: {
-    searchItem: function(item){
+    buildItemsToDivide: function () {
+      this.itemsToDivide = this.products.filter((product) => {
+        return product.allMembersQuantity !== undefined && product.allMembersQuantity.remainingFraction > 0;
+      });
+    },
+    searchItem: function (item) {
       this.$refs.productsTable.searchItem(item);
     },
     rebuildTotal: function (orderItems) {
@@ -267,6 +290,7 @@ export default {
         }
       });
       this.rebuildTotal(this.orderItems);
+      this.buildItemsToDivide();
       this.isLoading = false;
     },
     updateOrderQuantity: async function (updatedProduct) {
@@ -330,6 +354,7 @@ export default {
       updatedProduct.allMembersQuantity = this.memberOrdersQuantities.getAllMembersQuantityForProductId(updatedProduct.id);
       this.$set(this.products, this.products.indexOf(updatedProduct), updatedProduct);
       this.rebuildTotal(this.orderItems);
+      this.buildItemsToDivide();
       await this.$refs.productsTable.showQuantityChangedSuccess();
     }
   }

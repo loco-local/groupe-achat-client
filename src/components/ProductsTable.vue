@@ -452,7 +452,7 @@ export default {
     }
     if (this.showAllMembersQuantity) {
       headers.unshift({
-        text: this.$t('product:allMembersQuantity'),
+        text: this.$t('product:remainingQtyToDivide'),
         value: 'allMembersQuantity'
       });
     }
@@ -562,7 +562,7 @@ export default {
   },
   methods: {
     searchItem: function (item) {
-      this.search = item.description;
+      this.search = item.description === undefined ? item.name : item.description;
       VueScrollTo.scrollTo(
           document.getElementById(this.searchElementId), 500, {
             easing: 'linear',
