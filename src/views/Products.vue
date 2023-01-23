@@ -66,10 +66,13 @@
                 <span class="">{{ $t('total') }} : </span>
                 {{ total | currency }}
               </v-card-subtitle>
-              <v-card-text class="body-1">
+              <v-card-text class="body-1" v-if="orderItems.length > 0">
                 <div v-for="(orderItem) in orderItems " :key="orderItem.ProductId" class="d-inline">
                   <v-chip outlined class="mr-4 mb-4" label @click="searchItem(orderItem)">
                     {{ orderItem.description }}
+                    <span v-if="orderItem.description === undefined">
+                      {{ orderItem.name }}
+                    </span>
                     <v-divider vertical class="ml-2 mr-2"></v-divider>
                     {{ orderItem.expectedQuantityInput }}
                     <v-divider vertical class="ml-2 mr-2"></v-divider>
@@ -78,12 +81,18 @@
                   <!--                  <span class="ml-2 mr-2">|</span>-->
                 </div>
               </v-card-text>
+              <v-card-text v-if="orderItems.length === 0 && !isLoading">
+                {{ $t('products:noOrderItems') }}
+              </v-card-text>
+              <v-card-text v-if="isLoading" class="text-left">
+                <v-progress-circular indeterminate :size="45" :width="2"></v-progress-circular>
+              </v-card-text>
             </v-card>
             <v-card class="mt-8">
               <v-card-title>
                 {{ $t('products:toDivide') }}
               </v-card-title>
-              <v-card-text class="body-1">
+              <v-card-text class="body-1" v-if="itemsToDivide.length > 0">
                 <div v-for="(item) in itemsToDivide " :key="item.ProductId" class="d-inline">
                   <v-chip outlined class="mr-4 mb-4" label @click="searchItem(item)">
                     {{ item.name }}
@@ -93,6 +102,12 @@
                   </v-chip>
                   <!--                  <span class="ml-2 mr-2">|</span>-->
                 </div>
+              </v-card-text>
+              <v-card-text v-if="itemsToDivide.length === 0 && !isLoading">
+                {{ $t('products:noProductsToDivide') }}
+              </v-card-text>
+              <v-card-text v-if="isLoading" class="text-left">
+                <v-progress-circular indeterminate :size="45" :width="2"></v-progress-circular>
               </v-card-text>
             </v-card>
           </v-card-text>
@@ -153,7 +168,9 @@ export default {
       info2: "À la date de fin de la commande, les dernières quantités que vous aurez inscrites seront commandées aux fournisseurs.",
       noResults: "Pas de produits disponibles",
       summary: "Résumé",
-      toDivide: "Quantitées à diviser"
+      toDivide: "Quantitées à diviser",
+      noOrderItems: "Pas encore de produits commandés",
+      noProductsToDivide: "Pas de produits à diviser"
     };
     I18n.i18next.addResources("fr", "products", text);
     I18n.i18next.addResources("en", "products", text);
@@ -188,6 +205,9 @@ export default {
     this.isMemberLoading = false;
   },
   methods: {
+    buildAllMembersQuantities: function () {
+      return this.memberOrdersQuantities.buildQuantities();
+    },
     buildItemsToDivide: function () {
       this.itemsToDivide = this.products.filter((product) => {
         return product.allMembersQuantity !== undefined && product.allMembersQuantity.remainingFraction > 0;
@@ -240,7 +260,7 @@ export default {
         this.memberOrdersQuantities = new MemberOrdersQuantity(
             allMemberOrders
         );
-        allMembersQuantities = this.memberOrdersQuantities.buildQuantities();
+        allMembersQuantities = this.buildAllMembersQuantities();
       }
       this.orderItems.forEach((item) => {
         const matchingProduct = this.products.filter((product) => {
@@ -269,7 +289,8 @@ export default {
               this.isAdminModificationFlow ? item.unitPrice : item.expectedUnitPrice
           )
           OrderItem.defineQuantitiesFraction(matchingProduct[0]);
-          OrderItem.defineQuantitiesFraction(item);
+          item.expectedQuantityInput = matchingProduct[0].expectedQuantityInput;
+          item.quantityInput = matchingProduct[0].quantityInput;
           matchingProduct[0].previousExpectedQuantityInput = matchingProduct[0].expectedQuantityInput;
           matchingProduct[0].previousQuantityInput = matchingProduct[0].quantityInput;
         }
@@ -338,9 +359,11 @@ export default {
         orderItem.expectedTotalAfterRebateWithTaxes = updatedProduct.expectedTotalAfterRebateWithTaxes = prices.expectedTotalAfterRebateWithTaxes;
         updatedProduct.expectedQuantity = orderItem.expectedQuantity = prices.expectedQuantity;
       }
+      OrderItem.defineQuantitiesFraction(updatedProduct)
+      orderItem.expectedQuantityInput = updatedProduct.expectedQuantityInput;
+      orderItem.quantityInput = updatedProduct.quantityInput;
       updatedProduct.tps = prices.tps;
       updatedProduct.tvq = prices.tvq;
-      OrderItem.defineQuantitiesFraction(orderItem);
       if (isNewItem) {
         this.orderItems.push(
             orderItem
@@ -350,7 +373,7 @@ export default {
         MemberId: this.member.id
       }
       this.memberOrdersQuantities.updateMemberOrder(orderItem);
-      this.memberOrdersQuantities.buildQuantities();
+      this.buildAllMembersQuantities();
       updatedProduct.allMembersQuantity = this.memberOrdersQuantities.getAllMembersQuantityForProductId(updatedProduct.id);
       this.$set(this.products, this.products.indexOf(updatedProduct), updatedProduct);
       this.rebuildTotal(this.orderItems);
