@@ -58,32 +58,56 @@
           <!--        {{ $t('products:title') }}-->
           <!--      </v-card-title>-->
           <v-card-text class="font-weight-bold text-left body-1" v-if="memberId !== null">
-            <span class="">{{ $t('total') }} : </span>
-            {{ total | currency }}
+            <v-card>
+              <v-card-title>
+                {{$t('products:summary')}}
+              </v-card-title>
+              <v-card-subtitle class="font-weight-bold">
+                <span class="">{{ $t('total') }} : </span>
+                {{ total | currency }}
+              </v-card-subtitle>
+              <v-card-text class="body-1">
+                <div v-for="(orderItem) in orderItems " :key="orderItem.ProductId" class="d-inline">
+                  <v-chip outlined class="mr-4 mb-4" label @click="searchItem(orderItem)">
+                    {{ orderItem.description }}
+                    <v-divider vertical class="ml-2 mr-2"></v-divider>
+                    {{orderItem.expectedQuantityInput}}
+                    <v-divider vertical class="ml-2 mr-2"></v-divider>
+                    {{ orderItem.total | currency }}
+                  </v-chip>
+                  <!--                  <span class="ml-2 mr-2">|</span>-->
+                </div>
+              </v-card-text>
+            </v-card>
           </v-card-text>
         </v-card>
       </v-col>
       <v-col cols="12" class="vh-center" v-if="isLoading">
         <v-progress-circular indeterminate :size="80" :width="2"></v-progress-circular>
       </v-col>
-      <ProductsTable
-          v-else
-          :products="products || []"
-          :canToggleAvailability="false"
-          :canChangeExpectedQuantity="canChangeExpectedQuantity"
-          :hasExpectedQuantity="hasExpectedQuantity"
-          :hasQuantity="isAdminModificationFlow"
-          :canChangeQuantity="isAdminModificationFlow"
-          :showExpectedCostUnitPrice="!isAdminModificationFlow"
-          :showTaxes="true"
-          :hideExpectedUnitPrice="true"
-          :showExpectedUnitPriceAfterRebate="!isAdminModificationFlow"
-          :showCostUnitPrice="isAdminModificationFlow"
-          :showUnitPrice="isAdminModificationFlow"
-          :showAllMembersQuantity="showAllMembersQuantity"
-          @quantityUpdate="updateOrderQuantity"
-          ref="productsTable"
-      ></ProductsTable>
+      <v-col cols="12" class="" v-else>
+        <v-row>
+          <v-col cols="12">
+            <ProductsTable
+                :products="products || []"
+                :canToggleAvailability="false"
+                :canChangeExpectedQuantity="canChangeExpectedQuantity"
+                :hasExpectedQuantity="hasExpectedQuantity"
+                :hasQuantity="isAdminModificationFlow"
+                :canChangeQuantity="isAdminModificationFlow"
+                :showExpectedCostUnitPrice="!isAdminModificationFlow"
+                :showTaxes="true"
+                :hideExpectedUnitPrice="true"
+                :showExpectedUnitPriceAfterRebate="!isAdminModificationFlow"
+                :showCostUnitPrice="isAdminModificationFlow"
+                :showUnitPrice="isAdminModificationFlow"
+                :showAllMembersQuantity="showAllMembersQuantity"
+                @quantityUpdate="updateOrderQuantity"
+                ref="productsTable"
+            ></ProductsTable>
+          </v-col>
+        </v-row>
+      </v-col>
     </v-row>
   </Page>
 </template>
@@ -111,7 +135,8 @@ export default {
       "title": "Produits",
       info1: "Il n'y a pas de bouton de confirmation pour votre panier de commande.",
       info2: "À la date de fin de la commande, les dernières quantités que vous aurez inscrites seront commandées aux fournisseurs.",
-      noResults: "Pas de produits disponibles"
+      noResults: "Pas de produits disponibles",
+      summary: "Résumé"
     };
     I18n.i18next.addResources("fr", "products", text);
     I18n.i18next.addResources("en", "products", text);
@@ -145,11 +170,14 @@ export default {
     this.isMemberLoading = false;
   },
   methods: {
+    searchItem: function(item){
+      this.$refs.productsTable.searchItem(item);
+    },
     rebuildTotal: function (orderItems) {
       this.total = orderItems.reduce((total, orderItem) => {
         let orderItemTotal = (orderItem.totalAfterRebateWithTaxes === null || orderItem.totalAfterRebateWithTaxes === undefined) ?
             orderItem.expectedTotalAfterRebateWithTaxes : orderItem.totalAfterRebateWithTaxes;
-        orderItemTotal = parseFloat(orderItemTotal);
+        orderItem.total = orderItemTotal = parseFloat(orderItemTotal);
         return parseFloat((orderItemTotal || 0.0) + total);
       }, 0)
     },
@@ -218,6 +246,7 @@ export default {
               this.isAdminModificationFlow ? item.unitPrice : item.expectedUnitPrice
           )
           OrderItem.defineQuantitiesFraction(matchingProduct[0]);
+          OrderItem.defineQuantitiesFraction(item);
           matchingProduct[0].previousExpectedQuantityInput = matchingProduct[0].expectedQuantityInput;
           matchingProduct[0].previousQuantityInput = matchingProduct[0].quantityInput;
         }
@@ -287,6 +316,7 @@ export default {
       }
       updatedProduct.tps = prices.tps;
       updatedProduct.tvq = prices.tvq;
+      OrderItem.defineQuantitiesFraction(orderItem);
       if (isNewItem) {
         this.orderItems.push(
             orderItem

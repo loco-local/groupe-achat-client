@@ -22,7 +22,8 @@
     "vue-router": "^3.5.3",
     "vuetify": "^2.6.14",
     "vuex": "^3.6.2",
-    "vuex-persistedstate": "^3.2.1"
+    "vuex-persistedstate": "^3.2.1",
+    "vue-scrollto": "^2.20.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",

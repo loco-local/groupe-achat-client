@@ -23,6 +23,7 @@
             v-model="search"
             class="mx-4 mb-6"
             clearable
+            :id="searchElementId"
         ></v-text-field>
       </template>
       <template v-slot:item.expectedQuantity="{ item }" v-if="hasExpectedQuantity">
@@ -259,6 +260,7 @@ import Product from "@/Product";
 import latinize from 'latinize';
 import QuantityInterpreter from "@/QuantityInterpreter";
 import OrderItem from "@/OrderItem";
+import VueScrollTo from 'vue-scrollto'
 
 const ENTER_KEY_CODE = 13;
 export default {
@@ -457,7 +459,8 @@ export default {
     if (this.hasExpectedQuantity) {
       headers.unshift({
         text: this.$t('product:expectedQuantityShort'),
-        value: 'expectedQuantity'
+        value: 'expectedQuantity',
+        sortable: true
       });
     }
     if (this.showTaxes) {
@@ -548,7 +551,8 @@ export default {
       costUnitPriceUpdateSnackbar: false,
       wrongFormatSnackbar: false,
       inputFormat: "",
-      productFormat: ""
+      productFormat: "",
+      searchElementId: "search-" + Math.random()
     }
   },
   watch: {
@@ -557,17 +561,28 @@ export default {
     }
   },
   methods: {
+    searchItem: function (item) {
+      this.search = item.description;
+      VueScrollTo.scrollTo(
+          document.getElementById(this.searchElementId), 500, {
+            easing: 'linear',
+            offset: 60
+          }
+      );
+    },
     searchIgnoreAccents(value, search) {
       return value != null &&
           search != null &&
           typeof value === 'string' &&
           latinize(value.toString().toLowerCase()).indexOf(latinize(search.toLowerCase())) !== -1
-    },
+    }
+    ,
     enterKeyDownAction: function (event, entity, action) {
       if (event.keyCode === ENTER_KEY_CODE) {
         action(event, entity);
       }
-    },
+    }
+    ,
     async changeCostUnitPrice(event, product) {
       if (isNaN(product.costUnitPrice)) {
         return;
@@ -576,21 +591,24 @@ export default {
         return;
       }
       await this.$emit('costUnitPriceUpdate', product)
-    },
+    }
+    ,
     changeQuantity: async function (event, product) {
       await this._tryToChangeExpectedOrFinalQuantity(
           event,
           product,
           false
       );
-    },
+    }
+    ,
     changeExpectedQuantity: async function (event, product) {
       await this._tryToChangeExpectedOrFinalQuantity(
           event,
           product,
           true
       );
-    },
+    }
+    ,
     _tryToChangeExpectedOrFinalQuantity: async function (event, product, isForExpected) {
       const propertyName = isForExpected ? 'expectedQuantity' : 'quantity';
       const propertyNameUpper = isForExpected ? 'ExpectedQuantity' : 'Quantity';
@@ -612,7 +630,8 @@ export default {
       } else {
         product[previousPropertyName] = product[inputPropertyName];
       }
-    },
+    }
+    ,
     _changeExpectedOrFinalQuantity: async function (event, product, isForExpected) {
       const propertyName = isForExpected ? 'expectedQuantity' : 'quantity';
       const inputPropertyName = propertyName + 'Input';
@@ -649,7 +668,8 @@ export default {
       }
 
       await this.$emit('quantityUpdate', product)
-    },
+    }
+    ,
     showQuantityChangedSuccess: async function () {
       const timeout = this.quantityUpdateSnackbar ? 500 : 0;
       this.quantityUpdateSnackbar = false;
@@ -657,7 +677,8 @@ export default {
       setTimeout(() => {
         this.quantityUpdateSnackbar = true;
       }, timeout)
-    },
+    }
+    ,
     showCostUnitPriceChangedSuccess: async function () {
       const timeout = this.costUnitPriceUpdateSnackbar ? 500 : 0;
       this.costUnitPriceUpdateSnackbar = false;
@@ -665,7 +686,8 @@ export default {
       setTimeout(() => {
         this.costUnitPriceUpdateSnackbar = true;
       }, timeout)
-    },
+    }
+    ,
     toggleIsAvailable: async function (product) {
       if (product.isAvailable) {
         await ProductService.makeAvailable(product.id);

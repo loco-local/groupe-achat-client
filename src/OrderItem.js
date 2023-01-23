@@ -33,6 +33,12 @@ const OrderItem = {
     getQty(orderItem) {
         return orderItem.quantity === null ? orderItem.expectedQuantity : orderItem.quantity;
     },
+    getSafeQty(quantity) {
+        if (quantity === null || quantity === undefined) {
+            return 0;
+        }
+        return quantity;
+    },
     defineQuantitiesFraction(orderItem) {
         OrderItem.defineExpectedQuantityFraction(orderItem);
         OrderItem.defineQuantityFraction(orderItem);
@@ -74,7 +80,13 @@ const OrderItem = {
                 orderItem
             ) + " " + productFormat;
             orderItem[percentagePropertyName] = Math.round(orderItem[propertyName] * 100);
-            orderItem[propertyName + 'Hint'] = percentagePropertyName <= 0 ? "" : orderItem[percentagePropertyName] + "%";
+            let hint;
+            if (orderItem[propertyName] % 1 === 0) {
+                hint = orderItem[propertyName] + "x";
+            } else {
+                hint = (percentagePropertyName <= 0 ? "" : orderItem[percentagePropertyName] + "%");
+            }
+            orderItem[propertyName + 'Hint'] = hint
         }
     }
 }
