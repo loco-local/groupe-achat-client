@@ -126,6 +126,16 @@
           <v-divider></v-divider>
         </span>
       </template>
+      <template v-slot:item.format="{ item }">
+        <!--        <span class="text-no-wrap">-->
+        <span v-if="item.qtyInBox && item.qtyInBox > 1" class="font-weight-bold">
+          {{ item.qtyInBox }}x
+        </span>
+        <span>
+          {{ item.format }}
+        </span>
+        <!--        </span>-->
+      </template>
       <template v-slot:item.expectedUnitPrice="{ item }">
         {{ item.expectedUnitPrice | currency }}
       </template>
@@ -379,10 +389,6 @@ export default {
         sort: function (a, b) {
           return Product.formatInKg(a) - Product.formatInKg(b);
         }
-      },
-      {
-        text: this.$t('product:qtyInBox'),
-        value: 'qtyInBox'
       }
     ]
     if (!this.hideExpectedUnitPrice) {
@@ -710,5 +716,13 @@ export default {
 
 .productsTable th {
   font-size: 0.9em !important;
+}
+
+.productsTable .v-messages__message {
+  font-weight: normal;
+  color: black;
+  font-size: 17px !important;
+  padding-top: 6px;
+  padding-bottom: 8px;
 }
 </style>

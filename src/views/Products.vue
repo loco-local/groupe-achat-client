@@ -168,7 +168,7 @@ export default {
       info2: "À la date de fin de la commande, les dernières quantités que vous aurez inscrites seront commandées aux fournisseurs.",
       noResults: "Pas de produits disponibles",
       summary: "Résumé",
-      toDivide: "Quantitées à diviser",
+      toDivide: "Quantités restantes à diviser",
       noOrderItems: "Pas encore de produits commandés",
       noProductsToDivide: "Pas de produits à diviser"
     };
