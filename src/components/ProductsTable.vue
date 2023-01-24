@@ -2,7 +2,7 @@
   <div>
     <v-data-table
         :headers="headers"
-        :items="products"
+        :items="filteredProducts"
         :options="tableOptions"
         :no-data-text="$t('productTable:noProducts')"
         :no-results-text="$t('productTable:noProducts')"
@@ -15,6 +15,17 @@
         :custom-filter="searchIgnoreAccents"
     >
       <template v-slot:top v-if="!hideSearch">
+        <v-select
+            v-model="chosenCategories"
+            :items="categories"
+            :label="$t('productTable:categoriesFilter')"
+            multiple
+            chips
+            class="mx-4 mb-6"
+            clearable
+            persistent-hint
+            :hint="$t('productTable:displayAllIfNoCategory')"
+        ></v-select>
         <v-text-field
             prepend-inner-icon="search"
             label="Recherche"
@@ -271,6 +282,7 @@ import latinize from 'latinize';
 import QuantityInterpreter from "@/QuantityInterpreter";
 import OrderItem from "@/OrderItem";
 import VueScrollTo from 'vue-scrollto'
+import BuildUniquePropertySetsInProducts from "@/BuildUniquePropertySetsInProducts";
 
 const ENTER_KEY_CODE = 13;
 export default {
@@ -299,6 +311,10 @@ export default {
       default: false
     },
     hideCategory: {
+      type: Boolean,
+      default: false
+    },
+    hideCategoriesFilter: {
       type: Boolean,
       default: false
     },
@@ -374,7 +390,9 @@ export default {
       quantityUpdated: "Quantité mise à jour",
       costUnitPriceUpdated: "Prix coûtant mis à jour",
       wrongFormat1: "Le format entré",
-      wrongFormat2: "ne correspond pas au format du produit"
+      wrongFormat2: "ne correspond pas au format du produit",
+      categoriesFilter: "Afficher les produits dans ces catégories",
+      displayAllIfNoCategory: "Tous les produits s'affichent si rien n'est sélectionné"
     };
     I18n.i18next.addResources("fr", "productTable", text);
     I18n.i18next.addResources("en", "productTable", text);
@@ -558,7 +576,27 @@ export default {
       wrongFormatSnackbar: false,
       inputFormat: "",
       productFormat: "",
-      searchElementId: "search-" + Math.random()
+      searchElementId: "search-" + Math.random(),
+      chosenCategories: []
+    }
+  },
+  computed: {
+    filteredProducts: function () {
+      if (this.chosenCategories.length === 0) {
+        return this.products;
+      }
+      return this.products.filter((product) => {
+        return this.chosenCategories.indexOf(product.category) > -1;
+      });
+    },
+    categories: function () {
+      if (!this.hideCategoriesFilter && this.products !== undefined) {
+        const sets = BuildUniquePropertySetsInProducts.build(
+            this.products
+        );
+        return sets.categories;
+      }
+      return [];
     }
   },
   watch: {
@@ -718,7 +756,7 @@ export default {
   font-size: 0.9em !important;
 }
 
-.productsTable .v-messages__message {
+.productsTable tbody .v-messages__message {
   font-weight: normal;
   color: black;
   font-size: 17px !important;

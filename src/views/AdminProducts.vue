@@ -351,6 +351,7 @@ import I18n from "@/i18n";
 import Rules from '@/Rules'
 import BuyGroupService from "@/service/BuyGroupService";
 import Product from "@/Product";
+import BuildUniquePropertySetsInProducts from "@/BuildUniquePropertySetsInProducts";
 
 export default {
   name: "Products",
@@ -516,17 +517,12 @@ export default {
             this.$store.state.user.BuyGroupId,
             this.buyGroup.salePercentage
         );
-        const categoriesSet = new Set();
-        const providersSet = new Set();
-        const makersSet = new Set();
-        this.productsPutForward.forEach((product) => {
-          categoriesSet.add(product.category)
-          providersSet.add(product.provider);
-          makersSet.add(product.maker);
-        })
-        this.categories = Array.from(categoriesSet);
-        this.providers = Array.from(providersSet);
-        this.makers = Array.from(makersSet);
+        const sets = BuildUniquePropertySetsInProducts.build(
+            this.productsPutForward
+        );
+        this.categories = sets.categories;
+        this.providers = sets.providers;
+        this.makers = sets.makers;
       } else {
         this.productsDeprecated = await ProductService.listDeprecated(
             this.$store.state.user.BuyGroupId,
