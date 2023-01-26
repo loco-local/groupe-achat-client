@@ -62,7 +62,6 @@
             text
             dense
             color="teal"
-            icon="mdi-clock-fast"
             border="left"
             class="mt-8 body-1"
         >
@@ -135,9 +134,16 @@
       <v-col cols="12" class="vh-center" v-if="isLoading">
         <v-progress-circular indeterminate :size="80" :width="2"></v-progress-circular>
       </v-col>
-      <v-col cols="12" class="" v-else>
+      <v-col cols="12" v-else :class="
+          {
+            'pa-0': $vuetify.breakpoint.smAndDown
+          }"
+      >
         <v-row>
-          <v-col cols="12">
+          <v-col cols="12" :class="
+          {
+            'pa-0': $vuetify.breakpoint.smAndDown
+          }">
             <ProductsTable
                 :products="products || []"
                 :canToggleAvailability="false"
@@ -184,7 +190,7 @@ export default {
     const text = {
       "title": "Produits",
       info1: "Il n'y a pas de bouton de confirmation pour votre panier de commande.",
-      info2: "À la date de fin de la commande, les dernières quantités que vous aurez inscrites seront commandées aux fournisseurs.",
+      info2: "Après la date de fin de la commande, les dernières quantités que vous aurez inscrites seront commandées aux fournisseurs.",
       noResults: "Pas de produits disponibles",
       summary: "Résumé",
       toDivide: "Quantités restantes à diviser",
