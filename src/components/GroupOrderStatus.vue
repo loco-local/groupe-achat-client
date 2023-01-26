@@ -42,6 +42,12 @@
               {{ $t('groupOrderStatus:latestOrder') }}
               {{ latestOrder.endDate | dayDate }}
             </v-card-text>
+            <v-card-text v-if="memberId !== null" class="text-h6 font-weight-regular">
+              <v-btn text outlined :to="'/groupe/' + buyGroup.id + '/commande/' + latestOrder.id + '/factures-membres/' + 1">
+                <v-icon left>receipt</v-icon>
+                {{ $t('groupOrderStatus:billForLatest') }}
+              </v-btn>
+            </v-card-text>
           </div>
         </div>
       </v-card>
@@ -59,13 +65,14 @@ import I18n from "@/i18n";
 export default {
   name: "GroupOrderStatus",
   components: {GroupOrderStatusText},
-  props: ['buyGroupPath', 'buyGroupId'],
+  props: ['buyGroupPath', 'buyGroupId', 'memberId'],
   data: function () {
     const text = {
       addedToCost: "ajouté au prix coûtant",
       additionalFees: "Frais additionnels",
       noOrders: "Pas de commande en vue",
-      latestOrder: "La dernière commande s'est terminé le"
+      latestOrder: "La dernière commande s'est terminé le",
+      billForLatest: "Voir la facture"
     };
     I18n.i18next.addResources("fr", "groupOrderStatus", text);
     I18n.i18next.addResources("en", "groupOrderStatus", text);
@@ -93,7 +100,7 @@ export default {
           unfinishedGroupOrders
       );
     }
-    await this.$emit('buyGroupDefined', this.buyGroup);
+    await this.$emit('buyGroupDefined', this.buyGroup, this.latestOrder);
     this.isLoading = false;
   }
 }

@@ -3,6 +3,7 @@
     <GroupOrderStatus @buyGroupDefined="setBuyGroup"
                       :buyGroupPath="$route.params.buyGroup"
                       class="mt-8"
+                      :memberId="memberId"
                       v-if="!isMemberLoading"
     ></GroupOrderStatus>
     <v-row>
@@ -35,6 +36,24 @@
                 {{ $t('product:rebateOnAllProducts') }}
               </v-card-text>
             </div>
+
+            <v-card-text class="pb-2">
+              <v-alert
+                  border="top"
+                  colored-border
+                  type="info"
+                  elevation="2"
+                  v-if="isAdminModificationFlow"
+                  class="ml-6 mr-6 accent-4"
+              >
+                <p class="text-h6 font-weight-regular">
+                  {{ $t('products:actingAsAdministrator') }}
+                </p>
+                <p class="body-1">
+                  {{ $t('products:quantitiesFinal') }}
+                </p>
+              </v-alert>
+            </v-card-text>
           </v-card>
         </v-col>
       </v-row>
@@ -170,7 +189,9 @@ export default {
       summary: "Résumé",
       toDivide: "Quantités restantes à diviser",
       noOrderItems: "Pas encore de produits commandés",
-      noProductsToDivide: "Pas de produits à diviser"
+      noProductsToDivide: "Pas de produits à diviser",
+      actingAsAdministrator: "Vous agissez en tant qu'administrateur",
+      quantitiesFinal: "Les quantités saisies seront considérées comme des quantités finales"
     };
     I18n.i18next.addResources("fr", "products", text);
     I18n.i18next.addResources("en", "products", text);
@@ -224,15 +245,22 @@ export default {
         return parseFloat((orderItemTotal || 0.0) + total);
       }, 0)
     },
-    setBuyGroup: async function (buyGroup) {
-      const hasRelevantOrder = buyGroup.relevantOrder !== undefined && buyGroup.relevantOrder !== null;
+    setBuyGroup: async function (buyGroup, latestOrder) {
+      let hasRelevantOrder = buyGroup.relevantOrder !== undefined && buyGroup.relevantOrder !== null;
+      let relevantOrder;
+      if (hasRelevantOrder) {
+        relevantOrder = buyGroup.relevantOrder;
+      } else if (this.isAdminModificationFlow && latestOrder !== null) {
+        relevantOrder = latestOrder;
+        hasRelevantOrder = true;
+      }
       if (hasRelevantOrder) {
         this.hasExpectedQuantity = !this.isAdminModificationFlow && this.memberId !== null;
-        this.canChangeExpectedQuantity = Member.isApproved(this.$store.state.user) && GroupOrder.isCurrent(buyGroup.relevantOrder) && !this.isAdminModificationFlow;
+        this.canChangeExpectedQuantity = Member.isApproved(this.$store.state.user) && (hasRelevantOrder && GroupOrder.isCurrent(relevantOrder)) && !this.isAdminModificationFlow;
         if (this.memberId !== null) {
           const userOrder = await MemberOrderService.get(
               buyGroup.id,
-              buyGroup.relevantOrder.id,
+              relevantOrder.id,
               this.memberId,
               true
           );
@@ -241,7 +269,7 @@ export default {
         }
       }
       this.showAllMembersQuantity = hasRelevantOrder && this.$store.state.user !== null;
-      const salePercentage = buyGroup.relevantOrder ? buyGroup.relevantOrder.salePercentage : buyGroup.salePercentage;
+      const salePercentage = relevantOrder ? relevantOrder.salePercentage : buyGroup.salePercentage;
       let rebates = this.member === null ? {} : this.member.rebates;
       this.products = await ProductService.listPutForward(
           buyGroup.id,
@@ -255,7 +283,7 @@ export default {
       if (hasRelevantOrder) {
         const allMemberOrders = Member.isApproved(this.$store.state.user) ? await BuyGroupOrderService.listMemberOrdersItemsQuantities(
             buyGroup.id,
-            buyGroup.relevantOrder.id
+            relevantOrder.id
         ) : [];
         this.memberOrdersQuantities = new MemberOrdersQuantity(
             allMemberOrders

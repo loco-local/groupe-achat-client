@@ -12,6 +12,25 @@
         {{ $t('modify') }}
       </v-btn>
     </v-card-actions>
+    <v-card-text class="pb-0">
+      <v-alert
+          border="bottom"
+          colored-border
+          type="info"
+          elevation="2"
+          class="ml-6 mr-6 accent-4"
+      >
+        <p class="body-1">
+          {{ $t('userBill:subjectToChange') }}
+        </p>
+        <p class="body-1">
+          {{ $t('userBill:subjectToChange2') }}
+        </p>
+        <p class="body-1">
+          {{ $t('userBill:subjectToChange3') }}
+        </p>
+      </v-alert>
+    </v-card-text>
     <v-card-text v-if="!isLoading && userOrderItems.length">
       <ProductsTable
           :products="userOrderItems || []"
@@ -65,7 +84,10 @@ export default {
     const text = {
       noItems: "Rien de commandé",
       billOf: "Facture de",
-      download: "Télécharger"
+      download: "Télécharger",
+      subjectToChange: "Les prix et les quantités peuvent changer.",
+      subjectToChange2: "Un membre du groupe d'achat vous contactera lorsque le montant final sera déterminé et qu'il sera le moment de payer.",
+      subjectToChange3: "La manière de payer est indiquée dans le bas de cette page."
     }
     I18n.i18next.addResources("fr", "userBill", text);
     I18n.i18next.addResources("en", "userBill", text);

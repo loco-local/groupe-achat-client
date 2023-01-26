@@ -72,11 +72,7 @@ export default {
       this.itemsLoading = true;
     },
     leave: function () {
-      let path = this.$router.currentRoute.path;
-      path = path.substring(0, path.lastIndexOf("/"));
-      this.$router.push(
-          path
-      );
+      this.$router.back();
       this.show = false;
     },
     setData: function (data) {
