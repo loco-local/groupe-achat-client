@@ -132,6 +132,21 @@
                         :rules="[rules.required]"
                     ></v-date-picker>
                   </v-menu>
+                  <v-alert
+                      border="bottom"
+                      colored-border
+                      type="info"
+                      elevation="2"
+                      class="ml-6 mr-6 accent-4"
+                      dense
+                  >
+                    <p class="body-1">
+                      {{ $t('groupOrders:endDateInfo') }}
+                    </p>
+                    <p class="body-1">
+                      {{ $t('groupOrders:endDateInfo1') }}
+                    </p>
+                  </v-alert>
                 </v-col>
                 <v-col
                     cols="12"
@@ -223,7 +238,9 @@ export default {
       title: "Commandes du groupe",
       none: "Aucunes commandes passées",
       newOrder: "Nouvelle commande",
-      orderOf: "Commande du"
+      orderOf: "Commande du",
+      endDateInfo: "La date de fin correspond au dernier jour où le membre pourra modifier ses quantités.",
+      endDateInfo1: "Les administrateurs pourront toutefois modifier les quantités finales après cette date."
     };
     I18n.i18next.addResources("fr", "groupOrders", text);
     I18n.i18next.addResources("en", "groupOrders", text);
