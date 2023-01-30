@@ -38,7 +38,7 @@
             </v-card-text>
           </div>
           <div v-if="latestOrder !== null">
-            <v-card-text class="body-1">
+            <v-card-text class="text-h6 font-weight-regular">
               {{ $t('groupOrderStatus:latestOrder') }}
               {{ latestOrder.endDate | dayDate }}
             </v-card-text>
@@ -73,7 +73,8 @@ export default {
       additionalFees: "Frais additionnels",
       noOrders: "Pas de commande en vue",
       latestOrder: "La dernière commande s'est terminé le",
-      billForLatest: "Voir la facture"
+      billForLatest: "Voir la facture",
+      cannotOrderAtTheMoment: "Vous ne pouvez pas commander en ce moment"
     };
     I18n.i18next.addResources("fr", "groupOrderStatus", text);
     I18n.i18next.addResources("en", "groupOrderStatus", text);

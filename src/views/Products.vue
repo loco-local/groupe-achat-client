@@ -57,13 +57,21 @@
           </v-card>
         </v-col>
       </v-row>
-      <v-col cols="12" v-if="memberId !== null">
+      <v-col cols="12" v-if="memberId !== null" class="mt-8">
+        <v-alert class="body-1"
+                 text
+                 color="warning"
+                 border="left"
+                 v-if="!isLoading && (!relevantOrder || relevantOrder.status !== 'CURRENT')"
+        >
+          {{ $t('groupOrderStatus:cannotOrderAtTheMoment') }}.
+        </v-alert>
         <v-alert
             text
             dense
             color="teal"
             border="left"
-            class="mt-8 body-1"
+            class="body-1"
         >
           {{ $t('products:info1') }}
           <br>
@@ -214,7 +222,8 @@ export default {
       hasExpectedQuantity: false,
       isAdminModificationFlow: false,
       showAllMembersQuantity: true,
-      total: 0.0
+      total: 0.0,
+      relevantOrder: null
     }
   },
   mounted: async function () {
@@ -252,6 +261,7 @@ export default {
       }, 0)
     },
     setBuyGroup: async function (buyGroup, latestOrder) {
+      this.relevantOrder = buyGroup.relevantOrder;
       let hasRelevantOrder = buyGroup.relevantOrder !== undefined && buyGroup.relevantOrder !== null;
       let relevantOrder;
       if (hasRelevantOrder) {
