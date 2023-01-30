@@ -13,6 +13,9 @@
       <v-tab key="allItems" @click="setRouteToAllItems">
         {{ $t('groupOrder:allItems') }}
       </v-tab>
+      <v-tab key="productsToDivide" @click="setRouteToProductsToDivide">
+        {{ $t('groupOrder:productsToDivide') }}
+      </v-tab>
       <v-tab key="memberBills" @click="setRouteToMemberBills">
         <v-icon left>receipt</v-icon>
         {{ $t('groupOrder:memberBills') }}
@@ -35,11 +38,18 @@
             :buyGroupOrderId="buyGroupOrderId"
         ></AllBuyGroupOrderItems>
       </v-tab-item>
+      <v-tab-item key="productsToDivide">
+        <ProductsToDivide
+            v-if="tab === 1 && buyGroup !== null"
+            :buyGroupId="buyGroupId"
+            :buyGroupOrderId="buyGroupOrderId"
+        ></ProductsToDivide>
+      </v-tab-item>
       <v-tab-item
           key="memberBills"
       >
         <GroupOrderMembersBill
-            v-if="tab === 1 && buyGroup !== null"
+            v-if="tab === 2 && buyGroup !== null"
             :buyGroupId="buyGroupId"
             :buyGroupOrderId="buyGroupOrderId"
             :buyGroupPath="buyGroup.path"
@@ -49,7 +59,7 @@
           key="feeOnAllBills"
       >
         <FeeOnAllBills
-            v-if="tab === 2 && buyGroup !== null"
+            v-if="tab === 3 && buyGroup !== null"
             :buyGroupId="buyGroupId"
             :buyGroupOrderId="buyGroupOrderId"
         ></FeeOnAllBills>
@@ -71,6 +81,7 @@ import I18n from "@/i18n";
 import AllBuyGroupOrderItems from "@/components/AllBuyGroupOrderItems";
 import FeeOnAllBills from "@/components/FeeOnAllBills";
 import ProviderOrders from "@/components/ProviderOrders";
+import ProductsToDivide from "@/components/ProductsToDivide";
 
 export default {
   name: "GroupOrder",
@@ -78,6 +89,7 @@ export default {
     ProviderOrders,
     FeeOnAllBills,
     AllBuyGroupOrderItems,
+    ProductsToDivide,
     Page: () => import('@/components/Page'),
     GroupOrderStatus: () => import('@/components/GroupOrderStatus'),
     GroupOrderMembersBill: () => import('@/components/GroupOrderMembersBill')
@@ -90,7 +102,8 @@ export default {
       ordersForProviders: "Commandes fournisseurs",
       allGroupOrders: "Toutes les commandes du groupe",
       noAdminProducts: 'Aucun produit de type "Visible seulement pour les supers bénévoles"',
-      feeOnAllBills: "Frais pour toutes les factures"
+      feeOnAllBills: "Frais pour toutes les factures",
+      productsToDivide: "Produits à diviser"
     };
     I18n.i18next.addResources("fr", "groupOrder", text);
     I18n.i18next.addResources("en", "groupOrder", text);
@@ -106,12 +119,14 @@ export default {
   mounted: async function () {
     this.buyGroupId = parseInt(this.$route.params.buyGroupId);
     this.buyGroupOrderId = parseInt(this.$route.params.orderId);
-    if (['GroupOrderMemberBillsForMember', 'GroupOrderMemberBills'].indexOf(this.$router.currentRoute.name) > -1) {
+    if (this.$router.currentRoute.name === 'ProductsToDivide') {
       this.tab = 1;
-    } else if (this.$router.currentRoute.name === 'GroupOrderFeeOnAllBills') {
+    } else if (['GroupOrderMemberBillsForMember', 'GroupOrderMemberBills'].indexOf(this.$router.currentRoute.name) > -1) {
       this.tab = 2;
-    } else if (['GroupOrderProvidersOrderForProvider', 'GroupOrderProvidersOrders'].indexOf(this.$router.currentRoute.name) > -1) {
+    } else if (this.$router.currentRoute.name === 'GroupOrderFeeOnAllBills') {
       this.tab = 3;
+    } else if (['GroupOrderProvidersOrderForProvider', 'GroupOrderProvidersOrders'].indexOf(this.$router.currentRoute.name) > -1) {
+      this.tab = 4;
     }
   },
   methods: {
@@ -120,6 +135,11 @@ export default {
     },
     basePath: function () {
       return "/groupe/" + this.$route.params.buyGroupId + "/commande/" + this.$route.params.orderId;
+    },
+    setRouteToProductsToDivide: function () {
+      this.$router.push(
+          this.basePath() + "/diviser"
+      );
     },
     setRouteToAllItems: function () {
       this.$router.push(

@@ -278,11 +278,11 @@ import ProductTranslation from "@/ProductTranslation";
 import I18n from "@/i18n";
 import ProductService from "@/service/ProductService";
 import Product from "@/Product";
-import latinize from 'latinize';
 import QuantityInterpreter from "@/QuantityInterpreter";
 import OrderItem from "@/OrderItem";
 import VueScrollTo from 'vue-scrollto'
 import BuildUniquePropertySetsInProducts from "@/BuildUniquePropertySetsInProducts";
+import Search from "@/Search";
 
 const ENTER_KEY_CODE = 13;
 export default {
@@ -615,12 +615,8 @@ export default {
       );
     },
     searchIgnoreAccents(value, search) {
-      return value != null &&
-          search != null &&
-          typeof value === 'string' &&
-          latinize(value.toString().toLowerCase()).indexOf(latinize(search.toLowerCase())) !== -1
-    }
-    ,
+      return Search.matches(value, search);
+    },
     enterKeyDownAction: function (event, entity, action) {
       if (event.keyCode === ENTER_KEY_CODE) {
         action(event, entity);
