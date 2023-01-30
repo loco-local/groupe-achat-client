@@ -31,7 +31,7 @@ const OrderItem = {
         return orderItem.hasTPS ? price * 0.05 * quantity : 0;
     },
     getQty(orderItem) {
-        return orderItem.quantity === null ? orderItem.expectedQuantity : orderItem.quantity;
+        return orderItem.quantity === null || orderItem.quantity === undefined ? orderItem.expectedQuantity : orderItem.quantity;
     },
     getSafeQty(quantity) {
         if (quantity === null || quantity === undefined) {

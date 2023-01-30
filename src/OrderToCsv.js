@@ -1,6 +1,7 @@
 import I18n from "@/i18n";
 import ExportToCsv from "@/ExportToCsv";
 import ProductTranslation from "@/ProductTranslation";
+import OrderItem from "@/OrderItem";
 
 ProductTranslation.setup();
 const PROVIDER_ORDER_COLUMNS = [
@@ -78,7 +79,7 @@ const OrderToCsv = {
         items.forEach((item) => {
             data.push(
                 columns.map((columnName) => {
-                    return OrderToCsv._getValueForColumn(columnName, item)
+                    return OrderToCsv._getValueForColumn(columnName, item, isForMember)
                 })
             );
         });
@@ -87,7 +88,7 @@ const OrderToCsv = {
         lastLine.pop();
         lastLine.pop();
         lastLine.push(t('total'));
-        lastLine.push(total);
+        lastLine.push(total + "$");
         data.push(lastLine)
         if (optionalData.buyGroupOrder && optionalData.buyGroupOrder.howToPay !== null) {
             data.push(OrderToCsv._buildEmptyLine(columns));
@@ -124,36 +125,40 @@ const OrderToCsv = {
                 return 'product:' + column;
         }
     },
-    _getValueForColumn: function (column, item) {
+    _getValueForColumn: function (column, item, isForMember) {
         switch (column) {
             case "expectedQuantity" :
-                return (item.expectedQuantity || 0).toLocaleString()
+                return (item.expectedQuantity || 0).toFixed(2).toLocaleString() +
+                    (isForMember ? " (" + item.expectedQuantityInput + ")" : "")
             case "quantity" :
-                return (
-                    item.quantity === undefined || item.quantity === null ? item.expectedQuantity : item.quantity
-                ).toLocaleString();
+                return OrderItem.getQty(item).toFixed(2).toLocaleString() +
+                    (
+                        isForMember ? " (" + (item.quantity === undefined || item.quantity === null ? item.expectedQuantityInput : item.quantityInput) + ")"
+                            : ""
+                    )
+
             case "expectedTotalAfterRebateWithTaxes" :
-                return (item.expectedTotalAfterRebateWithTaxes || 0).toFixed(2).toLocaleString();
+                return (item.expectedTotalAfterRebateWithTaxes || 0).toFixed(2).toLocaleString() + "$";
             case "totalAfterRebateWithTaxes" :
                 return (
                     item.totalAfterRebateWithTaxes === undefined || item.totalAfterRebateWithTaxes === null ?
                         item.expectedTotalAfterRebateWithTaxes || 0 : item.totalAfterRebateWithTaxes
-                ).toFixed(2).toLocaleString();
+                ).toFixed(2).toLocaleString() + "$";
             case "costTotal":
-                return (item.costTotal || 0).toFixed(2).toLocaleString();
+                return (item.costTotal || 0).toFixed(2).toLocaleString() + "$";
             case "tps" :
-                return (item.tps || 0).toFixed(2).toLocaleString();
+                return (item.tps || 0).toFixed(2).toLocaleString() + "$";
             case "tvq" :
-                return (item.tvq || 0).toFixed(2).toLocaleString();
+                return (item.tvq || 0).toFixed(2).toLocaleString()+ "$";
             case "totalAfterRebate" :
                 return (
                     item.totalAfterRebate === undefined || item.totalAfterRebate === null ?
                         item.expectedTotalAfterRebate || 0 : item.totalAfterRebate
-                ).toFixed(2).toLocaleString();
+                ).toFixed(2).toLocaleString()+ "$";
             case "expectedUnitPrice" :
-                return (item.expectedUnitPrice || 0).toFixed(2).toLocaleString();
+                return (item.expectedUnitPrice || 0).toFixed(2).toLocaleString()+ "$";
             case "unitPrice" :
-                return (item.unitPrice || item.expectedUnitPrice || 0).toFixed(2).toLocaleString();
+                return (item.unitPrice || item.expectedUnitPrice || 0).toFixed(2).toLocaleString()+ "$";
             default:
                 return item[column]
         }
@@ -162,7 +167,7 @@ const OrderToCsv = {
         return columns.map(() => {
             return "";
         });
-    },
+    }
 
 }
 
