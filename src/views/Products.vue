@@ -4,7 +4,6 @@
                       :buyGroupPath="$route.params.buyGroup"
                       class="mt-8"
                       :memberId="memberId"
-                      :showBillButton="true"
                       v-if="!isMemberLoading"
     ></GroupOrderStatus>
     <v-row>

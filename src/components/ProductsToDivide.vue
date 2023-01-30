@@ -8,7 +8,7 @@
     </v-card-text>
     <v-card-text v-if="!isLoading && Object.keys(productsToDivide).length">
       <v-text-field :placeholder="$t('divide:searchPlaceholder')" v-model="search"></v-text-field>
-      <v-card v-for="productId in Object.keys(productsToDivideFiltered)" :key="productId" class="mb-6 mt-6">
+      <v-card v-for="productId in Object.keys(productsToDivideFiltered)" :key="productId" class="mb-6 mt-6 text-left">
         <v-card-title class="text-h6">
           {{ productsToDivide[productId][0].description }}
           <strong v-if="productsToDivide[productId][0].qtyInBox > 1" class="ml-2 mr-2">
@@ -16,6 +16,15 @@
           </strong>
           {{ productsToDivide[productId][0].format }}
         </v-card-title>
+        <v-chip outlined class="mr-4 mb-4 text-h6 font-weight-regular text-left ml-4" label
+                color="red"
+                v-if="remainingQuantities[productId].remainingFraction > 0"
+        >
+            {{ $t('divide:remaining') }}
+            {{ remainingQuantities[productId].remainingFraction }}
+            {{ remainingQuantities[productId].format }}
+          {{ $t('divide:toDivide') }}
+        </v-chip>
         <v-divider class="mb-6"></v-divider>
         <v-card-text class="body-1 text-left">
           <v-simple-table class="text-left">
@@ -53,6 +62,7 @@ import BuyGroupOrderService from "@/service/BuyGroupOrderService";
 import OrderItem from "@/OrderItem";
 import latinize from "latinize";
 import Search from "@/Search";
+import MemberOrdersQuantity from "@/MemberOrdersQuantity";
 
 export default {
   name: "ProductsToDivide",
@@ -62,13 +72,16 @@ export default {
       nothingToDivide: "Aucun produit à diviser",
       member: "Membre",
       quantity: "Quantité",
-      searchPlaceholder: "Produit ou membre"
+      searchPlaceholder: "Produit ou membre",
+      remaining: "Il reste",
+      toDivide: "à partager"
     };
     I18n.i18next.addResources("fr", "divide", text);
     I18n.i18next.addResources("en", "divide", text);
     return {
       isLoading: true,
-      productsToDivide: [],
+      productsToDivide: {},
+      remainingQuantities: {},
       search: ""
     }
   },
@@ -88,6 +101,9 @@ export default {
       productsToDivide[orderItem.ProductId].push(orderItem);
       return productsToDivide;
     }, {})
+    this.remainingQuantities = new MemberOrdersQuantity(
+        orderItems
+    ).buildQuantities();
     this.isLoading = false;
   },
   computed: {

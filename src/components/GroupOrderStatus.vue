@@ -42,7 +42,7 @@
               {{ $t('groupOrderStatus:latestOrder') }}
               {{ latestOrder.endDate | dayDate }}
             </v-card-text>
-            <v-card-text v-if="memberId !== null && showBillButton" class="text-h6 font-weight-regular">
+            <v-card-text v-if="memberId !== null && memberId !== undefined" class="text-h6 font-weight-regular">
               <v-btn text outlined
                      :to="'/groupe/' + buyGroup.id + '/commande/' + latestOrder.id + '/factures-membres/' + 1">
                 <v-icon left>receipt</v-icon>
@@ -66,7 +66,7 @@ import I18n from "@/i18n";
 export default {
   name: "GroupOrderStatus",
   components: {GroupOrderStatusText},
-  props: ['buyGroupPath', 'buyGroupId', 'memberId', 'showBillButton'],
+  props: ['buyGroupPath', 'buyGroupId', 'memberId'],
   data: function () {
     const text = {
       addedToCost: "ajouté au prix coûtant",
@@ -85,9 +85,6 @@ export default {
   },
   mounted: async function () {
     this.isLoading = true;
-    if(this.showBillButton === undefined){
-      this.showBillButton = false;
-    }
     this.buyGroup = this.buyGroupPath === undefined ?
         await BuyGroupService.getForId(this.buyGroupId) :
         await BuyGroupService.getForPath(this.buyGroupPath);
