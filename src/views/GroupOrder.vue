@@ -103,7 +103,7 @@ export default {
       allGroupOrders: "Toutes les commandes du groupe",
       noAdminProducts: 'Aucun produit de type "Visible seulement pour les supers bénévoles"',
       feeOnAllBills: "Frais pour toutes les factures",
-      productsToDivide: "Produits à diviser"
+      productsToDivide: "Produits à partager"
     };
     I18n.i18next.addResources("fr", "groupOrder", text);
     I18n.i18next.addResources("en", "groupOrder", text);

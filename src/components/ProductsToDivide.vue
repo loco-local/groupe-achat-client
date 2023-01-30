@@ -7,7 +7,7 @@
       {{ $t('divide:nothingToDivide') }}
     </v-card-text>
     <v-card-text v-if="!isLoading && Object.keys(productsToDivide).length">
-      <v-text-field :placeholder="$t('divide:searchPlaceholder')" v-model="search"></v-text-field>
+      <v-text-field :placeholder="$t('divide:searchPlaceholder')" v-model="search" prepend-icon="search"></v-text-field>
       <v-card v-for="productId in Object.keys(productsToDivideFiltered)" :key="productId" class="mb-6 mt-6 text-left">
         <v-card-title class="text-h6">
           {{ productsToDivide[productId][0].description }}
