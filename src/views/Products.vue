@@ -159,7 +159,6 @@
                 :hasExpectedQuantity="hasExpectedQuantity"
                 :hasQuantity="isAdminModificationFlow"
                 :canChangeQuantity="isAdminModificationFlow"
-                :showExpectedCostUnitPrice="!isAdminModificationFlow"
                 :showTaxes="true"
                 :hideExpectedUnitPrice="true"
                 :showExpectedUnitPriceAfterRebate="!isAdminModificationFlow"
