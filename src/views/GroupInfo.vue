@@ -22,7 +22,7 @@
                   <v-icon left>
                     content_copy
                   </v-icon>
-                  {{$t('copy')}}
+                  {{ $t('copy') }}
                 </v-btn>
               </v-card-text>
             </v-card>
@@ -82,6 +82,25 @@
         </v-row>
       </v-col>
     </v-row>
+    <v-snackbar
+        v-model="modifyGroupInfoSnackbar"
+        top
+        :timeout="7000"
+    >
+        <span class="body-1">
+          {{ $t('groupInfo:modifySuccess') }}
+        </span>
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="modifyGroupInfoSnackbar = false"
+        >
+          {{ $t('close') }}
+        </v-btn>
+      </template>
+    </v-snackbar>
   </Page>
 </template>
 
@@ -90,6 +109,8 @@ import BuyGroupService from "@/service/BuyGroupService";
 import BuyGroupTranslation from "@/BuyGroupTranslation";
 import BuyGroup from "@/BuyGroup";
 
+import I18n from "@/i18n";
+
 export default {
   name: "GroupInfo",
   components: {
@@ -97,10 +118,16 @@ export default {
   },
   data: function () {
     BuyGroupTranslation.setup();
+    const text = {
+      modifySuccess: "Les infos de votre groupe ont été modifiées"
+    };
+    I18n.i18next.addResources("fr", "groupInfo", text);
+    I18n.i18next.addResources("en", "groupInfo", text);
     return {
       buyGroup: null,
       isLoading: true,
-      isSaving: false
+      isSaving: false,
+      modifyGroupInfoSnackbar: false
     }
   },
   mounted: async function () {
@@ -116,6 +143,7 @@ export default {
           this.buyGroup.id,
           this.buyGroup
       )
+      this.modifyGroupInfoSnackbar = true;
       this.isSaving = false;
     }
   },
