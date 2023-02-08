@@ -81,16 +81,16 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/produits/import" v-if="isAdmin">
-              <v-list-item-action>
-                <v-icon>import_export</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ $t('app:importProducts') }}
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
+<!--            <v-list-item to="/produits/import" v-if="isAdmin">-->
+<!--              <v-list-item-action>-->
+<!--                <v-icon>import_export</v-icon>-->
+<!--              </v-list-item-action>-->
+<!--              <v-list-item-content>-->
+<!--                <v-list-item-title>-->
+<!--                  {{ $t('app:importProducts') }}-->
+<!--                </v-list-item-title>-->
+<!--              </v-list-item-content>-->
+<!--            </v-list-item>-->
             <v-divider v-if="isAdmin"></v-divider>
             <v-list-item @click="logout">
               <v-list-item-action>
