@@ -16,9 +16,11 @@ const MemberService = {
     update: async function (memberId, member) {
         return Service.api().put("/members/" + memberId, member);
     },
-    listForBuyGroupId: async function (buyGroupId) {
+    listForBuyGroupId: async function (buyGroupId, buyGroup) {
         const response = await Service.api().get("/members/list/" + buyGroupId);
-        return response.data.map(Member.format)
+        return response.data.map((member) => {
+            return Member.format(member, buyGroup);
+        })
     }
 };
 export default MemberService;

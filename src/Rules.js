@@ -38,10 +38,22 @@ export default {
         }
         return value.indexOf(" ") === -1 || I18n.i18next.t('noSpace');
     },
-    min1: function(value){
+    min1: function (value) {
         if (!value) {
             return true;
         }
         return value > 0 || I18n.i18next.t('min1');
+    },
+    lowerOrEqualTo: function (value, number) {
+        if (!value) {
+            return true;
+        }
+        return value <= number || I18n.i18next.t('mustBeLowerOrEqualTo') + " " + number;
+    },
+    greaterOrEqualTo: function (value, number) {
+        if (!value) {
+            return true;
+        }
+        return value >= number || I18n.i18next.t('mustBeHigherOrEqualTo') + " " + number;
     }
 }

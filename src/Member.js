@@ -17,7 +17,7 @@ const Member = {
         I18n.i18next.addResources("fr", "member", text);
         I18n.i18next.addResources("en", "member", text);
     },
-    format: function (member) {
+    format: function (member, buyGroup) {
         member.fullname = member.firstname + " " + member.lastname;
         if (member.rebates === null) {
             member.rebates = {
@@ -26,7 +26,18 @@ const Member = {
                 }
             }
         }
+        Member.defineSalePercentage(
+            member,
+            buyGroup
+        )
         return member;
+    },
+    defineSalePercentage: function (member, buyGroup) {
+        if (!buyGroup) {
+            return;
+        }
+        member.salePercentage = buyGroup.salePercentage - member.rebates.percentage.number;
+        return member.salePercentage;
     },
     isApproved: function (member) {
         if (member === null || member === undefined) {

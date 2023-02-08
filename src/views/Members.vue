@@ -18,19 +18,17 @@
           <v-col cols="12" sm="8" md="4" lg="3" xl="2"
                  v-for="member in members" :key="member.id"
           >
-            <v-card @click="enterUpdateMemberFlow(member)" height="150">
-              <v-card-title>
+            <v-card @click="enterUpdateMemberFlow(member)" height="175">
+              <v-card-title class="mb-0 pb-0">
                 {{ member.fullname }}
               </v-card-title>
-              <v-card-subtitle>
-                <span v-if="member.rebates === null">
-                  {{ $t('members:noRebates') }}
-                </span>
-                <span v-else>
-
-                </span>
+              <v-card-subtitle class="body-1 text-left mt-1">
+                <strong>
+                  {{ member.salePercentage }}%
+                </strong>
+                {{ $t('members:appliedPercentage') }}
               </v-card-subtitle>
-              <v-card-subtitle>
+              <v-card-subtitle class="text-left">
                 <v-chip
                     v-if="member.status==='pending'"
                     class="ma-2"
@@ -40,6 +38,14 @@
                 >
                   <v-icon left small>schedule</v-icon>
                   {{ $t('members:waitingApproval') }}
+                </v-chip>
+                <v-chip
+                    class="mt-0 ml-0 mb-0"
+                    outlined
+                    label
+                    v-if="member.status==='admin'"
+                >
+                  {{ $t('members:administrator') }}
                 </v-chip>
               </v-card-subtitle>
             </v-card>
@@ -162,6 +168,13 @@
                       :label="$t('member:rebatePercentage')"
                       type="number"
                       prefix="%"
+                      :hint="editedMember.salePercentage + ' % ' + $t('members:onCostPrice')"
+                      persistent-hint
+                      @change="updateMemberSalePercentage"
+                      :rules="[
+                          rules.lowerOrEqualTo(editedMember.rebates.percentage.number, 10),
+                          rules.greaterOrEqualTo(editedMember.rebates.percentage.number, 0)
+                          ]"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -198,6 +211,8 @@ import MemberService from "@/service/MemberService";
 import I18n from "@/i18n";
 import Rules from '@/Rules'
 import Members from "@/Member";
+import BuyGroupService from "@/service/BuyGroupService";
+import Member from "@/Member";
 
 export default {
   name: "Members",
@@ -210,7 +225,10 @@ export default {
       title: "Membres du groupe",
       noRebates: "Aucuns rabais",
       waitingApproval: "En attente d'approbation",
-      status: "Status"
+      status: "Status",
+      administrator: "Administrateur",
+      appliedPercentage: "sur le prix coûtant",
+      onCostPrice: "sur le prix coûtant"
     };
     I18n.i18next.addResources("fr", "members", text);
     I18n.i18next.addResources("en", "members", text);
@@ -219,6 +237,7 @@ export default {
       members: [],
       editMemberDialog: false,
       editedMember: null,
+      buyGroup: null,
       rules: Rules,
       originalEditMemberValues: null,
       isSaveLoading: false,
@@ -234,17 +253,24 @@ export default {
         },
         {
           value: "pending",
-          disabled:true
+          disabled: true
         }
       ],
     }
   },
   mounted: async function () {
     this.isLoading = true;
-    this.members = await MemberService.listForBuyGroupId(this.$store.state.user.BuyGroupId);
+    this.buyGroup = await BuyGroupService.getForId(this.$store.state.user.BuyGroupId);
+    this.members = await MemberService.listForBuyGroupId(this.$store.state.user.BuyGroupId, this.buyGroup);
     this.isLoading = false;
   },
   methods: {
+    updateMemberSalePercentage: function () {
+      Member.defineSalePercentage(
+          this.editedMember,
+          this.buyGroup
+      );
+    },
     save: async function () {
       if (!this.$refs.memberForm.validate()) {
         return

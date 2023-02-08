@@ -28,15 +28,17 @@
             </v-card-title>
             <div v-if="member.rebates && member.rebates.percentage && member.rebates.percentage.number">
               <v-divider></v-divider>
-              <v-card-text class="vh-center text-h6 font-weight-regular">
-                {{ $t('product:rebateOf') }}
-                <strong class="ml-2 mr-2">
-                  {{ member.rebates.percentage.number }}%
+              <v-card-title class="vh-center text-h6 font-weight-regular">
+                <strong class="ml-1 mr-1">
+                  {{ member.salePercentage }}%
                 </strong>
-                {{ $t('product:rebateOnAllProducts') }}
-              </v-card-text>
+                {{ $t('product:onCostPrice') }}
+              </v-card-title>
+              <v-card-subtitle class="body-1 font-weight-regular">
+                {{ $t('product:rebateOf') }}
+                {{ member.rebates.percentage.number }}%
+              </v-card-subtitle>
             </div>
-
             <v-card-text class="pb-2">
               <v-alert
                   border="top"
@@ -286,6 +288,12 @@ export default {
       this.showAllMembersQuantity = hasRelevantOrder && this.$store.state.user !== null;
       const salePercentage = relevantOrder ? relevantOrder.salePercentage : buyGroup.salePercentage;
       let rebates = this.member === null ? {} : this.member.rebates;
+      if (this.member !== null) {
+        Member.defineSalePercentage(
+            this.member,
+            buyGroup
+        );
+      }
       this.products = await ProductService.listPutForward(
           buyGroup.id,
           salePercentage,

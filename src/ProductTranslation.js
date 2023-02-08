@@ -33,13 +33,14 @@ export default {
             totalFinal: "Total Final",
             expectedTotal: "Total Prévu",
             rebates: "Rabais",
-            rebateOf: "rabais de",
+            rebateOf: "avec le rabais de",
             rebateOnAllProducts: "sur tous les produits",
             orderOf: "Commande de",
             isAdminRelated: "Visible pour super bénévoles seulement",
             isAdminRelatedHint: 'Exemple "Frais de transport". Si coché, le "prix coûtant" sera chargé au membre et les rabais ne s\'appliqueront pas',
             allMembersQuantity: "Qté des membres",
-            remainingQtyToDivide: "Qté restante à diviser"
+            remainingQtyToDivide: "Qté restante à diviser",
+            onCostPrice: "sur le prix coûtant"
         };
         I18n.i18next.addResources("fr", "product", text);
         I18n.i18next.addResources("en", "product", text);
