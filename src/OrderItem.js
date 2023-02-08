@@ -64,6 +64,12 @@ const OrderItem = {
             let format = QuantityInterpreter.getFormat(inputStr);
             if (format === "unit") {
                 orderItem[propertyName] = QuantityInterpreter.getQty(inputStr);
+            } else if (format === "nb") {
+                let qty = QuantityInterpreter.getQty(inputStr)
+                if (orderItem.qtyInBox !== null && orderItem.qtyInBox > 1) {
+                    qty = qty / orderItem.qtyInBox;
+                }
+                orderItem[propertyName] = qty;
             } else {
                 orderItem[propertyName] = QuantityInterpreter.convertFractionToDecimal(
                     QuantityInterpreter.getQty(inputStr),

@@ -685,6 +685,10 @@ export default {
         if (isNaN(product[inputPropertyName])) {
           return false;
         }
+      } else if (inputFormat === 'nb') {
+        if (QuantityInterpreter.getQty(product[inputPropertyName]) === null) {
+          return false;
+        }
       } else {
         const productFormat = QuantityInterpreter.getFormat(product.format)
         if (productFormat !== inputFormat) {
