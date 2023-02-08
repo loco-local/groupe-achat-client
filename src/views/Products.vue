@@ -300,7 +300,7 @@ export default {
           rebates
       );
       this.products = this.products.filter((product) => {
-        return !(product.isAdminRelated && !this.isAdminModificationFlow);
+        return product.isAvailable && !(product.isAdminRelated && !this.isAdminModificationFlow);
       });
       let allMembersQuantities = {};
       if (hasRelevantOrder) {
