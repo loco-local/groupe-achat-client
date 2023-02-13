@@ -682,7 +682,7 @@ export default {
       }
       const inputFormat = QuantityInterpreter.getFormat(String(product[inputPropertyName]));
       if (inputFormat === 'unit') {
-        if (isNaN(product[inputPropertyName])) {
+        if (product[inputPropertyName] === undefined || isNaN(product[inputPropertyName].replaceAll(",", "."))) {
           return false;
         }
       } else if (inputFormat === 'nb') {

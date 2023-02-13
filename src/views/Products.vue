@@ -154,6 +154,12 @@
           {
             'pa-0': $vuetify.breakpoint.smAndDown
           }">
+            <v-card-actions>
+              <v-btn @click="quantityTipDialog=true">
+                <v-icon left>info</v-icon>
+                {{ $t("products:tipsForQuantity") }}
+              </v-btn>
+            </v-card-actions>
             <ProductsTable
                 :products="products || []"
                 :canToggleAvailability="false"
@@ -174,6 +180,34 @@
         </v-row>
       </v-col>
     </v-row>
+    <v-dialog v-model="quantityTipDialog" max-width="600">
+      <v-card>
+        <v-card-title>
+          {{ $t("products:tipsForQuantity") }}
+<!--          <v-spacer></v-spacer>-->
+<!--          <v-icon @click="quantityTipDialog=false">close</v-icon>-->
+        </v-card-title>
+        <v-card-text>
+<!--          <p class="body-1">-->
+<!--            {{ $t('products:quantityTip1') }}-->
+<!--          </p>-->
+          <p class="body-1">
+            {{ $t('products:quantityTip2') }}
+          </p>
+          <p class="body-1">
+            {{ $t('products:quantityTip3') }}
+          </p>
+          <p class="body-1">
+            {{ $t('products:quantityTip4') }}
+          </p>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn text @click="quantityTipDialog = false">
+            {{$t('close')}}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </Page>
 </template>
 
@@ -206,7 +240,12 @@ export default {
       noOrderItems: "Pas encore de produits commandés",
       noProductsToDivide: "Pas de produits à diviser",
       actingAsAdministrator: "Vous agissez en tant qu'administrateur",
-      quantitiesFinal: "Les quantités saisies seront considérées comme des quantités finales"
+      quantitiesFinal: "Les quantités saisies seront considérées comme des quantités finales",
+      tipsForQuantity: "Trucs pour la saisie de quantité",
+      quantityTip1: "Les produits peuvent être partagés par plusieurs membres.",
+      quantityTip2: "Vous pouvez saisir la quantité en kg, L ou g dépendamment du format, par exemple 5 kg.",
+      quantityTip3: "Vous pouvez aussi inscrire des décimales, exemple 0,5, ou avec un point 0.5",
+      quantityTip4: "Certains produits ont plusieurs paquets. Le format ressemble alors à 4x 3Kg. Vous pouvez inscrire 2x pour avoir 2 paquets ou 6 kg.",
     };
     I18n.i18next.addResources("fr", "products", text);
     I18n.i18next.addResources("en", "products", text);
@@ -224,7 +263,8 @@ export default {
       isAdminModificationFlow: false,
       showAllMembersQuantity: true,
       total: 0.0,
-      relevantOrder: null
+      relevantOrder: null,
+      quantityTipDialog: false
     }
   },
   mounted: async function () {
