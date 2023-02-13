@@ -73,11 +73,24 @@
             dense
             color="teal"
             border="left"
+            colored-border
             class="body-1"
         >
-          {{ $t('products:info1') }}
-          <br>
-          {{ $t('products:info2') }}
+          <p>
+            {{ $t('products:info1') }}
+            <br>
+            {{ $t('products:info2') }}
+          </p>
+          <v-divider class="mb-4"></v-divider>
+          <p>
+            {{ $t('products:info3') }}
+            <br>
+            <a @click.prevent="quantityTipDialog=true">{{ $t('products:info4') }}</a>
+            <br>
+            {{ $t('products:info5') }}
+            <br>
+            {{ $t('products:info6') }}
+          </p>
         </v-alert>
       </v-col>
       <v-col cols="12">
@@ -184,13 +197,13 @@
       <v-card>
         <v-card-title>
           {{ $t("products:tipsForQuantity") }}
-<!--          <v-spacer></v-spacer>-->
-<!--          <v-icon @click="quantityTipDialog=false">close</v-icon>-->
+          <!--          <v-spacer></v-spacer>-->
+          <!--          <v-icon @click="quantityTipDialog=false">close</v-icon>-->
         </v-card-title>
         <v-card-text>
-<!--          <p class="body-1">-->
-<!--            {{ $t('products:quantityTip1') }}-->
-<!--          </p>-->
+          <!--          <p class="body-1">-->
+          <!--            {{ $t('products:quantityTip1') }}-->
+          <!--          </p>-->
           <p class="body-1">
             {{ $t('products:quantityTip2') }}
           </p>
@@ -203,7 +216,7 @@
         </v-card-text>
         <v-card-actions>
           <v-btn text @click="quantityTipDialog = false">
-            {{$t('close')}}
+            {{ $t('close') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -234,6 +247,10 @@ export default {
       "title": "Produits",
       info1: "Il n'y a pas de bouton de confirmation pour votre panier de commande.",
       info2: "Après la date de fin de la commande, les dernières quantités que vous aurez inscrites seront commandées aux fournisseurs.",
+      info3: "Vous pouvez saisir une fraction de la quantité totale d'un produit que vous partagerez avec d'autres membres.",
+      info4: "Voir astuces pour la saisie des quantités.",
+      info5: "Seuls les produits complets seront commandés.",
+      info6: "Vérifiez la section et la colonne 'Quantités restantes à diviser'.",
       noResults: "Pas de produits disponibles",
       summary: "Résumé",
       toDivide: "Quantités restantes à diviser",
