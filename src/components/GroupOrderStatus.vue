@@ -21,6 +21,8 @@
                   {{ buyGroup.relevantOrder.salePercentage }}%
                 </strong>
                 {{ $t('groupOrderStatus:addedToCost') }}.
+                <br>
+                {{ $t('groupOrderStatus:percentageIncluded') }}.
               </v-card-text>
             </v-card>
             <v-card>
@@ -70,6 +72,7 @@ export default {
   data: function () {
     const text = {
       addedToCost: "ajouté au prix coûtant",
+      percentageIncluded: 'Déjà inclut dans les prix affichés',
       additionalFees: "Frais additionnels",
       noOrders: "Pas de commande en vue",
       latestOrder: "La dernière commande s'est terminé le",
