@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="min-height: 1000px;">
     <v-data-table
         :headers="headers"
         :items="filteredProducts"
