@@ -44,7 +44,7 @@
             </v-card-text>
             <v-card-text v-if="memberId !== null && memberId !== undefined" class="text-h6 font-weight-regular">
               <v-btn text outlined
-                     :to="'/groupe/' + buyGroup.id + '/commande/' + latestOrder.id + '/factures-membres/' + 1">
+                     :to="'/groupe/' + buyGroup.id + '/commande/' + latestOrder.id + '/factures-membres/' + memberId">
                 <v-icon left>receipt</v-icon>
                 {{ $t('groupOrderStatus:billForLatest') }}
               </v-btn>
