@@ -51,7 +51,9 @@
               style="width:70px;"
               :hint="item.expectedQuantityHint"
               :persistent-hint="true"
-          ></v-text-field>
+              clearable
+          >
+          </v-text-field>
           <div v-else>
             <span class="text-no-wrap">{{ item.expectedQuantityInput }}</span>
             <br>
@@ -89,6 +91,7 @@
               :hint="item.quantityHint"
               :persistent-hint="true"
               style="width:70px;"
+              clearable
           ></v-text-field>
           <div v-else>
             <span class="text-no-wrap">{{ item.quantityInput }}</span>
@@ -677,12 +680,13 @@ export default {
       const inputPropertyName = propertyName + 'Input';
       const propertyNameUpper = isForExpected ? 'ExpectedQuantity' : 'Quantity';
       const previousPropertyName = 'previous' + propertyNameUpper + 'Input';
-      if (String(product[inputPropertyName]).trim() === "") {
+      if (product[inputPropertyName] === null || String(product[inputPropertyName]).trim() === "") {
         product[propertyName] = 0;
+        product[inputPropertyName] = "0";
       }
       const inputFormat = QuantityInterpreter.getFormat(String(product[inputPropertyName]));
       if (inputFormat === 'unit') {
-        if (product[inputPropertyName] === undefined || isNaN(product[inputPropertyName].replaceAll(",", "."))) {
+        if (product[inputPropertyName] === undefined || isNaN(String(product[inputPropertyName]).replaceAll(",", "."))) {
           return false;
         }
       } else if (inputFormat === 'nb') {
@@ -701,7 +705,10 @@ export default {
       if (product[previousPropertyName] == product[inputPropertyName]) {
         return false;
       }
-      const qty = QuantityInterpreter.getQty(String(product[inputPropertyName]));
+      let qty = QuantityInterpreter.getQty(String(product[inputPropertyName]));
+      if (qty === null) {
+        qty = 0;
+      }
       if (qty < 0) {
         return false;
       }
@@ -710,7 +717,6 @@ export default {
       } else {
         OrderItem.defineQuantityFraction(product);
       }
-
       await this.$emit('quantityUpdate', product)
     }
     ,
