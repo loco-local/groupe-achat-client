@@ -1,5 +1,5 @@
 <template>
-  <div style="min-height: 1000px;">
+  <div :style="minHeightStyle">
     <v-data-table
         :headers="headers"
         :items="filteredProducts"
@@ -291,6 +291,10 @@ const ENTER_KEY_CODE = 13;
 export default {
   name: "ProductsTable",
   props: {
+    preventSearchFlickr: {
+      type: Boolean,
+      default: true
+    },
     'products': Array,
     loading: Boolean,
     showSelect: {
@@ -580,7 +584,8 @@ export default {
       inputFormat: "",
       productFormat: "",
       searchElementId: "search-" + Math.random(),
-      chosenCategories: []
+      chosenCategories: [],
+      minHeightStyle: this.preventSearchFlickr ? "min-height: 1000px;" : ""
     }
   },
   computed: {

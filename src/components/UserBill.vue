@@ -40,6 +40,7 @@
           :canToggleAvailability="false"
           :show-taxes="true"
           :hideSearch="true"
+          :prevent-search-flickr="false"
       ></ProductsTable>
       <v-row>
         <v-col cols="12" class="text-right text-h5 mt-8 pr-8">
