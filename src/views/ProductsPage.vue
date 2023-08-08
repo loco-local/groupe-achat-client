@@ -1,5 +1,5 @@
 <template>
-  <Page>
+  <PageWrap>
     <GroupOrderStatus @buyGroupDefined="setBuyGroup"
                       :buyGroupPath="$route.params.buyGroup"
                       class="mt-8"
@@ -221,7 +221,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </Page>
+  </PageWrap>
 </template>
 
 <script>
@@ -236,9 +236,9 @@ import BuyGroupOrderService from "@/service/BuyGroupOrderService";
 import MemberOrdersQuantity from "@/MemberOrdersQuantity";
 
 export default {
-  name: "Products",
+  name: "ProductsPage",
   components: {
-    Page: () => import('@/components/Page'),
+    PageWrap: () => import('@/components/PageWrap'),
     ProductsTable: () => import('@/components/ProductsTable'),
     GroupOrderStatus: () => import('@/components/GroupOrderStatus')
   },

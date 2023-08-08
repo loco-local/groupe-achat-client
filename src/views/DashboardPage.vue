@@ -1,5 +1,5 @@
 <template>
-  <Page>
+  <PageWrap>
     <v-row class="vh-center" style="height:100%">
       <v-col cols="12" md="11" lg="10" xl="9" class="vh-center" style="height:100%">
         <v-row class="vh-center" style="height:100%">
@@ -26,7 +26,7 @@
         </v-row>
       </v-col>
     </v-row>
-  </Page>
+  </PageWrap>
 </template>
 
 <script>
@@ -35,7 +35,7 @@ import BuyGroupService from "@/service/BuyGroupService";
 
 export default {
   components: {
-    Page: () => import('@/components/Page')
+    PageWrap: () => import('@/components/PageWrap')
   },
   data: function () {
     const text = {

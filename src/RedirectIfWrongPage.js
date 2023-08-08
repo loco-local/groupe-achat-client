@@ -2,18 +2,18 @@ import Store from '@/store'
 import router from './router'
 
 const loggedOutAllowedPages = [
-    'Login',
-    'Register',
+    'LoginPage',
+    'RegisterPage',
     'ForgotPassword',
     'ChangePassword',
     'SendChangePasswordEmail',
-    'About',
-    'Products'
+    'AboutApp',
+    'ProductsPage'
 ]
 
 const loggedOutOnlyPages = [
-    'Login',
-    'Register',
+    'LoginPage',
+    'RegisterPage',
     'ForgotPassword',
     'ChangePassword',
     'SendChangePasswordEmail'
@@ -25,7 +25,7 @@ export default {
             const isOnLoggedOutAllowedPage = loggedOutAllowedPages.indexOf(router.currentRoute.name) !== -1
             if (!isOnLoggedOutAllowedPage) {
                 await router.push({
-                    name: 'Login'
+                    name: 'LoginPage'
                 })
                 return true;
             }
@@ -34,7 +34,7 @@ export default {
             const isOnLoggedOutOnlyPage = loggedOutOnlyPages.indexOf(router.currentRoute.name) !== -1;
             if (isOnLoggedOutOnlyPage) {
                 await router.push({
-                    name: 'Dashboard'
+                    name: 'DashboardPage'
                 })
                 return true;
             }

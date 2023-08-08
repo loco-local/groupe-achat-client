@@ -193,7 +193,7 @@
           {{ $t('no') }}
         </span>
       </template>
-      <template v-slot:item.isAdminRelated="{ item }" class="vh-center text-center">
+      <template v-slot:item.isAdminRelated="{ item }">
         <v-icon v-if="item.isAdminRelated">
           check
         </v-icon>

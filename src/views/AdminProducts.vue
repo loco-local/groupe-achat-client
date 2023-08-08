@@ -1,5 +1,5 @@
 <template>
-  <Page>
+  <PageWrap>
     <v-card flat class="pt-8" color="transparent">
       <v-card-title class="text-h4">
         {{ $t('productsAdmin:title') }}
@@ -342,7 +342,7 @@
         </v-btn>
       </template>
     </v-snackbar>
-  </Page>
+  </PageWrap>
 </template>
 
 <script>
@@ -354,9 +354,9 @@ import Product from "@/Product";
 import BuildUniquePropertySetsInProducts from "@/BuildUniquePropertySetsInProducts";
 
 export default {
-  name: "Products",
+  name: "AdminProducts",
   components: {
-    Page: () => import('@/components/Page'),
+    PageWrap: () => import('@/components/PageWrap'),
     ProductsTable: () => import('@/components/ProductsTable'),
   },
   data: function () {

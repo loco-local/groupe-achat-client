@@ -62,7 +62,7 @@ import RedirectIfWrongPage from "@/RedirectIfWrongPage";
 // import {VueReCaptcha} from "vue-recaptcha-v3"
 
 export default {
-  name: "Login",
+  name: "LoginPage",
   // components: {
   //   RecaptchaInfo: () => import('@/components/RecaptchaInfo')
   // },
@@ -128,7 +128,7 @@ export default {
       this.$emit('flow-is-done');
       await this.$nextTick();
       await this.$router.push({
-        name: 'Dashboard'
+        name: 'DashboardPage'
       });
       // this.$recaptchaInstance.hideBadge();
       LoadingFlow.leave();

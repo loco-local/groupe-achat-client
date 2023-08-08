@@ -26,22 +26,24 @@
     "vue-scrollto": "^2.20.0"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
-    "mocha": "^10.0.0",
-    "@vue/cli-plugin-babel": "~4.5.15",
-    "@vue/cli-plugin-eslint": "~4.5.15",
-    "@vue/cli-plugin-unit-jest": "^4.5.19",
+    "@vue/cli-plugin-babel": "^5.0.8",
+    "@vue/cli-plugin-eslint": "^5.0.8",
+    "@babel/eslint-parser": "^7.22.9",
     "@vue/cli-plugin-router": "^4.5.17",
+    "@vue/cli-plugin-unit-jest": "^5.0.8",
     "@vue/cli-plugin-vuex": "^4.5.17",
-    "@vue/cli-service": "^4.5.19",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^6.2.2",
-    "sass": "~1.49.11",
-    "sass-loader": "^10.2.1",
-    "vue-cli-plugin-vuetify": "~2.4.8",
+    "@vue/cli-service": "^5.0.8",
+    "@mdi/font": "^5.9.55",
+    "chai": "^4.1.2",
+    "eslint": "^8.46.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-vue": "^9.16.1",
+    "mocha": "^10.0.0",
+    "sass": "^1.64.2",
+    "sass-loader": "^13.3.2",
+    "vue-cli-plugin-vuetify": "^2.5.8",
     "vue-template-compiler": "^2.7.14",
-    "vuetify-loader": "^1.7.3"
+    "vuetify-loader": "^1.9.2"
   },
   "eslintConfig": {
     "root": true,
@@ -53,9 +55,16 @@
       "eslint:recommended"
     ],
     "parserOptions": {
-      "parser": "babel-eslint"
+      "parser": "@babel/eslint-parser"
     },
-    "rules": {}
+    "rules": {
+      "vue/valid-v-slot": [
+        "error",
+        {
+          "allowModifiers": true
+        }
+      ]
+    }
   },
   "browserslist": [
     "> 1%",

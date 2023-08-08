@@ -6,13 +6,13 @@ Vue.use(VueRouter)
 const routes = [
     {
         path: '/',
-        name: 'About',
-        component: () => import('../views/About.vue')
+        name: 'AboutApp',
+        component: () => import('../views/AboutApp.vue')
     },
     {
         path: '/connexion',
-        name: 'Login',
-        component: () => import('../views/Login.vue')
+        name: 'LoginPage',
+        component: () => import('../views/LoginPage.vue')
     },
     {
         path: '/change-password/:token',
@@ -26,8 +26,8 @@ const routes = [
     },
     {
         path: '/tableau-de-bord',
-        name: 'Dashboard',
-        component: () => import('../views/Dashboard.vue')
+        name: 'DashboardPage',
+        component: () => import('../views/DashboardPage.vue')
     },
     {
         path: '/produits/admin',
@@ -51,8 +51,8 @@ const routes = [
     },
     {
         path: '/groupe/:buyGroupId/membres',
-        name: 'Members',
-        component: () => import('../views/Members')
+        name: 'MembersAdmin',
+        component: () => import('../views/MembersAdmin')
     },
     {
         path: '/groupe/:buyGroupId',
@@ -101,18 +101,18 @@ const routes = [
     },
     {
         path: '/:buyGroup/',
-        name: 'Products',
-        component: () => import('../views/Products')
+        name: 'ProductsPage',
+        component: () => import('../views/ProductsPage')
     },
     {
         path: '/:buyGroup/inscription',
-        name: 'Register',
-        component: () => import('../views/Register.vue')
+        name: 'RegisterPage',
+        component: () => import('../views/RegisterPage.vue')
     },
     {
         path: '/:buyGroup/commande-membre/:memberId',
         name: 'ProductsOrderOfMember',
-        component: () => import('../views/Products')
+        component: () => import('../views/ProductsPage')
     }
 ]
 

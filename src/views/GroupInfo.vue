@@ -1,5 +1,5 @@
 <template>
-  <Page>
+  <PageWrap>
     <v-row class="vh-center">
       <v-col cols="12" md="11" lg="10" xl="9">
         <v-row>
@@ -101,7 +101,7 @@
         </v-btn>
       </template>
     </v-snackbar>
-  </Page>
+  </PageWrap>
 </template>
 
 <script>
@@ -114,7 +114,7 @@ import I18n from "@/i18n";
 export default {
   name: "GroupInfo",
   components: {
-    Page: () => import('@/components/Page')
+    PageWrap: () => import('@/components/PageWrap')
   },
   data: function () {
     BuyGroupTranslation.setup();

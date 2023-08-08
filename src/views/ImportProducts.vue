@@ -1,5 +1,5 @@
 <template>
-  <Page>
+  <PageWrap>
     <v-card flat class="pt-8" color="transparent">
       <v-card-title class="text-h4">
         {{ $t('import:title') }}
@@ -25,7 +25,7 @@
         </v-tab-item>
       </v-tabs-items>
     </v-tabs>
-  </Page>
+  </PageWrap>
 </template>
 
 <script>
@@ -38,7 +38,7 @@ export default {
   components: {
     HNImport,
     SatauImport,
-    Page: () => import('@/components/Page')
+    PageWrap: () => import('@/components/PageWrap')
   },
   data: function () {
     const text = {

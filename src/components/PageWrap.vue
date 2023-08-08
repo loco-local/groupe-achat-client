@@ -18,7 +18,7 @@
 import RedirectIfWrongPage from "@/RedirectIfWrongPage";
 
 export default {
-  name: "Page",
+  name: "PageWrap",
   mounted: async function () {
     await RedirectIfWrongPage.do();
   }

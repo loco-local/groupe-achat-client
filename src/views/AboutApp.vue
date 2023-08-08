@@ -1,24 +1,24 @@
 <template>
-  <Page class="vh-center">
+  <PageWrap class="vh-center">
     <v-btn to="/connexion" x-large color="primary" v-if="$store.state.user === null">
       {{ $t('login') }}
     </v-btn>
     <!--    <v-btn to="/inscription" x-large class="ml-8 primary">-->
     <!--      {{$t('register')}}-->
     <!--    </v-btn>-->
-  </Page>
+  </PageWrap>
 </template>
 
 <script>
 export default {
-  name: "About",
+  name: "AboutApp",
   components: {
-    Page: () => import('@/components/Page'),
+    PageWrap: () => import('@/components/PageWrap'),
   },
   mounted: function () {
     if (this.$store.state.user !== null) {
       this.$router.push({
-        name: 'Dashboard'
+        name: 'DashboardPage'
       });
     }
   }

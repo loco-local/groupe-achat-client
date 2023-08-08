@@ -1,6 +1,6 @@
 *
 <template>
-  <Page>
+  <PageWrap>
     <v-row v-if="isLoading" class="mt-12">
       <v-col cols="12">
         <v-progress-circular
@@ -203,7 +203,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </Page>
+  </PageWrap>
 </template>
 
 <script>
@@ -215,9 +215,9 @@ import BuyGroupService from "@/service/BuyGroupService";
 import Member from "@/Member";
 
 export default {
-  name: "Members",
+  name: "MembersAdmin",
   components: {
-    Page: () => import('@/components/Page')
+    PageWrap: () => import('@/components/PageWrap')
   },
   data: function () {
     Members.setupTranslation();

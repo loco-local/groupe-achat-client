@@ -1,5 +1,5 @@
 <template>
-  <Page>
+  <PageWrap>
     <v-card flat>
       <v-card-title class="text-center vh-center">
         {{ $t('groupOrders:title') }}
@@ -213,7 +213,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </Page>
+  </PageWrap>
 </template>
 
 <script>
@@ -229,7 +229,7 @@ export default {
 
   name: "GroupOrders",
   components: {
-    Page: () => import('@/components/Page'),
+    PageWrap: () => import('@/components/PageWrap'),
     GroupOrderStatusText: () => import('@/components/GroupOrderStatusText')
   },
   data: () => {

@@ -1,5 +1,5 @@
 <template>
-  <Page>
+  <PageWrap>
     <v-row class="mt-4">
       <v-col cols="12" class="text-left">
         <router-link to="/commandes-de-groupe">
@@ -73,7 +73,7 @@
         ></ProviderOrders>
       </v-tab-item>
     </v-tabs-items>
-  </Page>
+  </PageWrap>
 </template>
 
 <script>
@@ -90,7 +90,7 @@ export default {
     FeeOnAllBills,
     AllBuyGroupOrderItems,
     ProductsToDivide,
-    Page: () => import('@/components/Page'),
+    PageWrap: () => import('@/components/PageWrap'),
     GroupOrderStatus: () => import('@/components/GroupOrderStatus'),
     GroupOrderMembersBill: () => import('@/components/GroupOrderMembersBill')
   },

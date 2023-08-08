@@ -140,7 +140,7 @@ import AuthenticateService from "@/service/AuthenticateService";
 import RedirectIfWrongPage from "@/RedirectIfWrongPage";
 
 export default {
-  name: "Register",
+  name: "RegisterPage",
   components: {},
   data: function () {
     Members.setupTranslation();
@@ -184,7 +184,7 @@ export default {
       await this.$store.dispatch('setUser', response.data.member);
       await this.$nextTick();
       await this.$router.push({
-        name: 'Dashboard'
+        name: 'DashboardPage'
       });
       this.isPendingRegistrationFlow = true;
       this.registerLoading = false;
