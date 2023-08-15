@@ -128,6 +128,25 @@
         <!--      <RecaptchaInfo></RecaptchaInfo>-->
       </div>
     </v-col>
+    <v-snackbar
+        v-model="emailExistsSnackbar"
+        top
+        :timeout="-1"
+    >
+        <span class="body-1">
+          {{ $t('register:emailExists') }}
+        </span>
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="emailExists = false"
+        >
+          {{ $t('close') }}
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-row>
 </template>
 
@@ -148,7 +167,8 @@ export default {
       title: "Inscription",
       register: "S'inscrire",
       group: "Groupe",
-      completed: "Merci pour votre inscription ! Un super bénévole devrait vous contacter lorsque votre compte sera activé. Si cela tarde, n'hésitez pas à recontacter les responsables"
+      completed: "Merci pour votre inscription ! Un super bénévole devrait vous contacter lorsque votre compte sera activé. Si cela tarde, n'hésitez pas à recontacter les responsables",
+      emailExists: "Le courriel est déjà associé à un usager. Il ne peut être utilisé pour ajouter un nouveau membre."
     };
     I18n.i18next.addResources("fr", "register", text);
     I18n.i18next.addResources("en", "register", text);
@@ -158,7 +178,8 @@ export default {
       editedMember: {},
       registerLoading: false,
       buyGroup: null,
-      isPendingRegistrationFlow: false
+      isPendingRegistrationFlow: false,
+      emailExistsSnackbar: false
     }
   },
   mounted: async function () {
@@ -180,6 +201,11 @@ export default {
       }
       this.registerLoading = true;
       const response = await AuthenticateService.register(this.editedMember);
+      if (response.status === 401) {
+        this.emailExistsSnackbar = true;
+        this.registerLoading = false;
+        return;
+      }
       await this.$store.dispatch('setToken', response.data.token);
       await this.$store.dispatch('setUser', response.data.member);
       await this.$nextTick();

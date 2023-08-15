@@ -5,7 +5,9 @@ export default {
     register: function (member, recaptchaToken) {
         member.staySignedIn = true;
         member.recaptchaToken = recaptchaToken;
-        return Service.api().post("/register", member);
+        return Service.api().post("/register", member).catch((error) => {
+            return error.response;
+        })
     },
     login: function (user, recaptchaToken) {
         user.staySignedIn = true;
