@@ -65,6 +65,9 @@ const BuyGroupOrderService = {
             if (orderItem.costUnitPrice === null) {
                 orderItem.costUnitPrice = orderItem.expectedCostUnitPrice.toFixed(2);
             }
+            if (orderItem.qtyInBox === null) {
+                orderItem.qtyInBox = 1;
+            }
             OrderItem.defineQuantitiesFraction(orderItem);
             orderItem.previousExpectedQuantityInput = orderItem.expectedQuantityInput;
             orderItem.previousQuantityInput = orderItem.quantityInput;
