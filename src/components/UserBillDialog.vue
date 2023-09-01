@@ -72,7 +72,6 @@ export default {
       this.itemsLoading = true;
     },
     leave: function () {
-      this.$router.back();
       this.show = false;
     },
     setData: function (data) {
@@ -85,6 +84,11 @@ export default {
     }
   },
   watch: {
+    show: function () {
+      if (this.show === false) {
+        this.$router.back();
+      }
+    },
     '$route'(to) {
       if (to.name !== "GroupOrderMemberBillsForMember") {
         this.show = false;
