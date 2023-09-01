@@ -25,6 +25,8 @@
             clearable
             persistent-hint
             :hint="$t('productTable:displayAllIfNoCategory')"
+            outlined
+            filled
         ></v-select>
         <v-text-field
             prepend-inner-icon="search"
@@ -35,6 +37,8 @@
             class="mx-4 mb-6"
             clearable
             :id="searchElementId"
+            outlined
+            solo
         ></v-text-field>
       </template>
       <template v-slot:item.expectedQuantity="{ item }" v-if="hasExpectedQuantity">
