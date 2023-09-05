@@ -290,6 +290,7 @@ import OrderItem from "@/OrderItem";
 import VueScrollTo from 'vue-scrollto'
 import BuildUniquePropertySetsInProducts from "@/BuildUniquePropertySetsInProducts";
 import Search from "@/Search";
+import latinize from "latinize";
 
 const ENTER_KEY_CODE = 13;
 export default {
@@ -606,7 +607,17 @@ export default {
         const sets = BuildUniquePropertySetsInProducts.build(
             this.products
         );
-        return sets.categories;
+        return sets.categories.sort(function (a, b) {
+          const aText = latinize(a);
+          const bText = latinize(b);
+          if (aText < bText) {
+            return -1;
+          }
+          if (aText > bText) {
+            return 1;
+          }
+          return 0;
+        });
       }
       return [];
     }
