@@ -608,8 +608,8 @@ export default {
             this.products
         );
         return sets.categories.sort(function (a, b) {
-          const aText = latinize(a);
-          const bText = latinize(b);
+          const aText = latinize(a).toLowerCase();
+          const bText = latinize(b).toLowerCase();
           if (aText < bText) {
             return -1;
           }
