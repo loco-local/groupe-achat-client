@@ -607,18 +607,7 @@ export default {
         const sets = BuildUniquePropertySetsInProducts.build(
             this.products
         );
-        return sets.categories.sort(function (a, b) {
-          const aText = latinize(a).toLowerCase();
-          const bText = latinize(b).toLowerCase();
-          if (aText < bText) {
-            return -1;
-          }
-          if (aText > bText) {
-            return 1;
-          }
-          return 0;
-        });
-      }
+        return sets.categories;
       return [];
     }
   },
