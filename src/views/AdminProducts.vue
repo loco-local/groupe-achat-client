@@ -122,8 +122,9 @@
                       ref="categoryInput"
                       :items="categories"
                       :label="$t('product:category')"
+                      :no-data-text="$t('productsAdmin:categoryInexistent')"
                   >
-                    <v-list-item slot="no-data" @click="selectNewCategory()">
+                    <v-list-item slot="append-item" @click="selectNewCategory()">
                       <v-list-item-content>
                         <v-list-item-title>
                           {{ $t('productsAdmin:newCategory') }} "{{ categorySearchText }}"
@@ -187,8 +188,9 @@
                       ref="makerInput"
                       :items="makers"
                       :label="$t('product:maker')"
+                      :no-data-text="$t('productsAdmin:makerInexistent')"
                   >
-                    <v-list-item slot="no-data" @click="selectNewMaker()">
+                    <v-list-item slot="append-item" @click="selectNewMaker()">
                       <v-list-item-content>
                         <v-list-item-title>
                           {{ $t('productsAdmin:newMaker') }} "{{ makerSearchText }}"
@@ -206,8 +208,9 @@
                       ref="providerInput"
                       :items="providers"
                       :label="$t('product:provider')"
+                      :no-data-text="$t('productsAdmin:providerInexistent')"
                   >
-                    <v-list-item slot="no-data" @click="selectNewProvider()">
+                    <v-list-item slot="append-item" @click="selectNewProvider()">
                       <v-list-item-content>
                         <v-list-item-title>
                           {{ $t('productsAdmin:newProvider') }} "{{ providerSearchText }}"
@@ -374,7 +377,10 @@ export default {
       productUpdated: "Le produit a été mis à jour",
       newCategory: "nouvelle catégorie",
       newProvider: "nouveau fournisseur",
-      newMaker: "nouveau fabriquant"
+      newMaker: "nouveau fabriquant",
+      categoryInexistent: "Catégorie inexistante",
+      makerInexistent: "Fabriquant inexistant",
+      providerInexistent: "Fournisseur inexistant"
     };
     I18n.i18next.addResources("fr", "productsAdmin", text);
     I18n.i18next.addResources("en", "productsAdmin", text);
