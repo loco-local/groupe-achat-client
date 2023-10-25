@@ -38,7 +38,11 @@ const QuantityInterpreter = {
         if(orderItem.format === null){
             return 1;
         }
-        const total = QuantityInterpreter.getQty(orderItem.format) * orderItem.qtyInBox;
+        let qtyInBox = orderItem.qtyInBox;
+        if(qtyInBox === null || qtyInBox === undefined){
+            qtyInBox = 1;
+        }
+        const total = QuantityInterpreter.getQty(orderItem.format) * qtyInBox;
         return QuantityInterpreter._roundNumber(decimal * total, 2);
     },
     convertFractionToDecimal: function (fraction, orderItem) {
