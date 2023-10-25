@@ -15,34 +15,47 @@
         :custom-filter="searchIgnoreAccents"
     >
       <template v-slot:top v-if="!hideSearch">
-        {{$t('productTable:categoriesFilter')}}
-        <v-chip-group
-            v-model="chosenCategories"
-            color="primary"
-            column
-            multiple
-        >
-          <v-chip
-              v-for="category in categories"
-              :key="category"
-              :value="category"
-              outlined
-          >
-            {{ category }}
-          </v-chip>
-        </v-chip-group>
-        <v-text-field
-            prepend-inner-icon="search"
-            label="Recherche"
-            single-line
-            hide-details
-            v-model="search"
-            class="mx-4 mb-6"
-            clearable
-            :id="searchElementId"
-            outlined
-            solo
-        ></v-text-field>
+        <v-card class="mb-8">
+          <v-card-title>
+            <strong class="text-left">
+              {{ $t('productTable:categoriesFilter') }}
+            </strong>
+          </v-card-title>
+          <v-card-text>
+            <v-chip-group
+                v-model="chosenCategories"
+                color="primary"
+                column
+                multiple
+            >
+              <v-chip
+                  v-for="category in categories"
+                  :key="category"
+                  :value="category"
+                  outlined
+              >
+                {{ category }}
+              </v-chip>
+            </v-chip-group>
+          </v-card-text>
+        </v-card>
+        <v-row class="vh-center mb-6">
+          <v-col cols="12" lg="3">
+            <v-text-field
+                prepend-inner-icon="search"
+                label="Recherche"
+                single-line
+                hide-details
+                v-model="search"
+                class="mx-4 mb-6"
+                clearable
+                :id="searchElementId"
+                outlined
+                solo
+                rounded
+            ></v-text-field>
+          </v-col>
+        </v-row>
       </template>
       <template v-slot:item.expectedQuantity="{ item }" v-if="hasExpectedQuantity">
         <div v-if="showDecimalQuantityNotFractions">
@@ -405,7 +418,7 @@ export default {
       costUnitPriceUpdated: "Prix coûtant mis à jour",
       wrongFormat1: "Le format entré",
       wrongFormat2: "ne correspond pas au format du produit",
-      categoriesFilter: "Afficher les produits dans ces catégories",
+      categoriesFilter: "Catégories",
       displayAllIfNoCategory: "Tous les produits s'affichent si rien n'est sélectionné"
     };
     I18n.i18next.addResources("fr", "productTable", text);
@@ -609,7 +622,20 @@ export default {
         const sets = BuildUniquePropertySetsInProducts.build(
             this.products
         );
-        return sets.categories;
+        return sets.categories.filter((category) => {
+          if (category === null) {
+            return false;
+          }
+          return category.trim() !== ""
+        }).sort((a, b) => {
+          if (a < b) {
+            return -1;
+          }
+          if (a > b) {
+            return 1;
+          }
+          return 0;
+        })
       }
       return [];
     }
