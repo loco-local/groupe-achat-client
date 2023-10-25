@@ -188,6 +188,7 @@
                 :showAllMembersQuantity="showAllMembersQuantity"
                 @quantityUpdate="updateOrderQuantity"
                 ref="productsTable"
+                :title="$t('products:allProducts')"
             ></ProductsTable>
           </v-col>
         </v-row>
@@ -263,6 +264,7 @@ export default {
       quantityTip2: "Vous pouvez saisir la quantité en kg, L ou g dépendamment du format, par exemple 5 kg.",
       quantityTip3: "Vous pouvez aussi inscrire des décimales, exemple 0,5, ou avec un point 0.5",
       quantityTip4: "Certains produits ont plusieurs paquets. Le format ressemble alors à 4x 3Kg. Vous pouvez inscrire 2x pour avoir 2 paquets ou 6 kg.",
+      allProducts: "Tous les produits"
     };
     I18n.i18next.addResources("fr", "products", text);
     I18n.i18next.addResources("en", "products", text);

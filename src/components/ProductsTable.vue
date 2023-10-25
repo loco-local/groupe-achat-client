@@ -39,7 +39,7 @@
             </v-chip-group>
           </v-card-text>
         </v-card>
-        <v-row class="vh-center mb-6">
+        <v-row class="vh-center pb-0">
           <v-col cols="12" lg="3">
             <v-text-field
                 prepend-inner-icon="search"
@@ -56,6 +56,9 @@
             ></v-text-field>
           </v-col>
         </v-row>
+        <v-card-title v-if="title !== ''" class="pt-0">
+          {{title}}
+        </v-card-title>
       </template>
       <template v-slot:item.expectedQuantity="{ item }" v-if="hasExpectedQuantity">
         <div v-if="showDecimalQuantityNotFractions">
@@ -311,6 +314,10 @@ const ENTER_KEY_CODE = 13;
 export default {
   name: "ProductsTable",
   props: {
+    title: {
+      type: String,
+      default: ""
+    },
     preventSearchFlickr: {
       type: Boolean,
       default: true
