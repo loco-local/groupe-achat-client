@@ -20,7 +20,7 @@
 
 <script>
 
-import ProductService from "@/service/ProductService";
+import ProductUploadService from "@/service/ProductUploadService";
 
 export default {
   name: "SatauImport",
@@ -33,16 +33,19 @@ export default {
       isProductsFileLoading: false
     }
   },
-  methods: {
-
-  },
+  methods: {},
   watch: {
     productsFile: async function () {
       this.isProductsFileLoading = true;
       let formData = new FormData();
       formData.append('file', this.productsFile, this.productsFile.name);
-      const uploadData = await ProductService.uploadSatauProducts(formData);
-      this.$refs.import.setProducts(uploadData.formattedData, uploadData.uploadUuid);
+      const uploadData = await ProductUploadService.uploadSatauProducts(formData);
+      this.$refs.import.setProducts(
+          uploadData.formattedData,
+          uploadData.uploadUuid,
+          uploadData.propertiesAssociation,
+          uploadData.rawDataTenFirst
+      );
       this.isProductsFileLoading = false
     }
   }

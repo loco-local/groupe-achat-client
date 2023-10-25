@@ -15,19 +15,22 @@
         :custom-filter="searchIgnoreAccents"
     >
       <template v-slot:top v-if="!hideSearch">
-        <v-select
+        {{$t('productTable:categoriesFilter')}}
+        <v-chip-group
             v-model="chosenCategories"
-            :items="categories"
-            :label="$t('productTable:categoriesFilter')"
+            color="primary"
+            column
             multiple
-            chips
-            class="mx-4 mb-6"
-            clearable
-            persistent-hint
-            :hint="$t('productTable:displayAllIfNoCategory')"
-            outlined
-            filled
-        ></v-select>
+        >
+          <v-chip
+              v-for="category in categories"
+              :key="category"
+              :value="category"
+              outlined
+          >
+            {{ category }}
+          </v-chip>
+        </v-chip-group>
         <v-text-field
             prepend-inner-icon="search"
             label="Recherche"

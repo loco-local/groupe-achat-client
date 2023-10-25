@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import ProductService from "@/service/ProductService";
+import ProductUploadService from "@/service/ProductUploadService";
 
 export default {
   name: "HNImport",
@@ -46,7 +46,7 @@ export default {
   methods: {
     send: async function () {
       this.isLoading = true;
-      const uploadData = await ProductService.sendHNProducts(this.hnTextBlock);
+      const uploadData = await ProductUploadService.sendHNProducts(this.hnTextBlock);
       this.$refs.import.setProducts(uploadData.formattedData, uploadData.uploadUuid);
       this.isLoading = false;
     }

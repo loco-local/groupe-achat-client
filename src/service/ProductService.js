@@ -46,27 +46,6 @@ export default {
             })
         );
     },
-    uploadSatauProducts: async function (formData) {
-        const response = await Service.api().post('/products/upload/provider/satau', formData, {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        })
-        return response.data;
-    },
-    sendHNProducts: async function (textBlock) {
-        const response = await Service.api().post('/products/upload/provider/hn', {
-            textBlock: textBlock
-        })
-        return response.data;
-    },
-    acceptImport: async function (uploadId) {
-        const response = await Service.api().post('/products/upload/' + uploadId + "/accept")
-        return response.data;
-    },
-    refuseImport: async function () {
-
-    },
     makeAvailable: async function (productId) {
         return await Service.api().post(
             '/products/' + productId + "/available")
