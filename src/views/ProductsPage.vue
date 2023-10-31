@@ -107,20 +107,26 @@
                 <span class="">{{ $t('total') }} : </span>
                 {{ total | currency }}
               </v-card-subtitle>
-              <v-card-text class="body-1" v-if="orderItems.length > 0">
-                <div v-for="(orderItem) in orderItems " :key="orderItem.ProductId" class="d-inline">
-                  <v-chip outlined class="mr-4 mb-4" label @click="searchItem(orderItem)">
-                    {{ orderItem.description }}
-                    <span v-if="orderItem.description === undefined">
-                      {{ orderItem.name }}
-                    </span>
-                    <v-divider vertical class="ml-2 mr-2"></v-divider>
-                    {{ orderItem.expectedQuantityInput }}
-                    <v-divider vertical class="ml-2 mr-2"></v-divider>
-                    {{ orderItem.total | currency }}
-                  </v-chip>
-                  <!--                  <span class="ml-2 mr-2">|</span>-->
-                </div>
+              <v-card-text class="body-1" v-if="orderItemsAsProducts.length > 0">
+                <ProductsTable
+                    :products="orderItemsAsProducts || []"
+                    :hideSearch="true"
+                    :preventSearchFlickr="false"
+                    :hideCategory="true"
+                    :canToggleAvailability="false"
+                    :canChangeExpectedQuantity="canChangeExpectedQuantity"
+                    :hasExpectedQuantity="hasExpectedQuantity"
+                    :hasQuantity="isAdminModificationFlow"
+                    :canChangeQuantity="isAdminModificationFlow"
+                    :showTaxes="true"
+                    :hideExpectedUnitPrice="true"
+                    :showExpectedUnitPriceAfterRebate="!isAdminModificationFlow"
+                    :showCostUnitPrice="isAdminModificationFlow"
+                    :showUnitPrice="isAdminModificationFlow"
+                    :showAllMembersQuantity="showAllMembersQuantity"
+                    @quantityUpdate="updateOrderQuantity"
+                    ref="summaryProductsTable"
+                ></ProductsTable>
               </v-card-text>
               <v-card-text v-if="orderItems.length === 0 && !isLoading">
                 {{ $t('products:noOrderItems') }}
@@ -134,15 +140,25 @@
                 {{ $t('products:toDivide') }}
               </v-card-title>
               <v-card-text class="body-1" v-if="itemsToDivide.length > 0">
-                <div v-for="(item) in itemsToDivide " :key="item.ProductId" class="d-inline">
-                  <v-chip outlined class="mr-4 mb-4" label @click="searchItem(item)">
-                    {{ item.name }}
-                    <v-divider vertical class="ml-2 mr-2"></v-divider>
-                    {{ item.allMembersQuantity.remainingFraction }}
-                    {{ item.allMembersQuantity.format }}
-                  </v-chip>
-                  <!--                  <span class="ml-2 mr-2">|</span>-->
-                </div>
+                <ProductsTable
+                    :products="itemsToDivide || []"
+                    :hideSearch="true"
+                    :preventSearchFlickr="false"
+                    :hideCategory="true"
+                    :canToggleAvailability="false"
+                    :canChangeExpectedQuantity="canChangeExpectedQuantity"
+                    :hasExpectedQuantity="hasExpectedQuantity"
+                    :hasQuantity="isAdminModificationFlow"
+                    :canChangeQuantity="isAdminModificationFlow"
+                    :showTaxes="true"
+                    :hideExpectedUnitPrice="true"
+                    :showExpectedUnitPriceAfterRebate="!isAdminModificationFlow"
+                    :showCostUnitPrice="isAdminModificationFlow"
+                    :showUnitPrice="isAdminModificationFlow"
+                    :showAllMembersQuantity="showAllMembersQuantity"
+                    @quantityUpdate="updateOrderQuantity"
+                    ref="summaryProductsTable"
+                ></ProductsTable>
               </v-card-text>
               <v-card-text v-if="itemsToDivide.length === 0 && !isLoading">
                 {{ $t('products:noProductsToDivide') }}
@@ -273,6 +289,7 @@ export default {
       memberId: null,
       products: [],
       orderItems: [],
+      orderItemsAsProducts: [],
       itemsToDivide: [],
       userOrderId: null,
       isLoading: false,
@@ -307,6 +324,15 @@ export default {
     buildItemsToDivide: function () {
       this.itemsToDivide = this.products.filter((product) => {
         return product.allMembersQuantity !== undefined && product.allMembersQuantity.remainingFraction > 0;
+      });
+    },
+    buildOrderItemsAsProducts: function () {
+      const orderedProductIds = new Set();
+      this.orderItems.forEach(orderItem => {
+        orderedProductIds.add(orderItem.ProductId);
+      })
+      this.orderItemsAsProducts = this.products.filter((product) => {
+        return orderedProductIds.has(product.id);
       });
     },
     searchItem: function (item) {
@@ -422,6 +448,7 @@ export default {
       });
       this.rebuildTotal(this.orderItems);
       this.buildItemsToDivide();
+      this.buildOrderItemsAsProducts()
       this.isLoading = false;
     },
     updateOrderQuantity: async function (updatedProduct) {
@@ -488,6 +515,7 @@ export default {
       this.$set(this.products, this.products.indexOf(updatedProduct), updatedProduct);
       this.rebuildTotal(this.orderItems);
       this.buildItemsToDivide();
+      this.buildOrderItemsAsProducts();
       await this.$refs.productsTable.showQuantityChangedSuccess();
     }
   }
