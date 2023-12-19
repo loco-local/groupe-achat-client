@@ -23,7 +23,10 @@
           </router-link>
         </v-toolbar-title>
         <v-spacer></v-spacer>
-
+        <span v-if="$store.state.user !== null && $vuetify.breakpoint.mdAndUp" class="text-h6 mr-8 font-weight-regular">
+                {{ $store.state.user.firstname }}
+                {{ $store.state.user.lastname }}
+              </span>
         <v-menu
             bottom
             left
@@ -36,7 +39,7 @@
                 v-bind="attrs"
                 v-on="on"
             >
-              <v-icon color="blueTitle">menu</v-icon>
+              <v-icon color="primary">menu</v-icon>
             </v-btn>
           </template>
           <v-list>
@@ -81,16 +84,16 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-<!--            <v-list-item to="/produits/import" v-if="isAdmin">-->
-<!--              <v-list-item-action>-->
-<!--                <v-icon>import_export</v-icon>-->
-<!--              </v-list-item-action>-->
-<!--              <v-list-item-content>-->
-<!--                <v-list-item-title>-->
-<!--                  {{ $t('app:importProducts') }}-->
-<!--                </v-list-item-title>-->
-<!--              </v-list-item-content>-->
-<!--            </v-list-item>-->
+            <!--            <v-list-item to="/produits/import" v-if="isAdmin">-->
+            <!--              <v-list-item-action>-->
+            <!--                <v-icon>import_export</v-icon>-->
+            <!--              </v-list-item-action>-->
+            <!--              <v-list-item-content>-->
+            <!--                <v-list-item-title>-->
+            <!--                  {{ $t('app:importProducts') }}-->
+            <!--                </v-list-item-title>-->
+            <!--              </v-list-item-content>-->
+            <!--            </v-list-item>-->
             <v-divider v-if="isAdmin"></v-divider>
             <v-list-item @click="logout">
               <v-list-item-action>

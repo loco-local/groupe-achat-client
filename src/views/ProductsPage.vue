@@ -1,5 +1,53 @@
 <template>
   <PageWrap>
+    <v-card flat class="mb-0 pb-0" v-if="member !== null">
+      <v-card-title class="blue-grey--text mb-0 pb-0">
+        <v-spacer></v-spacer>
+        <span class="ml-2">
+                {{ member.firstname }}
+                {{ member.lastname }}
+              </span>
+        <v-spacer></v-spacer>
+      </v-card-title>
+    </v-card>
+    <v-row
+        v-if="member !== null && (isAdminModificationFlow || member.rebates && member.rebates.percentage && member.rebates.percentage.number)"
+        class="vh-center mt-6">
+      <v-col cols="12" xl="5">
+        <v-card flat>
+          <div v-if="member.rebates && member.rebates.percentage && member.rebates.percentage.number">
+            <v-divider></v-divider>
+            <v-card-title class="vh-center text-h6 font-weight-regular">
+              <strong class="ml-1 mr-1">
+                {{ member.salePercentage }}%
+              </strong>
+              {{ $t('product:onCostPrice') }}
+            </v-card-title>
+            <v-card-subtitle class="body-1 font-weight-regular">
+              {{ $t('product:rebateOf') }}
+              {{ member.rebates.percentage.number }}%
+            </v-card-subtitle>
+          </div>
+          <v-card-text class="pb-2">
+            <v-alert
+                border="top"
+                colored-border
+                type="info"
+                elevation="2"
+                v-if="isAdminModificationFlow"
+                class="ml-6 mr-6 accent-4"
+            >
+              <p class="text-h6 font-weight-regular">
+                {{ $t('products:actingAsAdministrator') }}
+              </p>
+              <p class="body-1">
+                {{ $t('products:quantitiesFinal') }}
+              </p>
+            </v-alert>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
     <GroupOrderStatus @buyGroupDefined="setBuyGroup"
                       :buyGroupPath="$route.params.buyGroup"
                       class="mt-8"
@@ -12,97 +60,65 @@
           {{ $t('products:noResults') }}
         </v-sheet>
       </v-col>
-      <!--      <v-col v-else cols="12" md="4" class="text-center" v-for="product in products"-->
-      <!--             :key="product.id">-->
-      <!--        <ProductCard :product="product"></ProductCard>-->
-      <!--      </v-col>-->
-
-      <v-row v-if="member !== null" class="vh-center mt-6">
-        <v-col cols="12" xl="4">
-          <v-card>
-            <v-card-title class="text-center vh-center">
-              <span class="ml-2">
-                {{ member.firstname }}
-                {{ member.lastname }}
-              </span>
-            </v-card-title>
-            <div v-if="member.rebates && member.rebates.percentage && member.rebates.percentage.number">
-              <v-divider></v-divider>
-              <v-card-title class="vh-center text-h6 font-weight-regular">
-                <strong class="ml-1 mr-1">
-                  {{ member.salePercentage }}%
-                </strong>
-                {{ $t('product:onCostPrice') }}
-              </v-card-title>
-              <v-card-subtitle class="body-1 font-weight-regular">
-                {{ $t('product:rebateOf') }}
-                {{ member.rebates.percentage.number }}%
-              </v-card-subtitle>
-            </div>
-            <v-card-text class="pb-2">
-              <v-alert
-                  border="top"
-                  colored-border
-                  type="info"
-                  elevation="2"
-                  v-if="isAdminModificationFlow"
-                  class="ml-6 mr-6 accent-4"
-              >
-                <p class="text-h6 font-weight-regular">
-                  {{ $t('products:actingAsAdministrator') }}
-                </p>
-                <p class="body-1">
-                  {{ $t('products:quantitiesFinal') }}
-                </p>
-              </v-alert>
-            </v-card-text>
-          </v-card>
+      <v-row class="vh-center mt-6">
+        <v-col cols="12" lg="6">
+          <v-toolbar color="primary" dark>
+            <v-btn text @click="tipsDialog=true">
+              {{ $t('products:tips') }}
+            </v-btn>
+            <v-spacer></v-spacer>
+            <v-divider vertical></v-divider>
+            <v-spacer></v-spacer>
+            <v-btn text :to="yourOrderRoutePath" :disabled="yourOrderRoutePath === $route.path">
+              {{ $t('products:summary') }}
+            </v-btn>
+            <v-spacer></v-spacer>
+            <v-divider vertical></v-divider>
+            <v-spacer></v-spacer>
+            <v-btn text :to="toDivideRoutePath" :disabled="toDivideRoutePath === $route.path">
+              {{ $t('products:toDivide') }}
+            </v-btn>
+            <v-spacer></v-spacer>
+            <v-divider vertical></v-divider>
+            <v-spacer></v-spacer>
+            <v-btn text :to="allProductsRoutePath" :disabled="allProductsRoutePath === $route.path">
+              {{ $t('products:allProducts') }}
+            </v-btn>
+            <v-spacer></v-spacer>
+          </v-toolbar>
+          <v-toolbar color="transparent" class="elevation-0">
+            <v-spacer></v-spacer>
+            <!--            -->
+            <v-btn text small @click="goToShowAllSections()" :disabled="allSectionsRoutePath === $route.path">
+              {{ $t('products:allSections') }}
+            </v-btn>
+            <v-spacer></v-spacer>
+          </v-toolbar>
         </v-col>
       </v-row>
-      <v-col cols="12" v-if="memberId !== null" class="mt-8">
+      <v-col cols="12" v-if="memberId !== null && !isLoading && (!relevantOrder || relevantOrder.status !== 'CURRENT')" class="mt-8">
         <v-alert class="body-1"
                  text
                  color="warning"
                  border="left"
-                 v-if="!isLoading && (!relevantOrder || relevantOrder.status !== 'CURRENT')"
         >
-          {{ $t('groupOrderStatus:cannotOrderAtTheMoment') }}.
-        </v-alert>
-        <v-alert
-            text
-            dense
-            color="teal"
-            border="left"
-            colored-border
-            class="body-1"
-        >
-          <p>
-            {{ $t('products:info1') }}
-            <br>
-            {{ $t('products:info2') }}
-          </p>
-          <v-divider class="mb-4"></v-divider>
-          <p>
-            {{ $t('products:info3') }}
-            <br>
-            <a @click.prevent="quantityTipDialog=true">{{ $t('products:info4') }}</a>
-            <br>
-            {{ $t('products:info5') }}
-            <br>
-            {{ $t('products:info6') }}
-          </p>
+          <span class="black--text body-1">
+            {{ $t('groupOrderStatus:cannotOrderAtTheMoment') }}.
+          </span>
         </v-alert>
       </v-col>
       <v-col cols="12">
         <v-card flat class="" color="transparent">
-          <!--      <v-card-title class="text-h4">-->
-          <!--        {{ $t('products:title') }}-->
-          <!--      </v-card-title>-->
           <v-card-text class="font-weight-bold text-left body-1" v-if="memberId !== null">
-            <v-card>
+            <v-card
+                v-if="shouldShowSection('ProductsPageYourOrder')"
+            >
               <v-card-title>
                 {{ $t('products:summary') }}
               </v-card-title>
+              <v-card-subtitle class="font-weight-bold">
+                {{ $t('products:summaryInfo1') }}
+              </v-card-subtitle>
               <v-card-subtitle class="font-weight-bold">
                 <span class="">{{ $t('total') }} : </span>
                 {{ total | currency }}
@@ -135,7 +151,9 @@
                 <v-progress-circular indeterminate :size="45" :width="2"></v-progress-circular>
               </v-card-text>
             </v-card>
-            <v-card class="mt-8">
+            <v-card class="mt-8"
+                    v-if="shouldShowSection('ProductsPageToDivide')"
+            >
               <v-card-title>
                 {{ $t('products:toDivide') }}
               </v-card-title>
@@ -173,22 +191,23 @@
       <v-col cols="12" class="vh-center" v-if="isLoading">
         <v-progress-circular indeterminate :size="80" :width="2"></v-progress-circular>
       </v-col>
-      <v-col cols="12" v-else :class="
-          {
-            'pa-0': $vuetify.breakpoint.smAndDown
-          }"
+      <v-col
+          cols="12"
+          v-if="!isLoading && shouldShowSection('ProductsPageAllProducts')"
+          :class="{
+              'pa-0': $vuetify.breakpoint.smAndDown
+            }"
       >
         <v-row>
-          <v-col cols="12" :class="
-          {
+          <v-col cols="12" :class="{
             'pa-0': $vuetify.breakpoint.smAndDown
           }">
-            <v-card-actions>
-              <v-btn @click="quantityTipDialog=true">
-                <v-icon left>info</v-icon>
-                {{ $t("products:tipsForQuantity") }}
-              </v-btn>
-            </v-card-actions>
+            <v-divider class="mb-6" v-if="allSectionsRoutePath === $route.path"></v-divider>
+            <v-card flat class="pb-0 mb-0">
+              <v-card-title class="pb-0 mb-0">
+                {{ $t('products:allProducts') }}
+              </v-card-title>
+            </v-card>
             <ProductsTable
                 :products="products || []"
                 :canToggleAvailability="false"
@@ -204,12 +223,62 @@
                 :showAllMembersQuantity="showAllMembersQuantity"
                 @quantityUpdate="updateOrderQuantity"
                 ref="productsTable"
-                :title="$t('products:allProducts')"
             ></ProductsTable>
           </v-col>
         </v-row>
       </v-col>
     </v-row>
+    <v-dialog v-model="tipsDialog" max-width="600">
+      <v-card>
+        <v-card-title>
+          <v-spacer></v-spacer>
+          <v-icon @click="tipsDialog=false">close</v-icon>
+        </v-card-title>
+        <v-card-text class="body-1">
+          <v-card-title>
+            {{ $t('products:tipsNoConfirmation') }}
+          </v-card-title>
+          <p>
+            {{ $t('products:info1') }}
+            <br>
+            <br>
+            {{ $t('products:info2') }}
+          </p>
+          <v-divider class="mb-4"></v-divider>
+          <v-card-title>
+            {{ $t('products:tipsQuantities') }}
+          </v-card-title>
+          <p class="body-1">
+            {{ $t('products:quantityTip2') }}
+          </p>
+          <p class="body-1">
+            {{ $t('products:quantityTip3') }}
+          </p>
+          <p class="body-1">
+            {{ $t('products:quantityTip4') }}
+          </p>
+          <v-divider class="mb-4"></v-divider>
+          <v-card-title>
+            {{ $t('products:tipsShare') }}
+          </v-card-title>
+          <p>
+            {{ $t('products:info3') }}
+            {{ $t('products:info4') }}
+            <br>
+            <br>
+            {{ $t('products:info5') }}
+            <br>
+            <br>
+            {{ $t('products:info6') }}
+          </p>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn text @click="tipsDialog = false">
+            {{ $t('close') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-dialog v-model="quantityTipDialog" max-width="600">
       <v-card>
         <v-card-title>
@@ -264,12 +333,18 @@ export default {
       "title": "Produits",
       info1: "Il n'y a pas de bouton de confirmation pour votre panier de commande.",
       info2: "Après la date de fin de la commande, les dernières quantités que vous aurez inscrites seront commandées aux fournisseurs.",
-      info3: "Vous pouvez saisir une fraction de la quantité totale d'un produit que vous partagerez avec d'autres membres.",
-      info4: "Voir astuces pour la saisie des quantités.",
+      info3: "Saisissez une fraction de la quantité totale d'un produit que vous partagerez avec d'autres membres.",
+      info4: "Voir saisie des quantités ci-haut.",
       info5: "Seuls les produits complets seront commandés.",
       info6: "Vérifiez la section et la colonne 'Quantités restantes à diviser'.",
       noResults: "Pas de produits disponibles",
-      summary: "Résumé",
+      tips: "Astuces",
+      tipsNoConfirmation: "Pas de confirmation",
+      tipsShare: "Partage",
+      tipsQuantities: "Saisie des quantités",
+      allSections: "Toutes les sections",
+      summary: "Votre commande",
+      summaryInfo1: "À la fin de la commande en cours, ces produits seront commandés pour vous.",
       toDivide: "Quantités restantes à diviser",
       noOrderItems: "Pas encore de produits commandés",
       noProductsToDivide: "Pas de produits à diviser",
@@ -278,7 +353,7 @@ export default {
       tipsForQuantity: "Trucs pour la saisie de quantité",
       quantityTip1: "Les produits peuvent être partagés par plusieurs membres.",
       quantityTip2: "Vous pouvez saisir la quantité en kg, L ou g dépendamment du format, par exemple 5 kg.",
-      quantityTip3: "Vous pouvez aussi inscrire des décimales, exemple 0,5, ou avec un point 0.5",
+      quantityTip3: "Pour le partage, inscrivez des décimales, exemple 0,5, ou avec un point 0.5",
       quantityTip4: "Certains produits ont plusieurs paquets. Le format ressemble alors à 4x 3Kg. Vous pouvez inscrire 2x pour avoir 2 paquets ou 6 kg.",
       allProducts: "Tous les produits"
     };
@@ -300,10 +375,20 @@ export default {
       showAllMembersQuantity: true,
       total: 0.0,
       relevantOrder: null,
-      quantityTipDialog: false
+      quantityTipDialog: false,
+      tipsDialog: false,
+      yourOrderRoutePath: "",
+      toDivideRoutePath: "",
+      allProductsRoutePath: "",
+      allSectionsRoutePath: ""
     }
   },
   mounted: async function () {
+    const buyGroup = this.$route.params.buyGroup;
+    this.yourOrderRoutePath = `/${buyGroup}/votre-commande`;
+    this.toDivideRoutePath = `/${buyGroup}/diviser`;
+    this.allProductsRoutePath = `/${buyGroup}/tous-les-produits`;
+    this.allSectionsRoutePath = `/${buyGroup}`;
     this.isLoading = true;
     this.isMemberLoading = true;
     this.isAdminModificationFlow = this.$router.currentRoute.name === 'ProductsOrderOfMember';
@@ -317,7 +402,19 @@ export default {
     }
     this.isMemberLoading = false;
   },
+  computed: {
+    isShowAllSections: function () {
+      return false;
+    }
+  },
   methods: {
+    shouldShowSection: function (sectionName) {
+      return ['ProductsPage'].concat(sectionName).indexOf(this.$router.currentRoute.name) > -1;
+    },
+    goToShowAllSections: function () {
+      console.log(this.$route.params.buyGroup)
+      this.$router.push({name: 'ProductsPage', params: {buyGroup: this.$route.params.buyGroup}})
+    },
     buildAllMembersQuantities: function () {
       return this.memberOrdersQuantities.buildQuantities();
     },

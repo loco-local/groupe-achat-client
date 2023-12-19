@@ -105,6 +105,21 @@ const routes = [
         component: () => import('../views/ProductsPage')
     },
     {
+        path: '/:buyGroup/votre-commande',
+        name: 'ProductsPageYourOrder',
+        component: () => import('../views/ProductsPage')
+    },
+    {
+        path: '/:buyGroup/diviser',
+        name: 'ProductsPageToDivide',
+        component: () => import('../views/ProductsPage')
+    },
+    {
+        path: '/:buyGroup/tous-les-produits',
+        name: 'ProductsPageAllProducts',
+        component: () => import('../views/ProductsPage')
+    },
+    {
         path: '/:buyGroup/inscription',
         name: 'RegisterPage',
         component: () => import('../views/RegisterPage.vue')

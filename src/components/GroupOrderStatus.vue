@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col cols="12" class="vh-center">
-      <v-card max-width="400">
+      <v-card max-width="400" border>
         <v-card-text v-if="isLoading">
           <v-progress-circular indeterminate :size="80" :width="2"></v-progress-circular>
         </v-card-text>
@@ -68,7 +68,7 @@ import I18n from "@/i18n";
 export default {
   name: "GroupOrderStatus",
   components: {GroupOrderStatusText},
-  props: ['buyGroupPath', 'buyGroupId', 'memberId'],
+  props: ['buyGroupPath', 'buyGroupId', 'memberId', 'memberOfOrder'],
   data: function () {
     const text = {
       addedToCost: "ajouté au prix coûtant",

@@ -16,8 +16,8 @@
     >
       <template v-slot:top v-if="!hideSearch">
         <v-card class="mb-8">
-          <v-card-title>
-            <strong class="text-left">
+          <v-card-title color="primary" class="body-1">
+            <strong class="text-left body-1">
               {{ $t('productTable:categoriesFilter') }}
             </strong>
           </v-card-title>
@@ -53,6 +53,8 @@
                 outlined
                 solo
                 rounded
+                background-color="primary"
+                dark
             ></v-text-field>
           </v-col>
         </v-row>
