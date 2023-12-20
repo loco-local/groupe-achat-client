@@ -246,6 +246,9 @@
           <v-icon color="primary">edit</v-icon>
         </v-btn>
       </template>
+      <template v-slot:footer>
+        <slot name="footer"></slot>
+      </template>
     </v-data-table>
     <v-snackbar
         v-model="quantityUpdateSnackbar"

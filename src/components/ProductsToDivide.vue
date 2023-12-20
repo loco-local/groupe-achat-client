@@ -20,36 +20,35 @@
                 color="red"
                 v-if="remainingQuantities[productId].remainingFraction > 0"
         >
-            {{ $t('divide:remaining') }}
-            {{ remainingQuantities[productId].remainingFraction }}
-            {{ remainingQuantities[productId].format }}
+          {{ $t('divide:remaining') }}
+          {{ remainingQuantities[productId].remainingFraction }}
+          {{ remainingQuantities[productId].format }}
           {{ $t('divide:toDivide') }}
         </v-chip>
         <v-divider class="mb-6"></v-divider>
         <v-card-text class="body-1 text-left">
-          <v-simple-table class="text-left">
-            <thead>
-            <tr>
-              <th class="text-left">
-                {{ $t('divide:member') }}
-              </th>
-              <th class="text-left">
-                {{ $t('divide:quantity') }}
-              </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="item in productsToDivide[productId]" :key="item.id">
-              <td>
-                {{ item.MemberOrder.Member.firstname }}
-                {{ item.MemberOrder.Member.lastname }}
-              </td>
-              <td>
-                {{ item.quantityInput }}
-              </td>
-            </tr>
-            </tbody>
-          </v-simple-table>
+          <ProductsTable
+              :products="productsToDivide[productId]"
+              :hide-search="true"
+              :preventSearchFlickr="false"
+              :show-person-name="true"
+              :canChangeQuantity="true"
+              :can-toggle-availability="false"
+              :has-quantity="true"
+              @quantityUpdate="updateOrderQuantity"
+          >
+            <div slot="footer" class="d-inline-block">
+              <v-select
+                  :items="members"
+                  item-text="fullname"
+                  item-value="memberId"
+                  :label="$t('divide:addMember')"
+                  return-object
+                  class="ml-2 mb-2"
+                  @change="addMemberToProduct($event, productsToDivide[productId], productId)"
+              ></v-select>
+            </div>
+          </ProductsTable>
         </v-card-text>
       </v-card>
     </v-card-text>
@@ -63,9 +62,12 @@ import OrderItem from "@/OrderItem";
 import latinize from "latinize";
 import Search from "@/Search";
 import MemberOrdersQuantity from "@/MemberOrdersQuantity";
+import ProductsTable from "@/components/ProductsTable.vue";
+import MemberOrderService from "@/service/MemberOrderService";
 
 export default {
   name: "ProductsToDivide",
+  components: {ProductsTable},
   props: ['buyGroupId', 'buyGroupOrderId'],
   data: function () {
     const text = {
@@ -74,7 +76,8 @@ export default {
       quantity: "Quantité",
       searchPlaceholder: "Produit ou membre",
       remaining: "Il reste",
-      toDivide: "à partager"
+      toDivide: "à partager",
+      addMember: "Membre à ajouter"
     };
     I18n.i18next.addResources("fr", "divide", text);
     I18n.i18next.addResources("en", "divide", text);
@@ -82,15 +85,28 @@ export default {
       isLoading: true,
       productsToDivide: {},
       remainingQuantities: {},
-      search: ""
+      search: "",
+      members: []
     }
   },
   mounted: async function () {
-    const orderItems = await BuyGroupOrderService.listMemberOrderItems(
+    this.orderItems = await BuyGroupOrderService.listMemberOrderItems(
         this.buyGroupId,
         this.buyGroupOrderId
     );
-    this.productsToDivide = orderItems.reduce((productsToDivide, orderItem) => {
+    const membersMap = {};
+    this.orderItems.forEach((orderItem) => {
+      const memberOrder = orderItem.MemberOrder;
+      membersMap[orderItem.MemberOrder.MemberId] = {
+        memberId: memberOrder.MemberId,
+        memberOrderId: memberOrder.id,
+        fullname: orderItem.personFullname,
+        firstname: memberOrder.Member.firstname,
+        lastname: memberOrder.Member.lastname,
+      }
+    })
+    this.members = Object.values(membersMap);
+    this.productsToDivide = this.orderItems.reduce((productsToDivide, orderItem) => {
       const quantity = OrderItem.getQty(orderItem);
       if (quantity % 1 === 0) {
         return productsToDivide;
@@ -101,9 +117,11 @@ export default {
       productsToDivide[orderItem.ProductId].push(orderItem);
       return productsToDivide;
     }, {})
-    this.remainingQuantities = new MemberOrdersQuantity(
-        orderItems
-    ).buildQuantities();
+    this.memberOrdersQuantities = new MemberOrdersQuantity(
+        this.orderItems
+    );
+    this.remainingQuantities = this.memberOrdersQuantities.buildQuantities();
+    console.log(this.memberOrdersQuantities.memberOrderItems[0].MemberOrder.MemberId)
     this.isLoading = false;
   },
   computed: {
@@ -128,6 +146,51 @@ export default {
     }
   },
   methods: {
+    addMemberToProduct: async function (memberInfo, itemsInProduct, productId) {
+      const orderItem = {
+        MemberOrder: {},
+        ProductId: productId,
+        format: itemsInProduct[0].format,
+        name: itemsInProduct[0].name,
+        expectedUnitPrice: itemsInProduct[0].expectedUnitPrice,
+        category: itemsInProduct[0].category,
+        internalCode: itemsInProduct[0].internalCode,
+        maker: itemsInProduct[0].maker,
+        provider: itemsInProduct[0].provider,
+        qtyInBox: itemsInProduct[0].qtyInBox
+      };
+      orderItem.MemberOrder.MemberId = memberInfo.memberId;
+      orderItem.MemberOrder.Member = {
+        id: memberInfo.memberId,
+        firstname: memberInfo.firstname,
+        lastname: memberInfo.lastname
+      }
+      orderItem.personFullname = memberInfo.fullname
+      orderItem.MemberOrder.id = memberInfo.memberOrderId;
+      orderItem.MemberOrderId = memberInfo.memberOrderId
+      orderItem.id = Math.random();
+      orderItem.quantity = 0;
+      orderItem.quantityInput = 0;
+      orderItem.previousQuantityInput = 0;
+      orderItem.totalAfterRebateWithTaxes = 0;
+      OrderItem.defineQuantitiesFraction(orderItem);
+      itemsInProduct.push(orderItem)
+    },
+    updateOrderQuantity: async function (updatedItem) {
+      const prices = await MemberOrderService.setQuantity(
+          updatedItem.MemberOrderId,
+          updatedItem.ProductId,
+          updatedItem.quantity
+      )
+      updatedItem.totalAfterRebateWithTaxes = prices.totalAfterRebateWithTaxes;
+      updatedItem.quantity = prices.quantity;
+      updatedItem.tps = prices.tps;
+      updatedItem.tvq = prices.tvq;
+      updatedItem.id = prices.id;
+      this.$set(this.orderItems, this.orderItems.indexOf(updatedItem), updatedItem);
+      this.memberOrdersQuantities.updateMemberOrder(updatedItem);
+      this.remainingQuantities = this.memberOrdersQuantities.buildQuantities();
+    },
     searchMatch: function (value, search) {
       return value != null &&
           search != null &&
