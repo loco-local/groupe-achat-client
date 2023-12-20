@@ -462,10 +462,16 @@ export default {
           return;
         }
         this.createdProduct = await ProductService.createProduct(this.editedProduct);
+        Product.format(
+            this.createdProduct, this.buyGroup.salePercentage
+        );
         this.productsPutForward.unshift(this.createdProduct);
         this.productCreatedSnackbar = true;
       } else {
         await ProductService.modifyProduct(this.editedProduct);
+        Product.format(
+            this.editedProduct, this.buyGroup.salePercentage
+        );
         this.productUpdatedSnackbar = true;
       }
       this.isSaveLoading = false;
