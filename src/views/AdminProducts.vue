@@ -47,6 +47,7 @@
             :showHasTaxes="true"
             :showExpectedCostUnitPrice="true"
             :showIsAdminRelated="true"
+            :showDownload="true"
             @selectionChanged="updateSelection"
             @modify="enterUpdateProductFlow"
         ></ProductsTable>

@@ -58,8 +58,17 @@
             ></v-text-field>
           </v-col>
         </v-row>
+        <v-row class="mb-8 pt-0 mt-0" v-if="showDownload">
+          <v-col cols="12" class="text-right mt-0 pt-0">
+            <v-spacer></v-spacer>
+            <v-btn @click="downloadAsCsv()">
+              <v-icon left>download</v-icon>
+              {{ $t('download') }}
+            </v-btn>
+          </v-col>
+        </v-row>
         <v-card-title v-if="title !== ''" class="pt-0">
-          {{title}}
+          {{ title }}
         </v-card-title>
       </template>
       <template v-slot:item.expectedQuantity="{ item }" v-if="hasExpectedQuantity">
@@ -311,6 +320,7 @@ import OrderItem from "@/OrderItem";
 import VueScrollTo from 'vue-scrollto'
 import BuildUniquePropertySetsInProducts from "@/BuildUniquePropertySetsInProducts";
 import Search from "@/Search";
+import OrderToCsv from "@/OrderToCsv";
 
 const ENTER_KEY_CODE = 13;
 export default {
@@ -412,6 +422,10 @@ export default {
     },
     onlyShowCostTotal: {
       type: Boolean,
+      default: false
+    },
+    showDownload:{
+      type:Boolean,
       default: false
     }
   },
@@ -649,6 +663,9 @@ export default {
     }
   },
   methods: {
+    downloadAsCsv: function () {
+      OrderToCsv.exportForOnlyItems(this.filteredProducts)
+    },
     searchItem: function (item) {
       this.search = item.description === undefined ? item.name : item.description;
       VueScrollTo.scrollTo(

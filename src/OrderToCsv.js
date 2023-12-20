@@ -4,68 +4,102 @@ import ProductTranslation from "@/ProductTranslation";
 import OrderItem from "@/OrderItem";
 
 ProductTranslation.setup();
-const PROVIDER_ORDER_COLUMNS = [
-    "quantity",
-    "costTotal",
-    "tps",
-    "tvq",
-    "name",
-    "format",
-    "qtyInBox",
-    "costUnitPrice",
-    "category",
-    "internalCode",
-    "maker",
-    "provider"
-];
-const MEMBER_ORDER_COLUMNS = [
-    "expectedQuantity",
-    "quantity",
-    "expectedTotal",
-    "totalAfterRebateWithTaxes",
-    "tps",
-    "tvq",
-    "totalAfterRebate",
-    "name",
-    "format",
-    "qtyInBox",
-    "expectedUnitPrice",
-    "unitPrice",
-    "category",
-    "internalCode",
-    "maker",
-    "provider"
-];
+
+const TYPE = {
+    memberOrder: {
+        name: "MEMBER_ORDER",
+        columns: [
+            "expectedQuantity",
+            "quantity",
+            "expectedTotal",
+            "totalAfterRebateWithTaxes",
+            "tps",
+            "tvq",
+            "totalAfterRebate",
+            "name",
+            "format",
+            "qtyInBox",
+            "expectedUnitPrice",
+            "unitPrice",
+            "category",
+            "internalCode",
+            "maker",
+            "provider"
+        ]
+    },
+    providerOrder: {
+        name: "PROVIDER_ORDER",
+        columns: [
+            "quantity",
+            "costTotal",
+            "tps",
+            "tvq",
+            "name",
+            "format",
+            "qtyInBox",
+            "costUnitPrice",
+            "category",
+            "internalCode",
+            "maker",
+            "provider"
+        ]
+    },
+    onlyItems: {
+        name: "ONLY_ITEMS",
+        fileName: "items-groupe-achat",
+        columns: [
+            "name",
+            "format",
+            "qtyInBox",
+            "expectedCostUnitPrice",
+            "category",
+            "internalCode",
+            "maker",
+            "provider"
+        ]
+    }
+}
+
 const OrderToCsv = {
     exportForProviderOrder: function (items, total) {
-        OrderToCsv._buildForProviderOrMemberOrder(
+        OrderToCsv._build(
             items,
-            false,
+            TYPE.providerOrder,
             {
                 total: total
             }
         );
     },
     exportForMemberOrder: function (items, buyGroupOrder) {
-        OrderToCsv._buildForProviderOrMemberOrder(
+        OrderToCsv._build(
             items,
-            true,
+            TYPE.memberOrder,
             {
                 buyGroupOrder: buyGroupOrder
             }
         );
     },
-    _buildForProviderOrMemberOrder: function (items, isForMember, optionalData) {
+    exportForOnlyItems: function (items) {
+        OrderToCsv._build(
+            items,
+            TYPE.onlyItems
+        );
+    },
+    _build: function (items, type, optionalData) {
         if (items.length === 0) {
             return;
         }
+        optionalData = optionalData || {};
         let total = optionalData.total;
-        if (total === undefined) {
-            const memberOrder = items[0].MemberOrder;
-            total = memberOrder.total || memberOrder.expectedTotal;
+        if (type.name !== TYPE.onlyItems.name) {
+            if (total === undefined) {
+                const memberOrder = items[0].MemberOrder;
+                total = memberOrder.total || memberOrder.expectedTotal;
+            }
         }
         const t = I18n.i18next.getFixedT();
-        let columns = isForMember ? MEMBER_ORDER_COLUMNS : PROVIDER_ORDER_COLUMNS;
+        const isForMember = type.name === TYPE.memberOrder.name;
+        let columns = type.columns;
         let data = [[]];
         columns.forEach((column) => {
             data[0].push(t(
@@ -74,7 +108,10 @@ const OrderToCsv = {
                 ))
             );
         })
-        let fileName = isForMember ? items[0].personFullname : items[0].provider;
+        let fileName = type.fileName;
+        if (fileName === undefined) {
+            fileName = isForMember ? items[0].personFullname : items[0].provider;
+        }
         fileName += ".csv";
         items.forEach((item) => {
             data.push(
@@ -85,10 +122,12 @@ const OrderToCsv = {
         });
         data.push(OrderToCsv._buildEmptyLine(columns));
         let lastLine = OrderToCsv._buildEmptyLine(columns);
-        lastLine.pop();
-        lastLine.pop();
-        lastLine.push(t('total'));
-        lastLine.push(total + "$");
+        if (total !== undefined) {
+            lastLine.pop();
+            lastLine.pop();
+            lastLine.push(t('total'));
+            lastLine.push(total + "$");
+        }
         data.push(lastLine)
         if (optionalData.buyGroupOrder && optionalData.buyGroupOrder.howToPay !== null) {
             data.push(OrderToCsv._buildEmptyLine(columns));
@@ -149,18 +188,18 @@ const OrderToCsv = {
             case "tps" :
                 return (item.tps || 0).toFixed(2).toLocaleString() + "$";
             case "tvq" :
-                return (item.tvq || 0).toFixed(2).toLocaleString()+ "$";
+                return (item.tvq || 0).toFixed(2).toLocaleString() + "$";
             case "totalAfterRebate" :
                 return (
                     item.totalAfterRebate === undefined || item.totalAfterRebate === null ?
                         item.expectedTotalAfterRebate || 0 : item.totalAfterRebate
-                ).toFixed(2).toLocaleString()+ "$";
+                ).toFixed(2).toLocaleString() + "$";
             case "expectedUnitPrice" :
-                return (item.expectedUnitPrice || 0).toFixed(2).toLocaleString()+ "$";
+                return (item.expectedUnitPrice || 0).toFixed(2).toLocaleString() + "$";
             case "unitPrice" :
-                return (item.unitPrice || item.expectedUnitPrice || 0).toFixed(2).toLocaleString()+ "$";
+                return (item.unitPrice || item.expectedUnitPrice || 0).toFixed(2).toLocaleString() + "$";
             default:
-                return item[column]
+                return item[column] === null || item[column] === undefined ? "" : item[column]
         }
     },
     _buildEmptyLine: function (columns) {
