@@ -7,6 +7,10 @@
       {{ $t('divide:nothingToDivide') }}
     </v-card-text>
     <v-card-text v-if="!isLoading && Object.keys(productsToDivide).length">
+      <v-switch
+          v-model="showOnlyProductsWithRemainingQuantities"
+          :label="$t('divide:showOnlyProductsWithRemainingQuantities')"
+      ></v-switch>
       <v-text-field :placeholder="$t('divide:searchPlaceholder')" v-model="search" prepend-icon="search"></v-text-field>
       <v-card v-for="productId in Object.keys(productsToDivideFiltered)" :key="productId" class="mb-6 mt-6 text-left">
         <v-card-title class="text-h6">
@@ -100,7 +104,8 @@ export default {
       remaining: "Il reste",
       toDivide: "à partager",
       addMember: "Membre à ajouter",
-      memberAlreadyHasProduct: "Ce membre ne peut être ajouté, il a déjà ce produit"
+      memberAlreadyHasProduct: "Ce membre ne peut être ajouté, il a déjà ce produit",
+      showOnlyProductsWithRemainingQuantities: "Afficher seulement les produits qui ont des quantités restantes à diviser"
     };
     I18n.i18next.addResources("fr", "divide", text);
     I18n.i18next.addResources("en", "divide", text);
@@ -149,20 +154,28 @@ export default {
     this.isLoading = false;
   },
   computed: {
-    productsToDivideFiltered: function () {
-      if (this.search.trim() === "") {
-        return this.productsToDivide;
+    showOnlyProductsWithRemainingQuantities: {
+      get: function () {
+        return this.$store.state.showOnlyProductsWithRemainingQuantities
+      },
+      set: async function (value) {
+        return this.$store.dispatch('setShowOnlyProductsWithRemainingQuantities', value)
       }
+    },
+    productsToDivideFiltered: function () {
       return Object.keys(this.productsToDivide).reduce((filteredProducts, productId) => {
         let items = this.productsToDivide[productId];
         const filteredItems = items.filter((item) => {
+          if (this.search.trim() === "") {
+            return true;
+          }
           return Search.matchesAnyValues([
             item.description,
             item.MemberOrder.Member.firstname,
             item.MemberOrder.Member.lastname
           ], this.search);
         });
-        if (filteredItems.length) {
+        if (filteredItems.length && (!this.showOnlyProductsWithRemainingQuantities || this.remainingQuantities[productId].remainingFraction > 0)) {
           filteredProducts[productId] = filteredItems;
         }
         return filteredProducts;
