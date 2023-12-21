@@ -31,7 +31,7 @@ export default {
             );
             orderItem.costTotal = orderItem.costUnitPrice * orderItem.quantity + orderItem.tps + orderItem.tvq;
             if (existingProduct.length) {
-                console.log(existingProduct[0].costTotal + " " + orderItem.costTotal)
+                // console.log(existingProduct[0].costTotal + " " + orderItem.costTotal)
                 existingProduct[0].quantity = OrderItem.getQty(existingProduct[0]) + orderItem.quantity;
                 existingProduct[0].tps = existingProduct[0].tps + orderItem.tps;
                 existingProduct[0].tvq = existingProduct[0].tvq + orderItem.tvq;

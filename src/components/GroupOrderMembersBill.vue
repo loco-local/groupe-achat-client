@@ -3,6 +3,12 @@
     <v-card-text v-if="isLoading">
       <v-progress-circular indeterminate :size="80" :width="2"></v-progress-circular>
     </v-card-text>
+    <v-card-title class="vh-center">
+      {{ $t('membersBill:totalToBill') }}
+    </v-card-title>
+    <v-card-subtitle class="vh-center text-h6">
+      {{ totalToBill | currency }}
+    </v-card-subtitle>
     <v-card-text v-if="!isLoading && !userOrders.length">
       {{ $t('membersBill:noBills') }}
     </v-card-text>
@@ -45,7 +51,7 @@
                     {{ userOrder.Member.lastname }}
                   </v-list-item-title>
                   <v-list-item-subtitle class="text-left ml-6">
-                    {{ userOrder.totalPrice | currency }}
+                    {{ (userOrder.total || userOrder.expectedTotal) | currency }}
                   </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
@@ -98,7 +104,8 @@ export default {
     const text = {
       noBills: "Pas encore de commandes",
       emailOfParticipatingMembers: "Courriel des membres participants",
-      emailsCopied: "Les courriels sont copiés dans votre presse papier"
+      emailsCopied: "Les courriels sont copiés dans votre presse papier",
+      totalToBill: "Total à facturer"
     };
     I18n.i18next.addResources("fr", "membersBill", text);
     I18n.i18next.addResources("en", "membersBill", text);
@@ -106,7 +113,8 @@ export default {
       isLoading: true,
       userOrders: [],
       userBillModal: false,
-      emailCopySnackbar: false
+      emailCopySnackbar: false,
+      totalToBill: 0
     }
   },
   mounted: async function () {
@@ -116,6 +124,10 @@ export default {
           this.buyGroupId,
           this.buyGroupOrderId
       );
+      this.totalToBill = this.userOrders.reduce((sum, userOrder) => {
+        const orderTotal = userOrder.total || userOrder.expectedTotal
+        return sum + orderTotal
+      }, 0)
     }
     if (this.$route.params.userId) {
       await this.$refs.userBillDialog.enter(this.$route.params.userId);

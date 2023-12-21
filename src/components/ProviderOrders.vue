@@ -3,6 +3,12 @@
     <v-card-text v-if="isLoading">
       <v-progress-circular indeterminate :size="80" :width="2"></v-progress-circular>
     </v-card-text>
+    <v-card-title class="vh-center">
+      {{ $t('providerOrders:totalToOrder') }}
+    </v-card-title>
+    <v-card-subtitle class="vh-center text-h6">
+      {{ total | currency }}
+    </v-card-subtitle>
     <v-card-text v-if="!isLoading && !providerNames.length">
       {{ $t('providerOrders:noOrders') }}
     </v-card-text>
@@ -69,7 +75,8 @@ export default {
   data: function () {
     const text = {
       noOrders: "Pas encore de commandes",
-      orderForProvider: "Commande pour le fournisseur"
+      orderForProvider: "Commande pour le fournisseur",
+      totalToOrder: "Total à commander"
     };
     I18n.i18next.addResources("fr", "providerOrders", text);
     I18n.i18next.addResources("en", "providerOrders", text);
@@ -77,7 +84,8 @@ export default {
       isLoading: true,
       providerOrders: {},
       providerNames: [],
-      providerTotals: {}
+      providerTotals: {},
+      total: 0
     }
   },
   mounted: async function () {
@@ -94,6 +102,9 @@ export default {
       this.providerOrders = orderItemsByProvider.providerOrders;
       this.providerNames = orderItemsByProvider.providerNames;
       this.providerTotals = orderItemsByProvider.providerTotals;
+      this.total = Object.values(orderItemsByProvider.providerTotals).reduce((sum, providerTotal) => {
+        return sum + providerTotal
+      }, 0)
       this.isLoading = false;
     },
     downloadAllOrders: function () {
