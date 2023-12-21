@@ -47,6 +47,16 @@
                   </v-btn>
                 </v-list-item-action>
                 <v-list-item-action>
+                  <v-btn
+                      icon
+                      large
+                      v-clipboard="getBillUrlOfMemberId(userOrder.Member.id)"
+                      v-clipboard:success="copyBillLinkSuccess"
+                  >
+                    <v-icon large>link</v-icon>
+                  </v-btn>
+                </v-list-item-action>
+                <v-list-item-action>
                   <v-btn icon large @click="viewReceipt(userOrder.Member.id)">
                     <v-icon large>preview</v-icon>
                   </v-btn>
@@ -57,7 +67,7 @@
                     {{ userOrder.Member.lastname }}
                   </v-list-item-title>
                   <v-list-item-subtitle class="text-left ml-6">
-                    {{ (userOrder.total || userOrder.expectedTotal) | currency }}
+                    {{ (userOrder.total || userOrder.expectedTotal || 0) | currency }}
                   </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
@@ -92,6 +102,25 @@
         </v-btn>
       </template>
     </v-snackbar>
+    <v-snackbar
+        v-model="billLinkCopySnackbar"
+        top
+        :timeout="7000"
+    >
+        <span class="body-1">
+          {{ $t('membersBill:billLinkCopied') }}
+        </span>
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="billLinkCopySnackbar = false"
+        >
+          {{ $t('close') }}
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-card>
 </template>
 
@@ -111,11 +140,12 @@ export default {
   data: function () {
     const text = {
       noBills: "Pas encore de commandes",
-      emailOfParticipatingMembers: "Copier, courriel des membres participants",
+      emailOfParticipatingMembers: "Copier courriels des membres participants",
       emailsCopied: "Les courriels sont copiés dans votre presse papier",
       totalToBill: "Total à facturer",
       downloadAllBills: "Télécharger toutes les factures",
-      downloadBillsTotal: "Télécharger le résumé des factures"
+      downloadBillsTotal: "Télécharger le résumé des factures",
+      billLinkCopied: "Le lien de la facture a été copié"
     };
     I18n.i18next.addResources("fr", "membersBill", text);
     I18n.i18next.addResources("en", "membersBill", text);
@@ -124,6 +154,7 @@ export default {
       userOrders: [],
       userBillModal: false,
       emailCopySnackbar: false,
+      billLinkCopySnackbar: false,
       totalToBill: 0
     }
   },
@@ -151,8 +182,23 @@ export default {
     this.isLoading = false;
   },
   methods: {
+    getBillUrlOfMemberId: function (memberId) {
+      return new URL(this.$router.currentRoute.path + '/' + memberId, window.location.origin).href;
+    },
     copyEmailsSuccess: function () {
       this.emailCopySnackbar = true;
+    },
+    copyBillLinkSuccess: async function () {
+      if (this.billLinkCopySnackbar) {
+        this.billLinkCopySnackbar = false;
+        await this.$nextTick()
+        setTimeout(() => {
+          this.billLinkCopySnackbar = true;
+        }, 500)
+      } else {
+        this.billLinkCopySnackbar = true;
+      }
+
     },
     emailsOfParticipants: function () {
       return this.userOrders.map((userOrder) => {
