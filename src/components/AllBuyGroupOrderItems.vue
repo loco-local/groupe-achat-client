@@ -14,6 +14,7 @@
           :canChangeQuantity="true"
           :canToggleAvailability="false"
           :showPersonName="true"
+          :show-member-id="true"
           :showTaxes="true"
           :showExpectedCostUnitPrice="true"
           :showCostUnitPrice="true"

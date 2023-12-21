@@ -36,12 +36,13 @@
               :can-toggle-availability="false"
               :has-quantity="true"
               :hideExpectedUnitPrice="true"
+              :showMemberId="true"
               @quantityUpdate="updateOrderQuantity"
           >
             <div slot="footer" class="d-inline-block">
               <v-select
                   :items="members"
-                  item-text="fullname"
+                  item-text="fullnameAndId"
                   item-value="memberId"
                   :label="$t('divide:addMember')"
                   return-object
@@ -124,6 +125,7 @@ export default {
         memberId: memberOrder.MemberId,
         memberOrderId: memberOrder.id,
         fullname: orderItem.personFullname,
+        fullnameAndId: orderItem.personFullname + ", id:" + memberOrder.MemberId,
         firstname: memberOrder.Member.firstname,
         lastname: memberOrder.Member.lastname,
       }

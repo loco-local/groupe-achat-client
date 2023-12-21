@@ -51,7 +51,7 @@ const BuyGroupOrderService = {
                 orderItem.costUnitPrice
             )
             if (orderItem.MemberOrder && orderItem.MemberOrder.Member) {
-                orderItem.personFullname = orderItem.MemberOrder.Member.firstname + " " + orderItem.MemberOrder.Member.lastname + ", id:" + orderItem.MemberOrder.Member.id;
+                orderItem.personFullname = orderItem.MemberOrder.Member.firstname + " " + orderItem.MemberOrder.Member.lastname
             }
             if (orderItem.quantity === null) {
                 orderItem.quantity = orderItem.expectedQuantity;

@@ -379,6 +379,10 @@ export default {
       type: Boolean,
       default: false
     },
+    showMemberId: {
+      type: Boolean,
+      default: false
+    },
     showTaxes: {
       type: Boolean,
       default: false
@@ -600,6 +604,13 @@ export default {
         text: '',
         sortable: false,
         value: 'edit'
+      });
+    }
+    if (this.showMemberId) {
+      headers.unshift({
+        text: "ID",
+        sortable: true,
+        value: 'MemberOrder.MemberId'
       });
     }
     if (this.showPersonName) {
