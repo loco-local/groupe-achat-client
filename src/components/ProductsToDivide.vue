@@ -84,6 +84,7 @@ import Search from "@/Search";
 import MemberOrdersQuantity from "@/MemberOrdersQuantity";
 import ProductsTable from "@/components/ProductsTable.vue";
 import MemberOrderService from "@/service/MemberOrderService";
+import Member from "@/Member";
 
 export default {
   name: "ProductsToDivide",
@@ -127,7 +128,7 @@ export default {
         lastname: memberOrder.Member.lastname,
       }
     })
-    this.members = Object.values(membersMap);
+    this.members = Member.sortAlphabetically(Object.values(membersMap));
     this.productsToDivide = this.orderItems.reduce((productsToDivide, orderItem) => {
       const quantity = OrderItem.getQty(orderItem);
       if (quantity % 1 === 0) {
