@@ -15,20 +15,26 @@
     <v-card-text v-if="!isLoading && userOrders.length" class="vh-center">
       <v-row>
         <v-col cols="12">
-          <v-btn class="mt-4" @click="downloadAllReceipts">
+          <v-btn @click="downloadAllReceipts">
             <v-icon left>file_download</v-icon>
-            {{ $t('downloadAll') }}
+            {{ $t('membersBill:downloadAllBills') }}
           </v-btn>
         </v-col>
         <v-col cols="12">
-          <v-btn class="ml-4"
-                 v-clipboard="emailsOfParticipants()"
-                 v-clipboard:success="copyEmailsSuccess"
+          <v-btn
+              v-clipboard="emailsOfParticipants()"
+              v-clipboard:success="copyEmailsSuccess"
           >
             <v-icon left>
               content_copy
             </v-icon>
             {{ $t('membersBill:emailOfParticipatingMembers') }}
+          </v-btn>
+        </v-col>
+        <v-col cols="12">
+          <v-btn @click="downloadBillsTotal">
+            <v-icon left>account_balance</v-icon>
+            {{ $t('membersBill:downloadBillsTotal') }}
           </v-btn>
         </v-col>
         <v-col cols="12" class="vh-center">
@@ -95,6 +101,8 @@ import BuyGroupOrderService from "@/service/BuyGroupOrderService";
 import UserBillDialog from "@/components/UserBillDialog";
 import LoadingFlow from "@/LoadingFlow";
 import OrderToCsv from "@/OrderToCsv";
+import Member from "@/Member";
+import BillsTotalCSV from "@/BillsTotalCSV";
 
 export default {
   name: "GroupOrderMemberBills",
@@ -103,9 +111,11 @@ export default {
   data: function () {
     const text = {
       noBills: "Pas encore de commandes",
-      emailOfParticipatingMembers: "Courriel des membres participants",
+      emailOfParticipatingMembers: "Copier, courriel des membres participants",
       emailsCopied: "Les courriels sont copiés dans votre presse papier",
-      totalToBill: "Total à facturer"
+      totalToBill: "Total à facturer",
+      downloadAllBills: "Télécharger toutes les factures",
+      downloadBillsTotal: "Télécharger le résumé des factures"
     };
     I18n.i18next.addResources("fr", "membersBill", text);
     I18n.i18next.addResources("en", "membersBill", text);
@@ -124,6 +134,12 @@ export default {
           this.buyGroupId,
           this.buyGroupOrderId
       );
+      this.userOrders = this.userOrders.sort((a, b) => {
+        return Member.alphabeticalSorter(
+            a.Member,
+            b.Member
+        );
+      })
       this.totalToBill = this.userOrders.reduce((sum, userOrder) => {
         const orderTotal = userOrder.total || userOrder.expectedTotal
         return sum + orderTotal
@@ -164,6 +180,9 @@ export default {
         await this.downloadReceipt(userOrder.Member.id);
       }))
       LoadingFlow.leave();
+    },
+    downloadBillsTotal: async function () {
+      BillsTotalCSV.doExport(this.userOrders)
     },
     viewReceipt: function (memberId) {
       LoadingFlow.enter();
