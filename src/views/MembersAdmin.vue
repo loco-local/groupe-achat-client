@@ -22,7 +22,11 @@
               <v-card-title class="mb-0 pb-0">
                 {{ member.fullname }}
               </v-card-title>
-              <v-card-subtitle class="body-1 text-left mt-1">
+              <v-card-subtitle class="body-1 text-left mt-1"
+                :class="{
+                  'green--text font-weight-bold' : member.salePercentage < buyGroup.salePercentage
+                }"
+              >
                 <strong>
                   {{ member.salePercentage }}%
                 </strong>
