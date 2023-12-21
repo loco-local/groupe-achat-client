@@ -44,6 +44,13 @@ const Member = {
             return false;
         }
         return member.status !== "pending" && member.status !== "disabled";
+    },
+    sortAlphabetically: function (members) {
+        return members.sort((a, b) => {
+            const aFullname = a.firstname + " " + b.lastname
+            const bFullname = b.firstname + " " + b.lastname
+            return aFullname.localeCompare(bFullname);
+        });
     }
 }
 export default Member;

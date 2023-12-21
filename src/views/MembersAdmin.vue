@@ -278,6 +278,7 @@ export default {
     this.isLoading = true;
     this.buyGroup = await BuyGroupService.getForId(this.$store.state.user.BuyGroupId);
     this.members = await MemberService.listForBuyGroupId(this.$store.state.user.BuyGroupId, this.buyGroup);
+    this.members = Member.sortAlphabetically(this.members);
     this.isLoading = false;
   },
   methods: {
