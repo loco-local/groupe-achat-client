@@ -5,7 +5,7 @@ const text = {
     member: "Membre",
     internalId: "ID",
     total: "Total",
-    filename:"résumé-facture-groupe-achat"
+    filename: "résumé-facture-groupe-achat"
 }
 I18n.i18next.addResources("fr", "billsTotalCsv", text);
 I18n.i18next.addResources("en", "billsTotalCsv", text);
@@ -27,11 +27,15 @@ const BillsTotalCSV = {
         })
         memberOrders.forEach((memberOrder) => {
             const member = memberOrder.Member;
+            let total = memberOrder.total || member.expectedTotal;
+            if (total === null || total === undefined) {
+                total = 0
+            }
             data.push(
                 [
                     member.firstname + " " + member.lastname,
                     member.id,
-                    memberOrder.total || member.expectedTotal
+                    total
                 ]
             );
         });
