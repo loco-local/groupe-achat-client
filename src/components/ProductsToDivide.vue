@@ -35,12 +35,13 @@
               :canChangeQuantity="true"
               :can-toggle-availability="false"
               :has-quantity="true"
+              :hideExpectedUnitPrice="true"
               @quantityUpdate="updateOrderQuantity"
           >
             <div slot="footer" class="d-inline-block">
               <v-select
                   :items="members"
-                  item-text="fullname"
+                  item-text="fullnameAndId"
                   item-value="memberId"
                   :label="$t('divide:addMember')"
                   return-object
@@ -100,7 +101,7 @@ export default {
       membersMap[orderItem.MemberOrder.MemberId] = {
         memberId: memberOrder.MemberId,
         memberOrderId: memberOrder.id,
-        fullname: orderItem.personFullname,
+        fullnameAndId: orderItem.personFullname + " id:" + memberOrder.MemberId +"",
         firstname: memberOrder.Member.firstname,
         lastname: memberOrder.Member.lastname,
       }
@@ -121,7 +122,6 @@ export default {
         this.orderItems
     );
     this.remainingQuantities = this.memberOrdersQuantities.buildQuantities();
-    console.log(this.memberOrdersQuantities.memberOrderItems[0].MemberOrder.MemberId)
     this.isLoading = false;
   },
   computed: {
@@ -147,6 +147,13 @@ export default {
   },
   methods: {
     addMemberToProduct: async function (memberInfo, itemsInProduct, productId) {
+      const memberAlreadyHasItem = itemsInProduct.some((item) => {
+        return item.MemberOrder.MemberId === memberInfo.memberId
+      });
+      if (memberAlreadyHasItem) {
+        console.log("already")
+        return;
+      }
       const orderItem = {
         MemberOrder: {},
         ProductId: productId,

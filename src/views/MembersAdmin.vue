@@ -127,7 +127,7 @@
                 </v-col>
                 <v-col
                     cols="12"
-                    lg="6"
+                    lg="4"
                 >
                   <v-text-field
                       v-model="editedMember.pronoun"
@@ -139,7 +139,7 @@
                 </v-col>
                 <v-col
                     cols="12"
-                    lg="6"
+                    lg="5"
                 >
                   <v-select
                       :items="status"
@@ -152,6 +152,17 @@
                       :disabled="$store.state.user.status !== 'admin'"
                   >
                   </v-select>
+                </v-col>
+                <v-col
+                    cols="12"
+                    lg="3"
+                >
+                  <v-text-field
+                      v-model="editedMember.id"
+                      :label="$t('members:internalId')"
+                      disabled
+
+                  ></v-text-field>
                 </v-col>
                 <v-col
                     cols="12"
@@ -228,7 +239,8 @@ export default {
       status: "Status",
       administrator: "Administrateur",
       appliedPercentage: "sur le prix coûtant",
-      onCostPrice: "sur le prix coûtant"
+      onCostPrice: "sur le prix coûtant",
+      internalId:"ID interne"
     };
     I18n.i18next.addResources("fr", "members", text);
     I18n.i18next.addResources("en", "members", text);

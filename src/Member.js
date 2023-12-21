@@ -9,7 +9,7 @@ const Member = {
             "phone1": "Téléphone",
             "phone2": "Autre téléphone",
             "address": "Adresse",
-            "pronoun": "Pronom à utiliser",
+            "pronoun": "Pronom",
             "rebatePercentage": "Pourcentage de rabais sur tous items",
             pronounHint: "elle, il, iel etc",
             password: "Mot de passe"
