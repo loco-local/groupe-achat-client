@@ -41,7 +41,7 @@
             <div slot="footer" class="d-inline-block">
               <v-select
                   :items="members"
-                  item-text="fullnameAndId"
+                  item-text="fullname"
                   item-value="memberId"
                   :label="$t('divide:addMember')"
                   return-object
@@ -53,6 +53,25 @@
         </v-card-text>
       </v-card>
     </v-card-text>
+    <v-snackbar
+        v-model="memberAlreadyHasProductSnackbar"
+        top
+        :timeout="12000"
+    >
+        <span class="body-1">
+          {{ $t('divide:memberAlreadyHasProduct') }}
+        </span>
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="memberAlreadyHasProductSnackbar = false"
+        >
+          {{ $t('close') }}
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-card>
 </template>
 
@@ -78,7 +97,8 @@ export default {
       searchPlaceholder: "Produit ou membre",
       remaining: "Il reste",
       toDivide: "à partager",
-      addMember: "Membre à ajouter"
+      addMember: "Membre à ajouter",
+      memberAlreadyHasProduct: "Ce membre ne peut être ajouté, il a déjà ce produit"
     };
     I18n.i18next.addResources("fr", "divide", text);
     I18n.i18next.addResources("en", "divide", text);
@@ -87,7 +107,8 @@ export default {
       productsToDivide: {},
       remainingQuantities: {},
       search: "",
-      members: []
+      members: [],
+      memberAlreadyHasProductSnackbar: false
     }
   },
   mounted: async function () {
@@ -101,7 +122,7 @@ export default {
       membersMap[orderItem.MemberOrder.MemberId] = {
         memberId: memberOrder.MemberId,
         memberOrderId: memberOrder.id,
-        fullnameAndId: orderItem.personFullname + " id:" + memberOrder.MemberId +"",
+        fullname: orderItem.personFullname,
         firstname: memberOrder.Member.firstname,
         lastname: memberOrder.Member.lastname,
       }
@@ -150,8 +171,10 @@ export default {
       const memberAlreadyHasItem = itemsInProduct.some((item) => {
         return item.MemberOrder.MemberId === memberInfo.memberId
       });
+      this.memberAlreadyHasProductSnackbar = false;
+      await this.$nextTick();
       if (memberAlreadyHasItem) {
-        console.log("already")
+        this.memberAlreadyHasProductSnackbar = true;
         return;
       }
       const orderItem = {
