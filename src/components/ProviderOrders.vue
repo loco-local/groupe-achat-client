@@ -65,6 +65,7 @@ import I18n from "@/i18n";
 import LoadingFlow from "@/LoadingFlow";
 import ProviderOrders from "@/ProviderOrders";
 import OrderToCsv from "@/OrderToCsv";
+import BuyGroupOrderService from "@/service/BuyGroupOrderService";
 
 export default {
   name: "ProviderOrders",
@@ -98,7 +99,11 @@ export default {
   methods: {
     setup: async function () {
       this.isLoading = true;
-      const orderItemsByProvider = await ProviderOrders.getOrderItemsForEachProvider(this.buyGroupId, this.buyGroupOrderId);
+      const memberOrdersItems = await BuyGroupOrderService.listMemberOrderItems(
+          this.buyGroupId,
+          this.buyGroupOrderId
+      );
+      const orderItemsByProvider = ProviderOrders.groupOrderItemsByProviders(memberOrdersItems);
       this.providerOrders = orderItemsByProvider.providerOrders;
       this.providerNames = orderItemsByProvider.providerNames;
       this.providerTotals = orderItemsByProvider.providerTotals;

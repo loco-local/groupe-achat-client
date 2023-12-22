@@ -1,15 +1,13 @@
-import BuyGroupOrderService from "@/service/BuyGroupOrderService";
 import OrderItem from "@/OrderItem";
+import MemberOrdersQuantity from "@/MemberOrdersQuantity";
 
-export default {
-    getOrderItemsForEachProvider: async function (buyGroupId, buyGroupOrderId) {
-        const userOrdersItems = await BuyGroupOrderService.listMemberOrderItems(
-            buyGroupId,
-            buyGroupOrderId
-        );
+const ProviderOrders = {
+    groupOrderItemsByProviders: function (memberOrdersItems, isTrimmedQtysOnly) {
+        isTrimmedQtysOnly = isTrimmedQtysOnly || false;
+        const memberOrdersQuantity = new MemberOrdersQuantity(memberOrdersItems).buildQuantities();
         const providerNames = [];
         const providerTotals = [];
-        const providerOrders = userOrdersItems.reduce((providerOrders, orderItem) => {
+        const providerOrders = memberOrdersItems.reduce((providerOrders, orderItem) => {
             if (!providerOrders[orderItem.provider]) {
                 providerNames.push(orderItem.provider);
                 providerTotals[orderItem.provider] = 0;
@@ -19,6 +17,13 @@ export default {
                 return existingOrderItem.ProductId === orderItem.ProductId
             });
             orderItem.quantity = OrderItem.getQty(orderItem);
+            if (isTrimmedQtysOnly && memberOrdersQuantity[orderItem.ProductId].remainingFraction === 0) {
+                return providerOrders;
+            }
+            if (!isTrimmedQtysOnly) {
+                const quantityFloored = Math.floor(orderItem.quantity);
+                orderItem.quantity = quantityFloored;
+            }
             orderItem.tps = OrderItem.calculateTPS(
                 orderItem,
                 orderItem.quantity,
@@ -30,16 +35,18 @@ export default {
                 orderItem.costUnitPrice
             );
             orderItem.costTotal = orderItem.costUnitPrice * orderItem.quantity + orderItem.tps + orderItem.tvq;
+            providerTotals[orderItem.provider] += orderItem.costTotal;
+            // console.log("quantity " + orderItem.quantity + " total " + orderItem.costTotal + " big total " + providerTotals[orderItem.provider])
             if (existingProduct.length) {
-                // console.log(existingProduct[0].costTotal + " " + orderItem.costTotal)
                 existingProduct[0].quantity = OrderItem.getQty(existingProduct[0]) + orderItem.quantity;
                 existingProduct[0].tps = existingProduct[0].tps + orderItem.tps;
                 existingProduct[0].tvq = existingProduct[0].tvq + orderItem.tvq;
                 existingProduct[0].costTotal = existingProduct[0].costTotal + orderItem.costTotal;
             } else {
-                providerOrders[orderItem.provider].push(orderItem);
+                if (orderItem.quantity > 0) {
+                    providerOrders[orderItem.provider].push(orderItem);
+                }
             }
-            providerTotals[orderItem.provider] += orderItem.costTotal;
             return providerOrders;
         }, {});
         return {
@@ -49,3 +56,6 @@ export default {
         }
     }
 }
+
+
+export default ProviderOrders;
