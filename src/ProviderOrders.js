@@ -35,8 +35,8 @@ const ProviderOrders = {
                 orderItem.costUnitPrice
             );
             orderItem.costTotal = orderItem.costUnitPrice * orderItem.quantity + orderItem.tps + orderItem.tvq;
-            providerTotals[orderItem.provider] += orderItem.costTotal;
             if (!existingProduct.length && orderItem.quantity > 0) {
+                providerTotals[orderItem.provider] += orderItem.costTotal;
                 providerOrders[orderItem.provider].push(orderItem);
             }
             return providerOrders;
