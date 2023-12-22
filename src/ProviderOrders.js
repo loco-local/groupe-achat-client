@@ -16,7 +16,7 @@ const ProviderOrders = {
             const existingProduct = providerOrders[orderItem.provider].filter((existingOrderItem) => {
                 return existingOrderItem.ProductId === orderItem.ProductId
             });
-            orderItem.quantity = OrderItem.getQty(orderItem);
+            orderItem.quantity = memberOrdersQuantity[orderItem.ProductId].total;
             if (isTrimmedQtysOnly && memberOrdersQuantity[orderItem.ProductId].remainingFraction === 0) {
                 return providerOrders;
             }
@@ -36,16 +36,8 @@ const ProviderOrders = {
             );
             orderItem.costTotal = orderItem.costUnitPrice * orderItem.quantity + orderItem.tps + orderItem.tvq;
             providerTotals[orderItem.provider] += orderItem.costTotal;
-            // console.log("quantity " + orderItem.quantity + " total " + orderItem.costTotal + " big total " + providerTotals[orderItem.provider])
-            if (existingProduct.length) {
-                existingProduct[0].quantity = OrderItem.getQty(existingProduct[0]) + orderItem.quantity;
-                existingProduct[0].tps = existingProduct[0].tps + orderItem.tps;
-                existingProduct[0].tvq = existingProduct[0].tvq + orderItem.tvq;
-                existingProduct[0].costTotal = existingProduct[0].costTotal + orderItem.costTotal;
-            } else {
-                if (orderItem.quantity > 0) {
-                    providerOrders[orderItem.provider].push(orderItem);
-                }
+            if (!existingProduct.length && orderItem.quantity > 0) {
+                providerOrders[orderItem.provider].push(orderItem);
             }
             return providerOrders;
         }, {});
