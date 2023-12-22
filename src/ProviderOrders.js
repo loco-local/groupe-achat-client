@@ -16,28 +16,42 @@ const ProviderOrders = {
             const existingProduct = providerOrders[orderItem.provider].filter((existingOrderItem) => {
                 return existingOrderItem.ProductId === orderItem.ProductId
             });
-            orderItem.quantity = memberOrdersQuantity[orderItem.ProductId].total;
+            let quantity = memberOrdersQuantity[orderItem.ProductId].total
             if (isTrimmedQtysOnly && memberOrdersQuantity[orderItem.ProductId].remainingFraction === 0) {
                 return providerOrders;
             }
             if (!isTrimmedQtysOnly) {
-                const quantityFloored = Math.floor(orderItem.quantity);
-                orderItem.quantity = quantityFloored;
+                const quantityFloored = Math.floor(quantity);
+                quantity = quantityFloored;
             }
-            orderItem.tps = OrderItem.calculateTPS(
-                orderItem,
-                orderItem.quantity,
-                orderItem.costUnitPrice
-            );
-            orderItem.tvq = OrderItem.calculateTVQ(
-                orderItem,
-                orderItem.quantity,
-                orderItem.costUnitPrice
-            );
-            orderItem.costTotal = orderItem.costUnitPrice * orderItem.quantity + orderItem.tps + orderItem.tvq;
-            if (!existingProduct.length && orderItem.quantity > 0) {
-                providerTotals[orderItem.provider] += orderItem.costTotal;
-                providerOrders[orderItem.provider].push(orderItem);
+            if (existingProduct.length || quantity === 0) {
+                return providerOrders;
+            }
+            const aggregatedItem = {
+                quantity: quantity,
+                tps: OrderItem.calculateTPS(
+                    orderItem,
+                    quantity,
+                    orderItem.costUnitPrice
+                ),
+                tvq: OrderItem.calculateTVQ(
+                    orderItem,
+                    orderItem.quantity,
+                    orderItem.costUnitPrice
+                ),
+                ProductId: orderItem.ProductId,
+                costUnitPrice: orderItem.costUnitPrice,
+                provider: orderItem.provider,
+                name: orderItem.name,
+                format: orderItem.format,
+                category: orderItem.category,
+                internalCode: orderItem.internalCode,
+                maker: orderItem.maker
+            }
+            aggregatedItem.costTotal = aggregatedItem.costUnitPrice * aggregatedItem.quantity + aggregatedItem.tps + aggregatedItem.tvq;
+            if (!existingProduct.length && aggregatedItem.quantity > 0) {
+                providerTotals[aggregatedItem.provider] += aggregatedItem.costTotal;
+                providerOrders[aggregatedItem.provider].push(aggregatedItem);
             }
             return providerOrders;
         }, {});

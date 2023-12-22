@@ -84,12 +84,11 @@ export default {
         this.buyGroupId,
         this.buyGroupOrderId
     );
-    const memberOrdersItemsCopy = JSON.parse(JSON.stringify(memberOrdersItems));
     const orderItemsByProvider = ProviderOrders.groupOrderItemsByProviders(memberOrdersItems);
     this.providerItems = orderItemsByProvider.providerOrders[this.providerName];
     this.orderTotal = orderItemsByProvider.providerTotals[this.providerName];
     let trimmedOrderItemsByProvider = ProviderOrders.groupOrderItemsByProviders(
-        memberOrdersItemsCopy,
+        memberOrdersItems,
         true
     );
     this.trimmedProviderItems = trimmedOrderItemsByProvider.providerOrders[this.providerName];
