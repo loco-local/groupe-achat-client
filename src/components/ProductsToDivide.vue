@@ -179,7 +179,9 @@ export default {
         return filteredItems.length &&
             (!this.showOnlyProductsWithRemainingQuantities || this.remainingQuantities[productId].remainingFraction > 0);
       }).sort((a, b) => {
-        return a.description.localeCompare(b.description);
+        const aItem = this.productsToDivide[a]
+        const bItem = this.productsToDivide[b]
+        return aItem.description.localeCompare(bItem.description);
       })
     }
   },
