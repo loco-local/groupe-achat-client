@@ -12,7 +12,7 @@
           :label="$t('divide:showOnlyProductsWithRemainingQuantities')"
       ></v-switch>
       <v-text-field :placeholder="$t('divide:searchPlaceholder')" v-model="search" prepend-icon="search"></v-text-field>
-      <v-card v-for="productId in Object.keys(productsToDivideFiltered)" :key="productId" class="mb-6 mt-6 text-left">
+      <v-card v-for="productId in productsIdToDivideFiltered" :key="productId" class="mb-6 mt-6 text-left">
         <v-card-title class="text-h6">
           {{ productsToDivide[productId][0].description }}
           <strong v-if="productsToDivide[productId][0].qtyInBox > 1" class="ml-2 mr-2">
@@ -162,8 +162,8 @@ export default {
         return this.$store.dispatch('setShowOnlyProductsWithRemainingQuantities', value)
       }
     },
-    productsToDivideFiltered: function () {
-      return Object.keys(this.productsToDivide).reduce((filteredProducts, productId) => {
+    productsIdToDivideFiltered: function () {
+      return Object.keys(this.productsToDivide).filter((productId) => {
         let items = this.productsToDivide[productId];
         const filteredItems = items.filter((item) => {
           if (this.search.trim() === "") {
@@ -172,14 +172,15 @@ export default {
           return Search.matchesAnyValues([
             item.description,
             item.MemberOrder.Member.firstname,
-            item.MemberOrder.Member.lastname
+            item.MemberOrder.Member.lastname,
+            item.format
           ], this.search);
         });
-        if (filteredItems.length && (!this.showOnlyProductsWithRemainingQuantities || this.remainingQuantities[productId].remainingFraction > 0)) {
-          filteredProducts[productId] = filteredItems;
-        }
-        return filteredProducts;
-      }, {})
+        return filteredItems.length &&
+            (!this.showOnlyProductsWithRemainingQuantities || this.remainingQuantities[productId].remainingFraction > 0);
+      }).sort((a, b) => {
+        return a.description.localeCompare(b.description);
+      })
     }
   },
   methods: {
