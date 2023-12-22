@@ -12,6 +12,9 @@
           :label="$t('divide:showOnlyProductsWithRemainingQuantities')"
       ></v-switch>
       <v-text-field :placeholder="$t('divide:searchPlaceholder')" v-model="search" prepend-icon="search"></v-text-field>
+      <h3 v-if="!isLoading && Object.keys(productsToDivide).length && !productsIdToDivideFiltered.length" class="mt-6">
+        {{ $t('noSearchResults') }}
+      </h3>
       <v-card v-for="productId in productsIdToDivideFiltered" :key="productId" class="mb-6 mt-6 text-left">
         <v-card-title class="text-h6">
           {{ productsToDivide[productId][0].description }}
@@ -179,8 +182,8 @@ export default {
         return filteredItems.length &&
             (!this.showOnlyProductsWithRemainingQuantities || this.remainingQuantities[productId].remainingFraction > 0);
       }).sort((a, b) => {
-        const aItem = this.productsToDivide[a][0]
-        const bItem = this.productsToDivide[b][0]
+        const aItem = this.productsToDivide[a][0];
+        const bItem = this.productsToDivide[b][0];
         return aItem.name.localeCompare(bItem.name);
       })
     }
