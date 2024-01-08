@@ -15,6 +15,14 @@
       <h3 v-if="!isLoading && Object.keys(productsToDivide).length && !productsIdToDivideFiltered.length" class="mt-6">
         {{ $t('noSearchResults') }}
       </h3>
+      <v-row class="mt-2 mb-2">
+        <v-col cols="12" class="text-left">
+          <v-btn color="primary" @click="download">
+            <v-icon left>download</v-icon>
+            {{ $t('download') }}
+          </v-btn>
+        </v-col>
+      </v-row>
       <v-card v-for="productId in productsIdToDivideFiltered" :key="productId" class="mb-6 mt-6 text-left">
         <v-card-title class="text-h6">
           {{ productsToDivide[productId][0].description }}
@@ -93,6 +101,7 @@ import MemberOrdersQuantity from "@/MemberOrdersQuantity";
 import ProductsTable from "@/components/ProductsTable.vue";
 import MemberOrderService from "@/service/MemberOrderService";
 import Member from "@/Member";
+import ProductsToDivideToCsv from "@/ProductsToDivideToCsv";
 
 export default {
   name: "ProductsToDivide",
@@ -189,6 +198,11 @@ export default {
     }
   },
   methods: {
+    download: function () {
+      ProductsToDivideToCsv.doExport(
+          this.productsIdToDivideFiltered, this.productsToDivide, this.remainingQuantities
+      );
+    },
     addMemberToProduct: async function (memberInfo, itemsInProduct, productId) {
       const memberAlreadyHasItem = itemsInProduct.some((item) => {
         return item.MemberOrder.MemberId === memberInfo.memberId
