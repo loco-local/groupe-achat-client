@@ -82,7 +82,7 @@
               @keydown="enterKeyDownAction($event, item, changeExpectedQuantity)"
               @blur="changeExpectedQuantity($event, item)"
               v-if="canChangeExpectedQuantity"
-              style="width:70px;"
+              style="width:95px;"
               :hint="item.expectedQuantityHint"
               :persistent-hint="true"
               clearable
@@ -124,7 +124,7 @@
               v-if="canChangeQuantity"
               :hint="item.quantityHint"
               :persistent-hint="true"
-              style="width:70px;"
+              style="width:95px;"
               clearable
           ></v-text-field>
           <div v-else>
