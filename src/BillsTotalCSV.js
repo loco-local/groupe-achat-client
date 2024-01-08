@@ -27,7 +27,7 @@ const BillsTotalCSV = {
         })
         memberOrders.forEach((memberOrder) => {
             const member = memberOrder.Member;
-            let total = memberOrder.total || member.expectedTotal;
+            let total = memberOrder.total === null || memberOrder.total === undefined ? memberOrder.expectedTotal : memberOrder.total;
             if (total === null || total === undefined) {
                 total = 0
             }
