@@ -60,7 +60,7 @@
           {{ $t('products:noResults') }}
         </v-sheet>
       </v-col>
-      <v-row class="vh-center mt-6">
+      <v-row class="vh-center mt-6" v-if="!isAdminModificationFlow">
         <v-col cols="12" lg="6">
           <v-toolbar color="primary" dark>
             <v-btn text @click="tipsDialog=true">
@@ -96,7 +96,8 @@
           </v-toolbar>
         </v-col>
       </v-row>
-      <v-col cols="12" v-if="memberId !== null && !isLoading && (!relevantOrder || relevantOrder.status !== 'CURRENT')" class="mt-8">
+      <v-col cols="12" v-if="memberId !== null && !isLoading && (!relevantOrder || relevantOrder.status !== 'CURRENT')"
+             class="mt-8">
         <v-alert class="body-1"
                  text
                  color="warning"
@@ -193,7 +194,7 @@
       </v-col>
       <v-col
           cols="12"
-          v-if="!isLoading && shouldShowSection('ProductsPageAllProducts')"
+          v-if="!isLoading && (shouldShowSection('ProductsPageAllProducts') || isAdminModificationFlow)"
           :class="{
               'pa-0': $vuetify.breakpoint.smAndDown
             }"
@@ -401,11 +402,6 @@ export default {
       this.member = await MemberService.getForId(this.memberId);
     }
     this.isMemberLoading = false;
-  },
-  computed: {
-    isShowAllSections: function () {
-      return false;
-    }
   },
   methods: {
     shouldShowSection: function (sectionName) {
