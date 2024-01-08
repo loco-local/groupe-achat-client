@@ -185,6 +185,8 @@ export default {
             item.description,
             item.MemberOrder.Member.firstname,
             item.MemberOrder.Member.lastname,
+            item.MemberOrder.Member.firstname + " " + item.MemberOrder.Member.lastname,
+            item.MemberOrderId + "",
             item.format
           ], this.search);
         });
