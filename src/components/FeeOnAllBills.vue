@@ -14,6 +14,7 @@
           :hasExpectedQuantity="false"
           :showTaxes="true"
           :showUnitPrice="true"
+          :hide-search="true"
           :hide-expected-unit-price="true"
           :canToggleAvailability="false"
           @quantityUpdate="updateQuantity"
