@@ -12,6 +12,16 @@
           :label="$t('divide:showOnlyProductsWithRemainingQuantities')"
       ></v-switch>
       <v-text-field :placeholder="$t('divide:searchPlaceholder')" v-model="search" prepend-icon="search"></v-text-field>
+      <v-select
+          :items="membersWhoOrdered"
+          item-text="fullnameAndId"
+          item-value="memberId"
+          :label="$t('divide:filterForMember')"
+          class="ml-2 mb-2"
+          v-model="memberIdFilter"
+          prepend-icon="person"
+          clearable
+      ></v-select>
       <h3 v-if="!isLoading && Object.keys(productsToDivide).length && !productsIdToDivideFiltered.length" class="mt-6">
         {{ $t('noSearchResults') }}
       </h3>
@@ -56,7 +66,7 @@
           >
             <div slot="footer" class="d-inline-block">
               <v-select
-                  :items="members"
+                  :items="membersWhoOrdered"
                   item-text="fullnameAndId"
                   item-value="memberId"
                   :label="$t('divide:addMember')"
@@ -102,6 +112,7 @@ import ProductsTable from "@/components/ProductsTable.vue";
 import MemberOrderService from "@/service/MemberOrderService";
 import Member from "@/Member";
 import ProductsToDivideToCsv from "@/ProductsToDivideToCsv";
+import MemberService from "@/service/MemberService";
 
 export default {
   name: "ProductsToDivide",
@@ -112,10 +123,11 @@ export default {
       nothingToDivide: "Aucun produit à diviser",
       member: "Membre",
       quantity: "Quantité",
-      searchPlaceholder: "Produit ou membre",
+      searchPlaceholder: "Produit",
       remaining: "Il reste",
       toDivide: "à partager",
       addMember: "Membre à ajouter",
+      filterForMember: "Membre",
       memberAlreadyHasProduct: "Ce membre ne peut être ajouté, il a déjà ce produit",
       showOnlyProductsWithRemainingQuantities: "Afficher seulement les produits qui ont des quantités restantes à diviser"
     };
@@ -126,8 +138,9 @@ export default {
       productsToDivide: {},
       remainingQuantities: {},
       search: "",
-      members: [],
-      memberAlreadyHasProductSnackbar: false
+      membersWhoOrdered: [],
+      memberAlreadyHasProductSnackbar: false,
+      memberIdFilter: null
     }
   },
   mounted: async function () {
@@ -147,7 +160,7 @@ export default {
         lastname: memberOrder.Member.lastname,
       }
     })
-    this.members = Member.sortAlphabetically(Object.values(membersMap));
+    this.membersWhoOrdered = Member.sortAlphabetically(Object.values(membersMap));
     this.productsToDivide = this.orderItems.reduce((productsToDivide, orderItem) => {
       const quantity = OrderItem.getQty(orderItem);
       if (quantity % 1 === 0) {
@@ -176,6 +189,16 @@ export default {
     },
     productsIdToDivideFiltered: function () {
       return Object.keys(this.productsToDivide).filter((productId) => {
+        return !this.showOnlyProductsWithRemainingQuantities || this.remainingQuantities[productId].remainingFraction > 0;
+      }).filter((productId) => {
+        if (this.memberIdFilter === null) {
+          return true;
+        }
+        let items = this.productsToDivide[productId];
+        return items.some((item) => {
+          return item.MemberOrder.MemberId === this.memberIdFilter
+        })
+      }).filter((productId) => {
         let items = this.productsToDivide[productId];
         const filteredItems = items.filter((item) => {
           if (this.search.trim() === "") {
@@ -183,15 +206,10 @@ export default {
           }
           return Search.matchesAnyValues([
             item.description,
-            item.MemberOrder.Member.firstname,
-            item.MemberOrder.Member.lastname,
-            item.MemberOrder.Member.firstname + " " + item.MemberOrder.Member.lastname,
-            item.MemberOrderId + "",
             item.format
           ], this.search);
         });
-        return filteredItems.length &&
-            (!this.showOnlyProductsWithRemainingQuantities || this.remainingQuantities[productId].remainingFraction > 0);
+        return filteredItems.length;
       }).sort((a, b) => {
         const aItem = this.productsToDivide[a][0];
         const bItem = this.productsToDivide[b][0];

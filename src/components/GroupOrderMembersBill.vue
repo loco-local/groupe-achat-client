@@ -53,7 +53,7 @@
                       v-clipboard="getBillUrlOfMemberId(userOrder.Member.id)"
                       v-clipboard:success="copyBillLinkSuccess"
                   >
-                    <v-icon large>link</v-icon>
+                    <v-icon large>content_copy</v-icon>
                   </v-btn>
                 </v-list-item-action>
                 <v-list-item-action>
