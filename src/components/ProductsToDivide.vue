@@ -112,7 +112,6 @@ import ProductsTable from "@/components/ProductsTable.vue";
 import MemberOrderService from "@/service/MemberOrderService";
 import Member from "@/Member";
 import ProductsToDivideToCsv from "@/ProductsToDivideToCsv";
-import MemberService from "@/service/MemberService";
 
 export default {
   name: "ProductsToDivide",
