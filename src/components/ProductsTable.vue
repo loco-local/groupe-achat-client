@@ -660,7 +660,7 @@ export default {
             this.products
         );
         return sets.categories.filter((category) => {
-          if (category === null) {
+          if (category === null || category === undefined) {
             return false;
           }
           return category.trim() !== ""

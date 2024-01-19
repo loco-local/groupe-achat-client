@@ -47,7 +47,10 @@ export default {
     send: async function () {
       this.isLoading = true;
       const uploadData = await ProductUploadService.sendHNProducts(this.hnTextBlock);
-      this.$refs.import.setProducts(uploadData.formattedData, uploadData.uploadUuid);
+      this.$refs.import.setProducts(
+          uploadData.formattedData,
+          uploadData.uploadUuid
+      );
       this.isLoading = false;
     }
   }

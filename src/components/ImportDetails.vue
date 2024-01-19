@@ -258,9 +258,11 @@ export default {
       this.haveAssociationsChanged = false;
       this.isChangingAssociation = false
       this.uploadUuid = uploadUuid;
-      this.propertiesAssociation = propertiesAssociation.associations.associations;
-      this.allProperties = Object.keys(rawDataTenFirst[0])
-      this.rawDataTenFirst = rawDataTenFirst.slice(1, 9)
+      if(propertiesAssociation){
+        this.propertiesAssociation = propertiesAssociation.associations.associations;
+        this.allProperties = Object.keys(rawDataTenFirst[0]);
+        this.rawDataTenFirst = rawDataTenFirst.slice(1, 9);
+      }
     }
   }
 }
