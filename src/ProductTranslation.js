@@ -41,7 +41,8 @@ export default {
             isAdminRelatedHint: 'Exemple "Frais de transport". Si coché, le "prix coûtant" sera chargé au membre et les rabais ne s\'appliqueront pas',
             allMembersQuantity: "Qté des membres",
             remainingQtyToDivide: "Qté restante à diviser",
-            onCostPrice: "sur le prix coûtant"
+            onCostPrice: "sur le prix coûtant",
+            noCategory: "Pas de catégorie"
         };
         I18n.i18next.addResources("fr", "product", text);
         I18n.i18next.addResources("en", "product", text);

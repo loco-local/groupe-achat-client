@@ -431,8 +431,8 @@ export default {
       type: Boolean,
       default: false
     },
-    showDownload:{
-      type:Boolean,
+    showDownload: {
+      type: Boolean,
       default: false
     }
   },

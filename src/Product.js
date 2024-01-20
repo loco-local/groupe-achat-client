@@ -1,3 +1,7 @@
+import I18n from "@/i18n";
+import ProductTranslation from "@/ProductTranslation";
+
+ProductTranslation.setup();
 const Product = {
     format: function (product, salePercentage, rebates) {
         if (product.expectedUnitPrice === undefined) {
@@ -19,6 +23,10 @@ const Product = {
         }
         if (product.qtyInBox === null || product.qtyInBox === undefined) {
             product.qtyInBox = 1;
+        }
+        if (product.category === null) {
+            const t = I18n.i18next.getFixedT();
+            product.category = t("product:noCategory")
         }
         product.quantity = product.expectedQuantity;
         product.expectedQuantityPercentage = 0;
