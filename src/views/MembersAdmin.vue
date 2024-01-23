@@ -14,6 +14,19 @@
         <h2 class="mt-8 mb-8">
           {{ $t('members:title') }}
         </h2>
+        <v-row>
+          <v-col cols="12" class="vh-center">
+            <v-btn
+                v-clipboard="emailsOfMembers()"
+                v-clipboard:success="copyEmailsSuccess"
+            >
+              <v-icon left>
+                content_copy
+              </v-icon>
+              {{ $t('members:emailCopy') }}
+            </v-btn>
+          </v-col>
+        </v-row>
         <v-row class="vh-center">
           <v-col cols="12" sm="8" md="4" lg="3" xl="2"
                  v-for="member in members" :key="member.id"
@@ -23,7 +36,7 @@
                 {{ member.fullname }}
               </v-card-title>
               <v-card-subtitle class="body-1 text-left mt-1"
-                :class="{
+                               :class="{
                   'green--text font-weight-bold' : member.salePercentage < buyGroup.salePercentage
                 }"
               >
@@ -218,6 +231,25 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-snackbar
+        v-model="emailCopySnackbar"
+        top
+        :timeout="7000"
+    >
+        <span class="body-1">
+          {{ $t('members:emailsCopied') }}
+        </span>
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="emailCopySnackbar = false"
+        >
+          {{ $t('close') }}
+        </v-btn>
+      </template>
+    </v-snackbar>
   </PageWrap>
 </template>
 
@@ -244,7 +276,9 @@ export default {
       administrator: "Administrateur",
       appliedPercentage: "sur le prix coûtant",
       onCostPrice: "sur le prix coûtant",
-      internalId:"ID interne"
+      internalId: "ID interne",
+      emailCopy: "Copier les courriels des membres",
+      emailsCopied: "Courriels copiés dans votre presse-papier"
     };
     I18n.i18next.addResources("fr", "members", text);
     I18n.i18next.addResources("en", "members", text);
@@ -257,6 +291,7 @@ export default {
       rules: Rules,
       originalEditMemberValues: null,
       isSaveLoading: false,
+      emailCopySnackbar: false,
       status: [
         {
           value: "member"
@@ -282,6 +317,14 @@ export default {
     this.isLoading = false;
   },
   methods: {
+    emailsOfMembers: function () {
+      return this.members.map((member) => {
+        return member.firstname + " " + member.lastname + " <" + member.email + ">"
+      }).join(", ");
+    },
+    copyEmailsSuccess: function () {
+      this.emailCopySnackbar = true;
+    },
     updateMemberSalePercentage: function () {
       Member.defineSalePercentage(
           this.editedMember,
