@@ -61,7 +61,7 @@
         </v-sheet>
       </v-col>
       <v-row class="vh-center mt-6" v-if="!isAdminModificationFlow">
-        <v-col cols="12" lg="6">
+        <v-col cols="12" lg="8" xl="6">
           <v-toolbar color="primary" dark>
             <v-btn text @click="tipsDialog=true">
               {{ $t('products:tips') }}
