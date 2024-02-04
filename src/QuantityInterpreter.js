@@ -4,7 +4,7 @@ const QuantityInterpreter = {
     getQty: function (str) {
         let qty = str.replaceAll(",", ".").match(qtyRegex);
         if (qty === null) {
-            return null;
+            return 1;
         }
         qty = qty[0];
         return parseFloat(qty.trim());
