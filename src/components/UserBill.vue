@@ -107,7 +107,10 @@ export default {
     );
     if (this.userOrderItems.length) {
       const memberOrder = this.userOrderItems[0].MemberOrder;
-      this.orderTotal = memberOrder.total || memberOrder.expectedTotal
+      this.orderTotal = memberOrder.total;
+      if (this.orderTotal === null || this.orderTotal === undefined) {
+        this.orderTotal = memberOrder.expectedTotal;
+      }
     } else {
       this.orderTotal = 0;
     }

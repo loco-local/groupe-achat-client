@@ -67,7 +67,12 @@
                     {{ userOrder.Member.lastname }}
                   </v-list-item-title>
                   <v-list-item-subtitle class="text-left ml-6">
-                    {{ (userOrder.total || userOrder.expectedTotal || 0) | currency }}
+                    <span v-if="userOrder.total === undefined || userOrder.total === null">
+                      {{ userOrder.expectedTotal || 0 | currency }}
+                    </span>
+                    <span>
+                      {{ userOrder.total | currency }}
+                    </span>
                   </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
@@ -172,7 +177,10 @@ export default {
         );
       })
       this.totalToBill = this.userOrders.reduce((sum, userOrder) => {
-        const orderTotal = userOrder.total || userOrder.expectedTotal
+        let orderTotal = userOrder.total;
+        if (orderTotal === null || orderTotal === undefined) {
+          orderTotal = userOrder.expectedTotal || 0
+        }
         return sum + orderTotal
       }, 0)
     }

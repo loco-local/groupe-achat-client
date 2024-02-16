@@ -34,10 +34,13 @@ const OrderItem = {
         return orderItem.quantity === null || orderItem.quantity === undefined ? orderItem.expectedQuantity : orderItem.quantity;
     },
     getSafeQty(quantity) {
-        if (quantity === null || quantity === undefined) {
+        if (!OrderItem.isQtyDefined(quantity)) {
             return 0;
         }
         return quantity;
+    },
+    isQtyDefined(quantity){
+        return quantity !== null && quantity !== undefined
     },
     defineQuantitiesFraction(orderItem) {
         OrderItem.defineExpectedQuantityFraction(orderItem);
