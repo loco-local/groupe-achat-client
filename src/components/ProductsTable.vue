@@ -159,7 +159,7 @@
         </strong>
       </template>
       <template v-slot:item.tps="{ item }">
-        <span v-if="item.hasTPS || (item.tps !== null && item.tps !== undefined)">
+        <span v-if="item.tps !== null && item.tps !== undefined && item.tps !== 0">
           {{ item.tps | currency }}
         </span>
         <span v-else>
@@ -167,7 +167,7 @@
         </span>
       </template>
       <template v-slot:item.tvq="{ item }">
-        <span v-if="item.hasTVQ || (item.tvq !== null && item.tvq !== undefined)">
+        <span v-if="item.tvq !== null && item.tvq !== undefined && item.tvq !== 0">
           {{ item.tvq | currency }}
         </span>
         <span v-else>
