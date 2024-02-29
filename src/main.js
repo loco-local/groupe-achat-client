@@ -16,6 +16,10 @@ import VueClipboard from 'vue-clipboard2'
 import {createApp} from 'vue'
 import App from './App.vue'
 
+import { loadFonts } from './plugins/webfontloader'
+
+loadFonts()
+
 Vue.config.productionTip = false
 
 Vue.use(VueClipboard);
