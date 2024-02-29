@@ -2,7 +2,6 @@
   <div id="app">
     <v-app>
       <v-app-bar
-          app
           color="white"
       >
         <div class="d-flex align-center">
@@ -10,7 +9,7 @@
             <v-img
                 alt="Logo Groupe d'achat"
                 class="shrink mr-2"
-                contain
+                cover
                 :src="require('@/assets/logo-loco-horizontal-initiale.png')"
                 transition="scale-transition"
                 width="40"
@@ -28,61 +27,60 @@
                 {{ $store.state.user.lastname }}
               </span>
         <v-menu
-            bottom
-            left
-            nudge-bottom="50"
+            location="bottom left"
+            offset="50"
             v-if="$store.state.user !== null"
         >
-          <template v-slot:activator="{ on, attrs }">
+          <template v-slot:activator="{ props }">
             <v-btn
                 icon
-                v-bind="attrs"
-                v-on="on"
+               
+                v-bind="props"
             >
               <v-icon color="primary">menu</v-icon>
             </v-btn>
           </template>
           <v-list>
             <v-divider v-if="isAdmin"></v-divider>
-            <v-subheader v-if="isAdmin">
+            <v-list-subheader v-if="isAdmin">
               Administration
-            </v-subheader>
+            </v-list-subheader>
             <v-list-item :to="'/groupe/'+$store.state.user.BuyGroupId+'/membres'" v-if="isAdmin">
               <v-list-item-action>
                 <v-icon>people</v-icon>
               </v-list-item-action>
-              <v-list-item-content>
+              
                 {{ $t('app:members') }}
-              </v-list-item-content>
+              
             </v-list-item>
             <v-list-item to="/commandes-de-groupe" v-if="isAdmin">
               <v-list-item-action>
                 <v-icon>groups_2</v-icon>
               </v-list-item-action>
-              <v-list-item-content>
+              
                 {{ $t('app:groupOrder') }}
-              </v-list-item-content>
+              
             </v-list-item>
             <v-list-item :to="'/groupe/' +  $store.state.user.BuyGroupId" v-if="isAdmin">
               <v-list-item-action>
                 <v-icon>settings</v-icon>
               </v-list-item-action>
-              <v-list-item-content>
+              
                 {{ $t('app:yourGroup') }}
-              </v-list-item-content>
+              
             </v-list-item>
-            <v-subheader v-if="isAdmin">
+            <v-list-subheader v-if="isAdmin">
               {{ $t('app:products') }}
-            </v-subheader>
+            </v-list-subheader>
             <v-list-item to="/produits/admin" v-if="isAdmin">
               <v-list-item-action>
                 <v-icon>list</v-icon>
               </v-list-item-action>
-              <v-list-item-content>
+              
                 <v-list-item-title>
                   {{ $t('app:listProducts') }}
                 </v-list-item-title>
-              </v-list-item-content>
+              
             </v-list-item>
             <!--            <v-list-item to="/produits/import" v-if="isAdmin">-->
             <!--              <v-list-item-action>-->
@@ -110,7 +108,7 @@
       <router-view/>
     </v-app>
     <v-footer
-        fixed
+        position="bottom"
         class="font-weight-medium"
         dark
     >
@@ -126,7 +124,7 @@
         </strong>
       </v-col>
     </v-footer>
-    <v-overlay :value="isLoadingFlow">
+    <v-overlay :model-value="isLoadingFlow">
       <v-progress-circular
           indeterminate
           size="64"

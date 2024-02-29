@@ -11,12 +11,12 @@
               <span class="mr-2">{{ $t('order') }}</span>
               <GroupOrderStatusText :status="buyGroup.relevantOrder.status"></GroupOrderStatusText>
             </v-card-title>
-            <v-card-subtitle class="body-1">
+            <v-card-subtitle class="text-body-1">
               {{ buyGroup.relevantOrder.startDate | dayNoYearDate }} {{ $t('to') }}
               {{ buyGroup.relevantOrder.endDate | dayDate }}
             </v-card-subtitle>
             <v-card>
-              <v-card-text class="body-1">
+              <v-card-text class="text-body-1">
                 <strong>
                   {{ buyGroup.relevantOrder.salePercentage }}%
                 </strong>
@@ -29,13 +29,13 @@
               <v-card-title class="text-body-1 font-weight-bold vh-center pb-0">
                 {{ $t('groupOrderStatus:additionalFees') }}
               </v-card-title>
-              <v-card-text class="pt-0 body-1">
+              <v-card-text class="pt-0 text-body-1">
                 {{ buyGroup.relevantOrder.additionalFees }}
               </v-card-text>
             </v-card>
           </div>
           <div v-if="!buyGroup.relevantOrder && latestOrder === null">
-            <v-card-text class="body-1">
+            <v-card-text class="text-body-1">
               {{ $t('groupOrderStatus:noOrders') }}
             </v-card-text>
           </div>
@@ -45,9 +45,9 @@
               {{ latestOrder.endDate | dayDate }}
             </v-card-text>
             <v-card-text v-if="memberId !== null && memberId !== undefined" class="text-h6 font-weight-regular">
-              <v-btn text outlined
+              <v-btn variant="outlined"
                      :to="'/groupe/' + buyGroup.id + '/commande/' + latestOrder.id + '/factures-membres/' + memberId">
-                <v-icon left>receipt</v-icon>
+                <v-icon start>receipt</v-icon>
                 {{ $t('groupOrderStatus:billForLatest') }}
               </v-btn>
             </v-card-text>

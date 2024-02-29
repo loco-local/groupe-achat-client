@@ -6,7 +6,7 @@
         :options="tableOptions"
         :no-data-text="$t('productTable:noProducts')"
         :no-results-text="$t('productTable:noProducts')"
-        class="elevation-1 mt-8 productsTable body-1"
+        class="elevation-1 mt-8 productsTable text-body-1"
         :loading="loading"
         :loading-text="$t('productTable:loadingText')"
         :show-select="showSelect"
@@ -16,8 +16,8 @@
     >
       <template v-slot:top v-if="!hideSearch">
         <v-card class="mb-8">
-          <v-card-title color="primary" class="body-1">
-            <strong class="text-left body-1">
+          <v-card-title color="primary" class="text-body-1">
+            <strong class="text-left text-body-1">
               {{ $t('productTable:categoriesFilter') }}
             </strong>
           </v-card-title>
@@ -32,7 +32,7 @@
                   v-for="category in categories"
                   :key="category"
                   :value="category"
-                  outlined
+                  variant="outlined"
               >
                 {{ category }}
               </v-chip>
@@ -50,11 +50,10 @@
                 class="mx-4 mb-6"
                 clearable
                 :id="searchElementId"
-                outlined
-                solo
+                variant="outlined"
                 rounded
-                background-color="primary"
-                dark
+                bg-color="primary"
+                theme="dark"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -62,7 +61,7 @@
           <v-col cols="12" class="text-right mt-0 pt-0">
             <v-spacer></v-spacer>
             <v-btn @click="downloadAsCsv()">
-              <v-icon left>download</v-icon>
+              <v-icon start>download</v-icon>
               {{ $t('download') }}
             </v-btn>
           </v-col>
@@ -206,7 +205,6 @@
             v-if="canEditCostUnitPrice"
             suffix="$"
             hide-details
-            hide-spin-buttons
             style="max-width:63px;"
         ></v-text-field>
         <span v-else>{{ item.costUnitPrice | currency }}</span>
@@ -238,7 +236,7 @@
       <template v-slot:item.isAvailable="{ item }" v-if="canToggleAvailability">
         <v-checkbox
             v-model="item.isAvailable"
-            @change="toggleIsAvailable(item)"
+            @update:model-value="toggleIsAvailable(item)"
         ></v-checkbox>
       </template>
       <template v-slot:item.edit="{ item }" v-if="showEditButton">
@@ -252,16 +250,16 @@
     </v-data-table>
     <v-snackbar
         v-model="quantityUpdateSnackbar"
-        top
+        location="top"
         :timeout="7000"
     >
-        <span class="body-1">
+        <span class="text-body-1">
           {{ $t('productTable:quantityUpdated') }}
         </span>
       <template v-slot:action="{ attrs }">
         <v-btn
             color="white"
-            text
+            variant="text"
             v-bind="attrs"
             @click="quantityUpdateSnackbar = false"
         >
@@ -271,16 +269,16 @@
     </v-snackbar>
     <v-snackbar
         v-model="costUnitPriceUpdateSnackbar"
-        top
+        location="top"
         :timeout="7000"
     >
-        <span class="body-1">
+        <span class="text-body-1">
           {{ $t('productTable:costUnitPriceUpdated') }}
         </span>
       <template v-slot:action="{ attrs }">
         <v-btn
             color="white"
-            text
+            variant="text"
             v-bind="attrs"
             @click="costUnitPriceUpdateSnackbar = false"
         >
@@ -290,10 +288,10 @@
     </v-snackbar>
     <v-snackbar
         v-model="wrongFormatSnackbar"
-        top
+        location="top"
         :timeout="7000"
     >
-        <span class="body-1">
+        <span class="text-body-1">
           {{ $t('productTable:wrongFormat1') }}
           '{{ inputFormat }}'
           {{ $t('productTable:wrongFormat2') }}
@@ -302,7 +300,7 @@
       <template v-slot:action="{ attrs }">
         <v-btn
             color="white"
-            text
+            variant="text"
             v-bind="attrs"
             @click="wrongFormatSnackbar = false"
         >

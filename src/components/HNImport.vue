@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card class="mb-8" flat>
-      <v-card-text class="body-1">
+      <v-card-text class="text-body-1">
         <p>
           Ouvrez le catalogue pdf avec chrome.
         </p>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-simple-table v-if="propertiesAssociation !==null">
+    <v-table v-if="propertiesAssociation !==null">
       <template v-slot:default>
         <thead>
         <tr>
@@ -31,7 +31,7 @@
             <v-select
                 :items="allProperties"
                 v-model="propertiesAssociation.name"
-                @change="changeAssociation"
+                @update:model-value="changeAssociation"
                 :loading="isChangingAssociation"
             >
             </v-select>
@@ -40,7 +40,7 @@
             <v-select
                 :items="allProperties"
                 v-model="propertiesAssociation.maker"
-                @change="changeAssociation"
+                @update:model-value="changeAssociation"
                 :loading="isChangingAssociation"
             >
             </v-select>
@@ -49,7 +49,7 @@
             <v-select
                 :items="allProperties"
                 v-model="propertiesAssociation.category"
-                @change="changeAssociation"
+                @update:model-value="changeAssociation"
                 :loading="isChangingAssociation"
             >
             </v-select>
@@ -58,7 +58,7 @@
             <v-select
                 :items="allProperties"
                 v-model="propertiesAssociation.internalCode"
-                @change="changeAssociation"
+                @update:model-value="changeAssociation"
                 :loading="isChangingAssociation"
             >
             </v-select>
@@ -67,7 +67,7 @@
             <v-select
                 :items="allProperties"
                 v-model="propertiesAssociation.qtyInBox"
-                @change="changeAssociation"
+                @update:model-value="changeAssociation"
                 :loading="isChangingAssociation"
             >
             </v-select>
@@ -76,7 +76,7 @@
             <v-select
                 :items="allProperties"
                 v-model="propertiesAssociation.format"
-                @change="changeAssociation"
+                @update:model-value="changeAssociation"
                 :loading="isChangingAssociation"
             >
             </v-select>
@@ -85,7 +85,7 @@
             <v-select
                 :items="allProperties"
                 v-model="propertiesAssociation.expectedCostUnitPrice"
-                @change="changeAssociation"
+                @update:model-value="changeAssociation"
                 :loading="isChangingAssociation"
             >
             </v-select>
@@ -107,15 +107,15 @@
         </tr>
         </tbody>
       </template>
-    </v-simple-table>
+    </v-table>
     <v-divider class="mt-8 mb-8"></v-divider>
     <v-expansion-panels>
       <v-expansion-panel>
-        <v-expansion-panel-header>
+        <v-expansion-panel-title>
           {{ $t('import:productsNotAvailable') }}
           <strong class="ml-2">{{ productsToDisable.length }}</strong>
-        </v-expansion-panel-header>
-        <v-expansion-panel-content>
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
           <ProductsTable
               :products="productsToDisable"
               v-if="!isLoading"
@@ -123,14 +123,14 @@
               :showExpectedCostUnitPrice="true"
               :hideExpectedUnitPrice="true"
           ></ProductsTable>
-        </v-expansion-panel-content>
+        </v-expansion-panel-text>
       </v-expansion-panel>
       <v-expansion-panel>
-        <v-expansion-panel-header>
+        <v-expansion-panel-title>
           {{ $t('import:priceUpdatedProducts') }}
           <strong class="ml-2">{{ updatePriceProducts.length }}</strong>
-        </v-expansion-panel-header>
-        <v-expansion-panel-content>
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
           <ProductsTable
               :products="updatePriceProducts"
               v-if="!isLoading"
@@ -138,14 +138,14 @@
               :showExpectedCostUnitPrice="true"
               :hideExpectedUnitPrice="true"
           ></ProductsTable>
-        </v-expansion-panel-content>
+        </v-expansion-panel-text>
       </v-expansion-panel>
       <v-expansion-panel>
-        <v-expansion-panel-header>
+        <v-expansion-panel-title>
           {{ $t('import:newProducts') }}
           <strong class="ml-2">{{ newProducts.length }}</strong>
-        </v-expansion-panel-header>
-        <v-expansion-panel-content>
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
           <ProductsTable
               :products="newProducts"
               v-if="!isLoading"
@@ -153,14 +153,14 @@
               :showExpectedCostUnitPrice="true"
               :hideExpectedUnitPrice="true"
           ></ProductsTable>
-        </v-expansion-panel-content>
+        </v-expansion-panel-text>
       </v-expansion-panel>
       <v-expansion-panel>
-        <v-expansion-panel-header>
+        <v-expansion-panel-title>
           {{ $t('import:productsNothingChanged') }}
           <strong class="ml-2">{{ doNothingProducts.length }}</strong>
-        </v-expansion-panel-header>
-        <v-expansion-panel-content>
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
           <ProductsTable
               :products="doNothingProducts"
               v-if="!isLoading"
@@ -168,7 +168,7 @@
               :showExpectedCostUnitPrice="true"
               :hideExpectedUnitPrice="true"
           ></ProductsTable>
-        </v-expansion-panel-content>
+        </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
     <v-card class="mb-12 mt-12" v-if="uploadUuid !== null">

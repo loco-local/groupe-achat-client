@@ -1,3 +1,4 @@
+/* eslint-disable */
 import QuantityInterpreter from "@/QuantityInterpreter";
 
 describe('QuantityInterpreter', () => {

@@ -13,8 +13,8 @@
         {{ $t('productsAdmin:deprecate') }}
       </v-tab>
     </v-tabs>
-    <v-tabs-items v-model="tab">
-      <v-tab-item
+    <v-window v-model="tab">
+      <v-window-item
           key="putForward" class="text-left"
       >
         <v-btn color="primary" class="mt-4 mb-1"
@@ -29,9 +29,9 @@
             <v-fab-transition>
               <v-btn
                   color="primary"
-                  fab
-                  dark
-                  right
+                  icon
+                  theme="dark"
+                  location="right"
                   absolute
                   @click="enterNewProductFlow"
               >
@@ -51,8 +51,8 @@
             @selectionChanged="updateSelection"
             @modify="enterUpdateProductFlow"
         ></ProductsTable>
-      </v-tab-item>
-      <v-tab-item
+      </v-window-item>
+      <v-window-item
           key="deprecated"
           class="text-left"
       >
@@ -81,8 +81,8 @@
             @selectionChanged="updateSelection"
             @modify="enterUpdateProductFlow"
         ></ProductsTable>
-      </v-tab-item>
-    </v-tabs-items>
+      </v-window-item>
+    </v-window>
     <v-dialog
         v-model="editProductDialog"
         max-width="500px"
@@ -119,18 +119,18 @@
                 >
                   <v-autocomplete
                       v-model="editedProduct.category"
-                      :search-input.sync="categorySearchText"
+                      :search.sync="categorySearchText"
                       ref="categoryInput"
                       :items="categories"
                       :label="$t('product:category')"
                       :no-data-text="$t('productsAdmin:categoryInexistent')"
                   >
                     <v-list-item slot="append-item" @click="selectNewCategory()">
-                      <v-list-item-content>
+                      
                         <v-list-item-title>
                           {{ $t('productsAdmin:newCategory') }} "{{ categorySearchText }}"
                         </v-list-item-title>
-                      </v-list-item-content>
+                      
                     </v-list-item>
                   </v-autocomplete>
                 </v-col>
@@ -185,18 +185,18 @@
                 >
                   <v-autocomplete
                       v-model="editedProduct.maker"
-                      :search-input.sync="makerSearchText"
+                      :search.sync="makerSearchText"
                       ref="makerInput"
                       :items="makers"
                       :label="$t('product:maker')"
                       :no-data-text="$t('productsAdmin:makerInexistent')"
                   >
                     <v-list-item slot="append-item" @click="selectNewMaker()">
-                      <v-list-item-content>
+                      
                         <v-list-item-title>
                           {{ $t('productsAdmin:newMaker') }} "{{ makerSearchText }}"
                         </v-list-item-title>
-                      </v-list-item-content>
+                      
                     </v-list-item>
                   </v-autocomplete>
                 </v-col>
@@ -205,18 +205,18 @@
                 >
                   <v-autocomplete
                       v-model="editedProduct.provider"
-                      :search-input.sync="providerSearchText"
+                      :search.sync="providerSearchText"
                       ref="providerInput"
                       :items="providers"
                       :label="$t('product:provider')"
                       :no-data-text="$t('productsAdmin:providerInexistent')"
                   >
                     <v-list-item slot="append-item" @click="selectNewProvider()">
-                      <v-list-item-content>
+                      
                         <v-list-item-title>
                           {{ $t('productsAdmin:newProvider') }} "{{ providerSearchText }}"
                         </v-list-item-title>
-                      </v-list-item-content>
+                      
                     </v-list-item>
                   </v-autocomplete>
                 </v-col>
@@ -258,17 +258,17 @@
 
         <v-card-actions>
           <v-btn
-              color="blue darken-1"
-              text
+              color="blue-darken-1"
+              variant="text"
               @click="cancelSave"
           >
             {{ $t('cancel') }}
           </v-btn>
           <v-spacer></v-spacer>
           <v-btn
-              color="blue darken-1"
+              color="blue-darken-1"
               @click="save"
-              dark
+              theme="dark"
               :loading="isSaveLoading"
               :disabled="isSaveLoading"
           >
@@ -285,16 +285,16 @@
     </v-dialog>
     <v-snackbar
         v-model="internalCodeExistsSnackbar"
-        top
+        location="top"
         :timeout="7000"
     >
-        <span class="body-1">
+        <span class="text-body-1">
           {{ $t('productsAdmin:internalCodeExists') }}
         </span>
       <template v-slot:action="{ attrs }">
         <v-btn
             color="white"
-            text
+            variant="text"
             v-bind="attrs"
             @click="internalCodeExistsSnackbar = false"
         >
@@ -304,11 +304,11 @@
     </v-snackbar>
     <v-snackbar
         v-model="productCreatedSnackbar"
-        top
+        location="top"
         color="success"
         :timeout="14000"
     >
-        <span class="body-1">
+        <span class="text-body-1">
           {{ $t('productsAdmin:productCreated') }}
           <strong v-if="createdProduct !== null">
             {{ createdProduct.name }}
@@ -318,7 +318,7 @@
       <template v-slot:action="{ attrs }">
         <v-btn
             color="white"
-            text
+            variant="text"
             v-bind="attrs"
             @click="productCreatedSnackbar = false"
         >
@@ -328,17 +328,17 @@
     </v-snackbar>
     <v-snackbar
         v-model="productUpdatedSnackbar"
-        top
+        location="top"
         color="success"
         :timeout="14000"
     >
-        <span class="body-1">
+        <span class="text-body-1">
           {{ $t('productsAdmin:productUpdated') }}
         </span>
       <template v-slot:action="{ attrs }">
         <v-btn
             color="white"
-            text
+            variant="text"
             v-bind="attrs"
             @click="productUpdatedSnackbar = false"
         >

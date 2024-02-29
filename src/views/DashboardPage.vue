@@ -15,8 +15,7 @@
           </v-col>
           <v-col cols="12" v-if="$store.state.user !== null && $store.state.user.status === 'pending' && !isLoading" class="vh-center">
             <v-alert
-                shaped
-                outlined
+                variant="outlined"
                 type="success"
                 max-width="800"
             >

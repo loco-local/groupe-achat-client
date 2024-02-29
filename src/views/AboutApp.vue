@@ -1,6 +1,6 @@
 <template>
   <PageWrap class="vh-center">
-    <v-btn to="/connexion" x-large color="primary" v-if="$store.state.user === null">
+    <v-btn to="/connexion" size="x-large" color="primary" v-if="$store.state.user === null">
       {{ $t('login') }}
     </v-btn>
     <!--    <v-btn to="/inscription" x-large class="ml-8 primary">-->

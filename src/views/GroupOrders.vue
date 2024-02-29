@@ -6,7 +6,7 @@
       </v-card-title>
       <v-card-actions class="vh-center">
         <v-btn @click="enterNewOrderFlow">
-          <v-icon left>add</v-icon>
+          <v-icon start>add</v-icon>
           {{ $t('groupOrders:newOrder') }}
         </v-btn>
       </v-card-actions>
@@ -24,7 +24,7 @@
         <div v-for="order in orders"
              :key="order.id">
           <v-list-item :to="'/groupe/' + $store.state.user.BuyGroupId + '/commande/'  + order.id">
-            <v-list-item-content>
+            
               <v-list-item-title class="font-weight-bold mb-2 text-capitalize">
                 <GroupOrderStatusText :status="order.status"></GroupOrderStatusText>
               </v-list-item-title>
@@ -33,7 +33,7 @@
                 {{ $t('to') }}
                 {{ order.endDate | dayDate }}
               </v-list-item-subtitle>
-            </v-list-item-content>
+            
             <v-list-item-action>
               <v-btn @click.prevent="enterUpdateOrderFlow(order)" icon>
                 <v-icon>
@@ -72,13 +72,12 @@
                   <v-menu
                       v-model="startDateMenu"
                       :close-on-content-click="false"
-                      :nudge-right="40"
+                      :offset="40"
                       transition="scale-transition"
-                      offset-y
                       min-width="auto"
                       v-if="!isSaveLoading"
                   >
-                    <template v-slot:activator="{ on, attrs }">
+                    <template v-slot:activator="{ props }">
                       <!--                      <div v-bind="attrs"&ndash;&gt;-->
                       <!--                        &lt;!&ndash;                          v-on="on"&ndash;&gt;>-->
                       <!--                        <v-icon left>-->
@@ -92,8 +91,8 @@
                           :label="$t('startDate')"
                           prepend-icon="mdi-calendar"
                           readonly
-                          v-bind="attrs"
-                          v-on="on"
+                         
+                          v-bind="props"
                           :rules="[rules.required]"
                       ></v-text-field>
                     </template>
@@ -109,20 +108,19 @@
                   <v-menu
                       v-model="endDateMenu"
                       :close-on-content-click="false"
-                      :nudge-right="40"
+                      :offset="40"
                       transition="scale-transition"
-                      offset-y
                       min-width="auto"
                       v-if="!isSaveLoading"
                   >
-                    <template v-slot:activator="{ on, attrs }">
+                    <template v-slot:activator="{ props }">
                       <v-text-field
                           v-model="editedOrder.endDateFormattedForInput"
                           :label="$t('endDate')"
                           prepend-icon="mdi-calendar"
                           readonly
-                          v-bind="attrs"
-                          v-on="on"
+                         
+                          v-bind="props"
                           :rules="[rules.required]"
                       ></v-text-field>
                     </template>
@@ -134,16 +132,17 @@
                   </v-menu>
                   <v-alert
                       border="bottom"
-                      colored-border
+                      border-color="info"
                       type="info"
                       elevation="2"
-                      class="ml-6 mr-6 accent-4"
-                      dense
+                      color="info"
+                      class="ml-6 mr-6 info-accent-4"
+                      density="compact"
                   >
-                    <p class="body-1">
+                    <p class="text-body-1">
                       {{ $t('groupOrders:endDateInfo') }}
                     </p>
-                    <p class="body-1">
+                    <p class="text-body-1">
                       {{ $t('groupOrders:endDateInfo1') }}
                     </p>
                   </v-alert>
@@ -188,17 +187,17 @@
         </v-card-text>
         <v-card-actions>
           <v-btn
-              color="blue darken-1"
-              text
+              color="blue-darken-1"
+              variant="text"
               @click="cancelSave"
           >
             {{ $t('cancel') }}
           </v-btn>
           <v-spacer></v-spacer>
           <v-btn
-              color="blue darken-1"
+              color="blue-darken-1"
               @click="save"
-              dark
+              theme="dark"
               :loading="isSaveLoading"
               :disabled="isSaveLoading"
           >

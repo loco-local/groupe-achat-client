@@ -18,8 +18,7 @@
       </div>
       <div v-if="isPendingRegistrationFlow && !isLoading">
         <v-alert
-            shaped
-            outlined
+            variant="outlined"
             type="success"
         >
           {{ $t('register:completed') }}.
@@ -119,7 +118,7 @@
             </v-form>
           </v-card-text>
           <v-card-actions>
-            <v-btn color="primary" large @click="register" :loading="registerLoading" :disabled="registerLoading">
+            <v-btn color="primary" size="large" @click="register" :loading="registerLoading" :disabled="registerLoading">
               {{ $t('register:register') }}
             </v-btn>
           </v-card-actions>
@@ -130,16 +129,16 @@
     </v-col>
     <v-snackbar
         v-model="emailExistsSnackbar"
-        top
+        location="top"
         :timeout="-1"
     >
-        <span class="body-1">
+        <span class="text-body-1">
           {{ $t('register:emailExists') }}
         </span>
       <template v-slot:action="{ attrs }">
         <v-btn
             color="white"
-            text
+            variant="text"
             v-bind="attrs"
             @click="emailExists = false"
         >

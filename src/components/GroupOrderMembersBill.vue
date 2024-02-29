@@ -16,7 +16,7 @@
       <v-row>
         <v-col cols="12">
           <v-btn @click="downloadAllReceipts">
-            <v-icon left>file_download</v-icon>
+            <v-icon start>file_download</v-icon>
             {{ $t('membersBill:downloadAllBills') }}
           </v-btn>
         </v-col>
@@ -25,7 +25,7 @@
               v-clipboard="emailsOfParticipants()"
               v-clipboard:success="copyEmailsSuccess"
           >
-            <v-icon left>
+            <v-icon start>
               content_copy
             </v-icon>
             {{ $t('membersBill:emailOfParticipatingMembers') }}
@@ -33,7 +33,7 @@
         </v-col>
         <v-col cols="12">
           <v-btn @click="downloadBillsTotal">
-            <v-icon left>account_balance</v-icon>
+            <v-icon start>account_balance</v-icon>
             {{ $t('membersBill:downloadBillsTotal') }}
           </v-btn>
         </v-col>
@@ -42,26 +42,26 @@
             <div v-for="userOrder in userOrders" :key="userOrder.id">
               <v-list-item>
                 <v-list-item-action>
-                  <v-btn icon @click="downloadReceipt(userOrder.Member.id)" large>
-                    <v-icon large>file_download</v-icon>
+                  <v-btn icon @click="downloadReceipt(userOrder.Member.id)" size="large">
+                    <v-icon size="large">file_download</v-icon>
                   </v-btn>
                 </v-list-item-action>
                 <v-list-item-action>
                   <v-btn
                       icon
-                      large
+                      size="large"
                       v-clipboard="getBillUrlOfMemberId(userOrder.Member.id)"
                       v-clipboard:success="copyBillLinkSuccess"
                   >
-                    <v-icon large>content_copy</v-icon>
+                    <v-icon size="large">content_copy</v-icon>
                   </v-btn>
                 </v-list-item-action>
                 <v-list-item-action>
-                  <v-btn icon large @click="viewReceipt(userOrder.Member.id)">
-                    <v-icon large>preview</v-icon>
+                  <v-btn icon size="large" @click="viewReceipt(userOrder.Member.id)">
+                    <v-icon size="large">preview</v-icon>
                   </v-btn>
                 </v-list-item-action>
-                <v-list-item-content>
+                
                   <v-list-item-title class="text-left ml-6">
                     {{ userOrder.Member.firstname }}
                     {{ userOrder.Member.lastname }}
@@ -74,7 +74,7 @@
                       {{ userOrder.total | currency }}
                     </span>
                   </v-list-item-subtitle>
-                </v-list-item-content>
+                
               </v-list-item>
               <v-divider></v-divider>
             </div>
@@ -90,16 +90,16 @@
     ></UserBillDialog>
     <v-snackbar
         v-model="emailCopySnackbar"
-        top
+        location="top"
         :timeout="7000"
     >
-        <span class="body-1">
+        <span class="text-body-1">
           {{ $t('membersBill:emailsCopied') }}
         </span>
       <template v-slot:action="{ attrs }">
         <v-btn
             color="white"
-            text
+            variant="text"
             v-bind="attrs"
             @click="emailCopySnackbar = false"
         >
@@ -109,16 +109,16 @@
     </v-snackbar>
     <v-snackbar
         v-model="billLinkCopySnackbar"
-        top
+        location="top"
         :timeout="7000"
     >
-        <span class="body-1">
+        <span class="text-body-1">
           {{ $t('membersBill:billLinkCopied') }}
         </span>
       <template v-slot:action="{ attrs }">
         <v-btn
             color="white"
-            text
+            variant="text"
             v-bind="attrs"
             @click="billLinkCopySnackbar = false"
         >

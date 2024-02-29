@@ -14,7 +14,7 @@
       <v-text-field :placeholder="$t('divide:searchPlaceholder')" v-model="search" prepend-icon="search"></v-text-field>
       <v-select
           :items="membersWhoOrdered"
-          item-text="fullnameAndId"
+          item-title="fullnameAndId"
           item-value="memberId"
           :label="$t('divide:filterForMember')"
           class="ml-2 mb-2"
@@ -28,7 +28,7 @@
       <v-row class="mt-2 mb-2">
         <v-col cols="12" class="text-left">
           <v-btn color="primary" @click="download">
-            <v-icon left>download</v-icon>
+            <v-icon start>download</v-icon>
             {{ $t('download') }}
           </v-btn>
         </v-col>
@@ -41,7 +41,7 @@
           </strong>
           {{ productsToDivide[productId][0].format }}
         </v-card-title>
-        <v-chip outlined class="mr-4 mb-4 text-h6 font-weight-regular text-left ml-4" label
+        <v-chip variant="outlined" class="mr-4 mb-4 text-h6 font-weight-regular text-left ml-4" label
                 color="red"
                 v-if="remainingQuantities[productId].remainingFraction > 0"
         >
@@ -51,7 +51,7 @@
           {{ $t('divide:toDivide') }}
         </v-chip>
         <v-divider class="mb-6"></v-divider>
-        <v-card-text class="body-1 text-left">
+        <v-card-text class="text-body-1 text-left">
           <ProductsTable
               :products="productsToDivide[productId]"
               :hide-search="true"
@@ -67,12 +67,12 @@
             <div slot="footer" class="d-inline-block">
               <v-select
                   :items="membersWhoOrdered"
-                  item-text="fullnameAndId"
+                  item-title="fullnameAndId"
                   item-value="memberId"
                   :label="$t('divide:addMember')"
                   return-object
                   class="ml-2 mb-2"
-                  @change="addMemberToProduct($event, productsToDivide[productId], productId)"
+                  @update:model-value="addMemberToProduct($event, productsToDivide[productId], productId)"
               ></v-select>
             </div>
           </ProductsTable>
@@ -81,16 +81,16 @@
     </v-card-text>
     <v-snackbar
         v-model="memberAlreadyHasProductSnackbar"
-        top
+        location="top"
         :timeout="12000"
     >
-        <span class="body-1">
+        <span class="text-body-1">
           {{ $t('divide:memberAlreadyHasProduct') }}
         </span>
       <template v-slot:action="{ attrs }">
         <v-btn
             color="white"
-            text
+            variant="text"
             v-bind="attrs"
             @click="memberAlreadyHasProductSnackbar = false"
         >

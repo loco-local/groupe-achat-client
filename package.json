@@ -22,17 +22,17 @@
     "vue-router": "^3.5.3",
     "vue-scrollto": "^2.20.0",
     "vuetify": "^3.5.6",
-    "vuex": "^3.6.2",
-    "vuex-persistedstate": "^3.2.1"
+    "vuex": "^4.1.0",
+    "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.22.9",
     "@mdi/font": "^5.9.55",
     "@vue/cli-plugin-babel": "^5.0.8",
     "@vue/cli-plugin-eslint": "^5.0.8",
-    "@vue/cli-plugin-router": "^4.5.17",
+    "@vue/cli-plugin-router": "^5.0.8",
     "@vue/cli-plugin-unit-jest": "^5.0.8",
-    "@vue/cli-plugin-vuex": "^4.5.17",
+    "@vue/cli-plugin-vuex": "^5.0.8",
     "@vue/cli-service": "^5.0.8",
     "chai": "^4.1.2",
     "eslint": "^8.46.0",
@@ -42,9 +42,9 @@
     "mocha": "^10.0.0",
     "sass": "^1.64.2",
     "sass-loader": "^13.3.2",
-    "vue-cli-plugin-vuetify": "^2.5.8",
+    "vue-cli-plugin-vuetify": "~2.5.8",
     "vue-template-compiler": "^2.7.15",
-    "vuetify-loader": "^1.9.2"
+    "webpack-plugin-vuetify": "^3.0.2"
   },
   "eslintConfig": {
     "root": true,

@@ -1,14 +1,14 @@
 <template>
   <v-card>
     <v-card-text v-if="!isLoading && trimmedProviderItems.length > 0">
-      <v-expansion-panels popout dark>
+      <v-expansion-panels variant="popout" dark>
         <v-expansion-panel>
-          <v-expansion-panel-header class="body-1" color="primary">
+          <v-expansion-panel-title class="text-body-1" color="primary">
             {{ $t('providerOrder:changedQtys1') }}
             {{ trimmedProviderItems.length }}
             {{ $t('providerOrder:changedQtys2') }}
-          </v-expansion-panel-header>
-          <v-expansion-panel-content>
+          </v-expansion-panel-title>
+          <v-expansion-panel-text>
             <ProductsTable
                 :products="trimmedProviderItems || []"
                 :hasQuantity="true"
@@ -24,7 +24,7 @@
                 :onlyShowCostTotal="true"
                 :prevent-search-flickr="false"
             ></ProductsTable>
-          </v-expansion-panel-content>
+          </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>
     </v-card-text>

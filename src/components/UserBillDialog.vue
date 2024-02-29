@@ -7,7 +7,7 @@
       >
         <v-btn
             icon
-            dark
+            theme="dark"
             @click="leave"
             v-if="$store.state.user.status === 'admin'"
         >
@@ -23,12 +23,12 @@
         <v-spacer></v-spacer>
         <v-toolbar-items>
           <v-btn
-              dark
-              text
+              theme="dark"
+              variant="text"
               @click="exportToCsv"
               :disabled="itemsLoading"
           >
-            <v-icon left>file_download</v-icon>
+            <v-icon start>file_download</v-icon>
             {{ $t('userBill:download') }}
           </v-btn>
         </v-toolbar-items>

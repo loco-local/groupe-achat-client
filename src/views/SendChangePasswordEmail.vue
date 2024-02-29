@@ -17,16 +17,16 @@
           ></v-text-field>
         </v-form>
       </div>
-      <v-alert v-if="error !== null" icon="priority_high" value="true" color="error" class="error" dark>
+      <v-alert v-if="error !== null" icon="priority_high" value="true" color="error" class="bg-error" theme="dark">
         {{ error }}
       </v-alert>
-      <v-alert v-if="emailDoesNotExist" icon="priority_high" value="true" color="error" class="error" dark>
+      <v-alert v-if="emailDoesNotExist" icon="priority_high" value="true" color="error" class="bg-error" theme="dark">
         {{ $t('forgotP:courrielInexistant') }}
       </v-alert>
 
       <v-btn
           @click="send"
-          dark
+          theme="dark"
           color="primary"
           class="mt-2"
       >

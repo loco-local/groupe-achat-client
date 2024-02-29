@@ -1,7 +1,7 @@
 <template>
   <PageWrap>
     <v-card flat class="mb-0 pb-0" v-if="member !== null">
-      <v-card-title class="blue-grey--text mb-0 pb-0">
+      <v-card-title class="text-blue-grey mb-0 pb-0">
         <v-spacer></v-spacer>
         <span class="ml-2">
                 {{ member.firstname }}
@@ -23,7 +23,7 @@
               </strong>
               {{ $t('product:onCostPrice') }}
             </v-card-title>
-            <v-card-subtitle class="body-1 font-weight-regular">
+            <v-card-subtitle class="text-body-1 font-weight-regular">
               {{ $t('product:rebateOf') }}
               {{ member.rebates.percentage.number }}%
             </v-card-subtitle>
@@ -31,16 +31,16 @@
           <v-card-text class="pb-2">
             <v-alert
                 border="top"
-                colored-border
+                border-color="info"
                 type="info"
                 elevation="2"
                 v-if="isAdminModificationFlow"
-                class="ml-6 mr-6 accent-4"
+                class="ml-6 mr-6 info-accent-4"
             >
               <p class="text-h6 font-weight-regular">
                 {{ $t('products:actingAsAdministrator') }}
               </p>
-              <p class="body-1">
+              <p class="text-body-1">
                 {{ $t('products:quantitiesFinal') }}
               </p>
             </v-alert>
@@ -56,32 +56,32 @@
     ></GroupOrderStatus>
     <v-row>
       <v-col v-if="!isLoading && products.length === 0" cols="12" class="text-h6">
-        <v-sheet class="grey--text mb-4">
+        <v-sheet class="text-grey mb-4">
           {{ $t('products:noResults') }}
         </v-sheet>
       </v-col>
       <v-row class="vh-center mt-6" v-if="!isAdminModificationFlow">
         <v-col cols="12" lg="8" xl="6">
           <v-toolbar color="primary" dark>
-            <v-btn text @click="tipsDialog=true">
+            <v-btn variant="text" @click="tipsDialog=true">
               {{ $t('products:tips') }}
             </v-btn>
             <v-spacer></v-spacer>
             <v-divider vertical></v-divider>
             <v-spacer></v-spacer>
-            <v-btn text :to="yourOrderRoutePath" :disabled="yourOrderRoutePath === $route.path">
+            <v-btn variant="text" :to="yourOrderRoutePath" :disabled="yourOrderRoutePath === $route.path">
               {{ $t('products:summary') }}
             </v-btn>
             <v-spacer></v-spacer>
             <v-divider vertical></v-divider>
             <v-spacer></v-spacer>
-            <v-btn text :to="toDivideRoutePath" :disabled="toDivideRoutePath === $route.path">
+            <v-btn variant="text" :to="toDivideRoutePath" :disabled="toDivideRoutePath === $route.path">
               {{ $t('products:toDivide') }}
             </v-btn>
             <v-spacer></v-spacer>
             <v-divider vertical></v-divider>
             <v-spacer></v-spacer>
-            <v-btn text :to="allProductsRoutePath" :disabled="allProductsRoutePath === $route.path">
+            <v-btn variant="text" :to="allProductsRoutePath" :disabled="allProductsRoutePath === $route.path">
               {{ $t('products:allProducts') }}
             </v-btn>
             <v-spacer></v-spacer>
@@ -89,7 +89,7 @@
           <v-toolbar color="transparent" class="elevation-0">
             <v-spacer></v-spacer>
             <!--            -->
-            <v-btn text small @click="goToShowAllSections()" :disabled="allSectionsRoutePath === $route.path">
+            <v-btn variant="text" size="small" @click="goToShowAllSections()" :disabled="allSectionsRoutePath === $route.path">
               {{ $t('products:allSections') }}
             </v-btn>
             <v-spacer></v-spacer>
@@ -98,19 +98,19 @@
       </v-row>
       <v-col cols="12" v-if="memberId !== null && !isLoading && (!relevantOrder || relevantOrder.status !== 'CURRENT')"
              class="mt-8">
-        <v-alert class="body-1"
+        <v-alert class="text-body-1"
                  text
                  color="warning"
-                 border="left"
+                 border="start"
         >
-          <span class="black--text body-1">
+          <span class="text-black text-body-1">
             {{ $t('groupOrderStatus:cannotOrderAtTheMoment') }}.
           </span>
         </v-alert>
       </v-col>
       <v-col cols="12">
         <v-card flat class="" color="transparent">
-          <v-card-text class="font-weight-bold text-left body-1" v-if="memberId !== null">
+          <v-card-text class="font-weight-bold text-left text-body-1" v-if="memberId !== null">
             <v-card
                 v-if="shouldShowSection('ProductsPageYourOrder')"
             >
@@ -124,7 +124,7 @@
                 <span class="">{{ $t('total') }} : </span>
                 {{ total | currency }}
               </v-card-subtitle>
-              <v-card-text class="body-1" v-if="orderItemsAsProducts.length > 0">
+              <v-card-text class="text-body-1" v-if="orderItemsAsProducts.length > 0">
                 <ProductsTable
                     :products="orderItemsAsProducts || []"
                     :hideSearch="true"
@@ -158,7 +158,7 @@
               <v-card-title>
                 {{ $t('products:toDivide') }}
               </v-card-title>
-              <v-card-text class="body-1" v-if="itemsToDivide.length > 0">
+              <v-card-text class="text-body-1" v-if="itemsToDivide.length > 0">
                 <ProductsTable
                     :products="itemsToDivide || []"
                     :hideSearch="true"
@@ -235,7 +235,7 @@
           <v-spacer></v-spacer>
           <v-icon @click="tipsDialog=false">close</v-icon>
         </v-card-title>
-        <v-card-text class="body-1">
+        <v-card-text class="text-body-1">
           <v-card-title>
             {{ $t('products:tipsNoConfirmation') }}
           </v-card-title>
@@ -249,13 +249,13 @@
           <v-card-title>
             {{ $t('products:tipsQuantities') }}
           </v-card-title>
-          <p class="body-1">
+          <p class="text-body-1">
             {{ $t('products:quantityTip2') }}
           </p>
-          <p class="body-1">
+          <p class="text-body-1">
             {{ $t('products:quantityTip3') }}
           </p>
-          <p class="body-1">
+          <p class="text-body-1">
             {{ $t('products:quantityTip4') }}
           </p>
           <v-divider class="mb-4"></v-divider>
@@ -274,7 +274,7 @@
           </p>
         </v-card-text>
         <v-card-actions>
-          <v-btn text @click="tipsDialog = false">
+          <v-btn variant="text" @click="tipsDialog = false">
             {{ $t('close') }}
           </v-btn>
         </v-card-actions>
@@ -291,18 +291,18 @@
           <!--          <p class="body-1">-->
           <!--            {{ $t('products:quantityTip1') }}-->
           <!--          </p>-->
-          <p class="body-1">
+          <p class="text-body-1">
             {{ $t('products:quantityTip2') }}
           </p>
-          <p class="body-1">
+          <p class="text-body-1">
             {{ $t('products:quantityTip3') }}
           </p>
-          <p class="body-1">
+          <p class="text-body-1">
             {{ $t('products:quantityTip4') }}
           </p>
         </v-card-text>
         <v-card-actions>
-          <v-btn text @click="quantityTipDialog = false">
+          <v-btn variant="text" @click="quantityTipDialog = false">
             {{ $t('close') }}
           </v-btn>
         </v-card-actions>

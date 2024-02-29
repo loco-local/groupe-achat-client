@@ -8,25 +8,26 @@
     </v-card-text>
     <v-card-actions v-if="$store.state.user.status === 'admin'" class="mt-7 ml-6">
       <v-btn :to="'/'+buyGroupPath+'/commande-membre/'+userId">
-        <v-icon left>edit</v-icon>
+        <v-icon start>edit</v-icon>
         {{ $t('modify') }}
       </v-btn>
     </v-card-actions>
     <v-card-text class="pb-0">
       <v-alert
           border="bottom"
-          colored-border
+          border-color="info"
           type="info"
           elevation="2"
-          class="ml-6 mr-6 accent-4"
+          color="info"
+          class="ml-6 mr-6 info-accent-4"
       >
-        <p class="body-1">
+        <p class="text-body-1">
           {{ $t('userBill:subjectToChange') }}
         </p>
-        <p class="body-1">
+        <p class="text-body-1">
           {{ $t('userBill:subjectToChange2') }}
         </p>
-        <p class="body-1">
+        <p class="text-body-1">
           {{ $t('userBill:subjectToChange3') }}
         </p>
       </v-alert>
@@ -48,8 +49,8 @@
         </v-col>
       </v-row>
       <v-row v-if="buyGroupOrder.howToPay !== null">
-        <v-col cols="12" class="text-left body-1 mt-8 pl-8">
-          <v-card outlined>
+        <v-col cols="12" class="text-left text-body-1 mt-8 pl-8">
+          <v-card variant="outlined">
             <v-card-text>
               {{ buyGroupOrder.howToPay }}
             </v-card-text>
@@ -57,8 +58,8 @@
         </v-col>
       </v-row>
       <v-row v-if="buyGroupOrder.comment !== null">
-        <v-col cols="12" class="text-left body-1 mt-8 pl-8">
-          <v-card outlined>
+        <v-col cols="12" class="text-left text-body-1 mt-8 pl-8">
+          <v-card variant="outlined">
             <v-card-text>
               {{ buyGroupOrder.comment }}
             </v-card-text>

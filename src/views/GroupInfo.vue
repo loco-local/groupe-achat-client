@@ -15,11 +15,11 @@
           </v-col>
           <v-col cols="12" v-if="!isLoading">
             <v-card class="mb-6">
-              <v-card-text class="body-1 text-left">
+              <v-card-text class="text-body-1 text-left">
                 {{ $t('group:subscriptionUrl') }} :
                 {{ subscriptionUrl }}
-                <v-btn small class="ml-4" v-clipboard:copy="subscriptionUrl">
-                  <v-icon left>
+                <v-btn size="small" class="ml-4" v-clipboard:copy="subscriptionUrl">
+                  <v-icon start>
                     content_copy
                   </v-icon>
                   {{ $t('copy') }}
@@ -84,16 +84,16 @@
     </v-row>
     <v-snackbar
         v-model="modifyGroupInfoSnackbar"
-        top
+        location="top"
         :timeout="7000"
     >
-        <span class="body-1">
+        <span class="text-body-1">
           {{ $t('groupInfo:modifySuccess') }}
         </span>
       <template v-slot:action="{ attrs }">
         <v-btn
             color="white"
-            text
+            variant="text"
             v-bind="attrs"
             @click="modifyGroupInfoSnackbar = false"
         >

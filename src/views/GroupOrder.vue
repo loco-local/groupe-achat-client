@@ -17,19 +17,19 @@
         {{ $t('groupOrder:productsToDivide') }}
       </v-tab>
       <v-tab key="memberBills" @click="setRouteToMemberBills">
-        <v-icon left>receipt</v-icon>
+        <v-icon start>receipt</v-icon>
         {{ $t('groupOrder:memberBills') }}
       </v-tab>
       <v-tab key="feeOnAllBills" @click="setRouteToFeeOnAllBills">
-        <v-icon left>receipt</v-icon>
+        <v-icon start>receipt</v-icon>
         {{ $t('groupOrder:feeOnAllBills') }}
       </v-tab>
       <v-tab key="providerOrders" @click="setRouteToProviderOrders">
         {{ $t('groupOrder:ordersForProviders') }}
       </v-tab>
     </v-tabs>
-    <v-tabs-items v-model="tab">
-      <v-tab-item
+    <v-window v-model="tab">
+      <v-window-item
           key="allItems"
       >
         <AllBuyGroupOrderItems
@@ -37,15 +37,15 @@
             :buyGroupId="buyGroupId"
             :buyGroupOrderId="buyGroupOrderId"
         ></AllBuyGroupOrderItems>
-      </v-tab-item>
-      <v-tab-item key="productsToDivide">
+      </v-window-item>
+      <v-window-item key="productsToDivide">
         <ProductsToDivide
             v-if="tab === 1 && buyGroup !== null"
             :buyGroupId="buyGroupId"
             :buyGroupOrderId="buyGroupOrderId"
         ></ProductsToDivide>
-      </v-tab-item>
-      <v-tab-item
+      </v-window-item>
+      <v-window-item
           key="memberBills"
       >
         <GroupOrderMembersBill
@@ -54,8 +54,8 @@
             :buyGroupOrderId="buyGroupOrderId"
             :buyGroupPath="buyGroup.path"
         ></GroupOrderMembersBill>
-      </v-tab-item>
-      <v-tab-item
+      </v-window-item>
+      <v-window-item
           key="feeOnAllBills"
       >
         <FeeOnAllBills
@@ -63,16 +63,16 @@
             :buyGroupId="buyGroupId"
             :buyGroupOrderId="buyGroupOrderId"
         ></FeeOnAllBills>
-      </v-tab-item>
-      <v-tab-item
+      </v-window-item>
+      <v-window-item
           key="providerOrders"
       >
         <ProviderOrders
             :buyGroupId="buyGroupId"
             :buyGroupOrderId="buyGroupOrderId"
         ></ProviderOrders>
-      </v-tab-item>
-    </v-tabs-items>
+      </v-window-item>
+    </v-window>
   </PageWrap>
 </template>
 

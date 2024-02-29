@@ -20,7 +20,7 @@
                 v-clipboard="emailsOfMembers()"
                 v-clipboard:success="copyEmailsSuccess"
             >
-              <v-icon left>
+              <v-icon start>
                 content_copy
               </v-icon>
               {{ $t('members:emailCopy') }}
@@ -35,7 +35,7 @@
               <v-card-title class="mb-0 pb-0">
                 {{ member.fullname }}
               </v-card-title>
-              <v-card-subtitle class="body-1 text-left mt-1"
+              <v-card-subtitle class="text-body-1 text-left mt-1"
                                :class="{
                   'green--text font-weight-bold' : member.salePercentage < buyGroup.salePercentage
                 }"
@@ -51,14 +51,14 @@
                     class="ma-2"
                     icon="clock"
                     color="red"
-                    outlined
+                    variant="outlined"
                 >
-                  <v-icon left small>schedule</v-icon>
+                  <v-icon start size="small">schedule</v-icon>
                   {{ $t('members:waitingApproval') }}
                 </v-chip>
                 <v-chip
                     class="mt-0 ml-0 mb-0"
-                    outlined
+                    variant="outlined"
                     label
                     v-if="member.status==='admin'"
                 >
@@ -163,7 +163,7 @@
                       v-model="editedMember.status"
                       :label="$t('members:status')"
                       required
-                      :item-text="getSelectText"
+                      :item-title="getSelectText"
                       item-value="value"
                       :rules="[rules.required]"
                       :disabled="$store.state.user.status !== 'admin'"
@@ -212,17 +212,17 @@
 
         <v-card-actions>
           <v-btn
-              color="blue darken-1"
-              text
+              color="blue-darken-1"
+              variant="text"
               @click="cancelSave"
           >
             {{ $t('cancel') }}
           </v-btn>
           <v-spacer></v-spacer>
           <v-btn
-              color="blue darken-1"
+              color="blue-darken-1"
               @click="save"
-              dark
+              theme="dark"
               :loading="isSaveLoading"
               :disabled="isSaveLoading"
           >
@@ -233,16 +233,16 @@
     </v-dialog>
     <v-snackbar
         v-model="emailCopySnackbar"
-        top
+        location="top"
         :timeout="7000"
     >
-        <span class="body-1">
+        <span class="text-body-1">
           {{ $t('members:emailsCopied') }}
         </span>
       <template v-slot:action="{ attrs }">
         <v-btn
             color="white"
-            text
+            variant="text"
             v-bind="attrs"
             @click="emailCopySnackbar = false"
         >

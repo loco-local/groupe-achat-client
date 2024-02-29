@@ -16,7 +16,7 @@
       <v-row>
         <v-col cols="12">
           <v-btn class="mt-4" @click="downloadAllOrders">
-            <v-icon left>file_download</v-icon>
+            <v-icon start>file_download</v-icon>
             {{ $t('downloadAll') }}
           </v-btn>
         </v-col>
@@ -25,23 +25,23 @@
             <div v-for="providerName in providerNames" :key="providerName">
               <v-list-item>
                 <v-list-item-action>
-                  <v-btn icon @click="downloadProviderOrder(providerName)" large>
-                    <v-icon large>file_download</v-icon>
+                  <v-btn icon @click="downloadProviderOrder(providerName)" size="large">
+                    <v-icon size="large">file_download</v-icon>
                   </v-btn>
                 </v-list-item-action>
                 <v-list-item-action>
-                  <v-btn icon large @click="viewProviderOrder(providerName)">
-                    <v-icon large>preview</v-icon>
+                  <v-btn icon size="large" @click="viewProviderOrder(providerName)">
+                    <v-icon size="large">preview</v-icon>
                   </v-btn>
                 </v-list-item-action>
-                <v-list-item-content>
+                
                   <v-list-item-title class="text-left ml-6">
                     {{ providerName }}
                   </v-list-item-title>
                   <v-list-item-subtitle class="text-left ml-6">
                     {{ providerTotals[providerName] | currency }}
                   </v-list-item-subtitle>
-                </v-list-item-content>
+                
               </v-list-item>
               <v-divider></v-divider>
             </div>

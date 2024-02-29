@@ -12,18 +12,18 @@
       <v-tab key="hn">
         Horizon Nature
       </v-tab>
-      <v-tabs-items v-model="tab">
-        <v-tab-item
+      <v-window v-model="tab">
+        <v-window-item
             key="satau" class="text-left"
         >
           <SatauImport></SatauImport>
-        </v-tab-item>
-        <v-tab-item
+        </v-window-item>
+        <v-window-item
             key="hn" class="text-left"
         >
           <HNImport></HNImport>
-        </v-tab-item>
-      </v-tabs-items>
+        </v-window-item>
+      </v-window>
     </v-tabs>
   </PageWrap>
 </template>
