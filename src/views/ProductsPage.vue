@@ -196,12 +196,12 @@
           cols="12"
           v-if="!isLoading && (shouldShowSection('ProductsPageAllProducts') || isAdminModificationFlow)"
           :class="{
-              'pa-0': $vuetify.breakpoint.smAndDown
+              'pa-0': $vuetify.display.smAndDown
             }"
       >
         <v-row>
           <v-col cols="12" :class="{
-            'pa-0': $vuetify.breakpoint.smAndDown
+            'pa-0': $vuetify.display.smAndDown
           }">
             <v-divider class="mb-6" v-if="allSectionsRoutePath === $route.path"></v-divider>
             <v-card flat class="pb-0 mb-0">
@@ -321,13 +321,14 @@ import MemberService from "@/service/MemberService";
 import Member from "@/Member";
 import BuyGroupOrderService from "@/service/BuyGroupOrderService";
 import MemberOrdersQuantity from "@/MemberOrdersQuantity";
-
+import PageWrap from '@/components/PageWrap'
+import { defineAsyncComponent } from "vue";
 export default {
   name: "ProductsPage",
   components: {
-    PageWrap: () => import('@/components/PageWrap'),
-    ProductsTable: () => import('@/components/ProductsTable'),
-    GroupOrderStatus: () => import('@/components/GroupOrderStatus')
+    PageWrap: PageWrap,
+    ProductsTable: defineAsyncComponent(() => import('@/components/ProductsTable')),
+    GroupOrderStatus: defineAsyncComponent(() => import('@/components/GroupOrderStatus'))
   },
   data: function () {
     const text = {

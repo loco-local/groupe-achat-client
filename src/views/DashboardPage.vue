@@ -31,10 +31,10 @@
 <script>
 import I18n from "@/i18n";
 import BuyGroupService from "@/service/BuyGroupService";
-
+import PageWrap from '@/components/PageWrap'
 export default {
   components: {
-    PageWrap: () => import('@/components/PageWrap')
+    PageWrap: PageWrap
   },
   data: function () {
     const text = {

@@ -12,8 +12,8 @@
               <GroupOrderStatusText :status="buyGroup.relevantOrder.status"></GroupOrderStatusText>
             </v-card-title>
             <v-card-subtitle class="text-body-1">
-              {{ buyGroup.relevantOrder.startDate | dayNoYearDate }} {{ $t('to') }}
-              {{ buyGroup.relevantOrder.endDate | dayDate }}
+              {{ $filters.dayNoYearDate(buyGroup.relevantOrder.startDate)}} {{ $t('to') }}
+              {{ $filters.dayDate(buyGroup.relevantOrder.endDate)}}
             </v-card-subtitle>
             <v-card>
               <v-card-text class="text-body-1">
@@ -42,7 +42,7 @@
           <div v-if="latestOrder !== null">
             <v-card-text class="text-h6 font-weight-regular">
               {{ $t('groupOrderStatus:latestOrder') }}
-              {{ latestOrder.endDate | dayDate }}
+              {{ $filters.dayDate(latestOrder.endDate) }}
             </v-card-text>
             <v-card-text v-if="memberId !== null && memberId !== undefined" class="text-h6 font-weight-regular">
               <v-btn variant="outlined"

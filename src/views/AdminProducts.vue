@@ -356,12 +356,14 @@ import Rules from '@/Rules'
 import BuyGroupService from "@/service/BuyGroupService";
 import Product from "@/Product";
 import BuildUniquePropertySetsInProducts from "@/BuildUniquePropertySetsInProducts";
+import PageWrap from '@/components/PageWrap'
+import {defineAsyncComponent} from "vue";
 
 export default {
   name: "AdminProducts",
   components: {
-    PageWrap: () => import('@/components/PageWrap'),
-    ProductsTable: () => import('@/components/ProductsTable'),
+    PageWrap: PageWrap,
+    ProductsTable: defineAsyncComponent(() => import('@/components/ProductsTable')),
   },
   data: function () {
     const text = {

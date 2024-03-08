@@ -22,7 +22,7 @@
           </router-link>
         </v-toolbar-title>
         <v-spacer></v-spacer>
-        <span v-if="$store.state.user !== null && $vuetify.breakpoint.mdAndUp" class="text-h6 mr-8 font-weight-regular">
+        <span v-if="$store.state.user !== null && $vuetify.display.mdAndUp" class="text-h6 mr-8 font-weight-regular">
                 {{ $store.state.user.firstname }}
                 {{ $store.state.user.lastname }}
               </span>
@@ -33,12 +33,10 @@
         >
           <template v-slot:activator="{ props }">
             <v-btn
-                icon
-               
+                icon="menu"
                 v-bind="props"
-            >
-              <v-icon color="primary">menu</v-icon>
-            </v-btn>
+                color="primary"
+            ></v-btn>
           </template>
           <v-list>
             <v-divider v-if="isAdmin"></v-divider>
@@ -49,25 +47,25 @@
               <v-list-item-action>
                 <v-icon>people</v-icon>
               </v-list-item-action>
-              
+
                 {{ $t('app:members') }}
-              
+
             </v-list-item>
             <v-list-item to="/commandes-de-groupe" v-if="isAdmin">
               <v-list-item-action>
                 <v-icon>groups_2</v-icon>
               </v-list-item-action>
-              
+
                 {{ $t('app:groupOrder') }}
-              
+
             </v-list-item>
             <v-list-item :to="'/groupe/' +  $store.state.user.BuyGroupId" v-if="isAdmin">
               <v-list-item-action>
                 <v-icon>settings</v-icon>
               </v-list-item-action>
-              
+
                 {{ $t('app:yourGroup') }}
-              
+
             </v-list-item>
             <v-list-subheader v-if="isAdmin">
               {{ $t('app:products') }}
@@ -76,11 +74,11 @@
               <v-list-item-action>
                 <v-icon>list</v-icon>
               </v-list-item-action>
-              
+
                 <v-list-item-title>
                   {{ $t('app:listProducts') }}
                 </v-list-item-title>
-              
+
             </v-list-item>
             <!--            <v-list-item to="/produits/import" v-if="isAdmin">-->
             <!--              <v-list-item-action>-->
@@ -107,21 +105,17 @@
 
       <router-view/>
       <v-footer
-          position="bottom"
-          class="font-weight-medium"
-          dark
+          class="bg-black font-weight-medium"
+          height="40"
       >
-        <v-col
-            class="vh-center"
-            cols="12"
-        >
+        <v-row justify="center" no-gutters>
           {{ new Date().getFullYear() }} —
           <strong>
             <a href="https://horizonsgaspesiens.net" style="color:white; text-decoration: none;">
               Horizons Gaspésiens
             </a>
           </strong>
-        </v-col>
+        </v-row>
       </v-footer>
       <v-overlay :model-value="isLoadingFlow">
         <v-progress-circular
