@@ -7,7 +7,7 @@
       {{ $t('membersBill:totalToBill') }}
     </v-card-title>
     <v-card-subtitle class="vh-center text-h6">
-      {{ totalToBill | currency }}
+      {{ $filters.currency(totalToBill) }}
     </v-card-subtitle>
     <v-card-text v-if="!isLoading && !userOrders.length">
       {{ $t('membersBill:noBills') }}
@@ -61,20 +61,20 @@
                     <v-icon size="large">preview</v-icon>
                   </v-btn>
                 </v-list-item-action>
-                
-                  <v-list-item-title class="text-left ml-6">
-                    {{ userOrder.Member.firstname }}
-                    {{ userOrder.Member.lastname }}
-                  </v-list-item-title>
-                  <v-list-item-subtitle class="text-left ml-6">
+
+                <v-list-item-title class="text-left ml-6">
+                  {{ userOrder.Member.firstname }}
+                  {{ userOrder.Member.lastname }}
+                </v-list-item-title>
+                <v-list-item-subtitle class="text-left ml-6">
                     <span v-if="userOrder.total === undefined || userOrder.total === null">
-                      {{ userOrder.expectedTotal || 0 | currency }}
+                      {{ $filters.currency(userOrder.expectedTotal) }}
                     </span>
-                    <span>
-                      {{ userOrder.total | currency }}
+                  <span>
+                      {{ $filters.currency(userOrder.total)}}
                     </span>
-                  </v-list-item-subtitle>
-                
+                </v-list-item-subtitle>
+
               </v-list-item>
               <v-divider></v-divider>
             </div>

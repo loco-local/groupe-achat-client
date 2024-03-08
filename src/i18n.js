@@ -1,12 +1,8 @@
-import Vue from 'vue'
 import Store from '@/store'
-import i18next from 'i18next'
-import VueI18Next from '@panter/vue-i18next'
 import I18nextBrowserLanguageDetector from 'i18next-browser-languagedetector'
-
+import i18next from 'i18next';
 export default {
     setup: function () {
-        Vue.use(VueI18Next);
         let savedLocale = Store.state.locale;
         if (!savedLocale) {
             let localesArray = new I18nextBrowserLanguageDetector().detectors.navigator.lookup();
@@ -135,7 +131,7 @@ export default {
                 }
             }
         });
-        return new VueI18Next(i18next);
+        return i18next;
     },
     i18next: i18next,
     getLocale: function () {

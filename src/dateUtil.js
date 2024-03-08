@@ -1,10 +1,9 @@
 import {format} from 'date-fns'
 import {fr} from 'date-fns/locale'
-import Vue from 'vue'
 
 const dateUtil = {
-    setup: function () {
-        Vue.filter('date', function (value) {
+    setup: function (app) {
+        app.config.globalProperties.$filters.date = function (value) {
             if (value) {
                 return format(
                     new Date(String(value)),
@@ -14,9 +13,9 @@ const dateUtil = {
                     }
                 )
             }
-        })
-        Vue.filter('dayDate', dateUtil.getDayDate)
-        Vue.filter('dayNoYearDate', dateUtil.getDayNoYearDate)
+        }
+        app.config.globalProperties.$filters.dayDate = dateUtil.getDayDate
+        app.config.globalProperties.$filters.dayNoYearDate = dateUtil.getDayNoYearDate
     },
     getDayDate: function (value) {
         if (value) {

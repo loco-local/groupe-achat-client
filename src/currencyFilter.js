@@ -1,8 +1,6 @@
-import Vue from 'vue'
-
 export default {
-    setup: function () {
-        Vue.filter('currency', function (value) {
+    setup: function (app) {
+        app.config.globalProperties.$filters.currency = function (value) {
             if (typeof value !== 'number') {
                 return value
             }
@@ -17,6 +15,6 @@ export default {
             } else {
                 return formatted.substring(0, formatted.length - 3);
             }
-        })
+        }
     }
 }

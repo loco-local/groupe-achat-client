@@ -1,5 +1,7 @@
-import Vue from 'vue'
+import {createApp} from 'vue'
 import I18n from '@/i18n'
+import i18next from 'i18next';
+import I18NextVue from 'i18next-vue';
 import router from './router'
 import store from './store'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
@@ -13,24 +15,18 @@ import colors from 'vuetify/lib/util/colors'
 import CurrencyFilter from '@/currencyFilter'
 import DateUtil from '@/dateUtil'
 import VueClipboard from 'vue-clipboard2'
-import {createApp} from 'vue'
 import App from './App.vue'
 
-import { loadFonts } from './plugins/webfontloader'
+import {loadFonts} from './plugins/webfontloader'
 
 loadFonts()
 
-Vue.config.productionTip = false
-
-Vue.use(VueClipboard);
-
-CurrencyFilter.setup();
-
-DateUtil.setup();
-
 const app = createApp(App)
-const i18n = I18n.setup();
-app.use(i18n)
+I18n.setup(i18next);
+app.use(I18NextVue, {i18next});
+app.config.globalProperties.$filters = {};
+CurrencyFilter.setup(app);
+DateUtil.setup(app);
 const vuetify = createVuetify({
     components,
     directives,
@@ -65,4 +61,5 @@ const vuetify = createVuetify({
 app.use(vuetify)
 app.use(router)
 app.use(store)
+app.use(VueClipboard)
 app.mount('#app')

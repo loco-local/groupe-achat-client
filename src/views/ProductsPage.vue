@@ -122,7 +122,7 @@
               </v-card-subtitle>
               <v-card-subtitle class="font-weight-bold">
                 <span class="">{{ $t('total') }} : </span>
-                {{ total | currency }}
+                {{ $filters.currency(total) }}
               </v-card-subtitle>
               <v-card-text class="text-body-1" v-if="orderItemsAsProducts.length > 0">
                 <ProductsTable

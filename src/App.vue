@@ -106,30 +106,30 @@
       </v-app-bar>
 
       <router-view/>
-    </v-app>
-    <v-footer
-        position="bottom"
-        class="font-weight-medium"
-        dark
-    >
-      <v-col
-          class="vh-center"
-          cols="12"
+      <v-footer
+          position="bottom"
+          class="font-weight-medium"
+          dark
       >
-        {{ new Date().getFullYear() }} —
-        <strong>
-          <a href="https://horizonsgaspesiens.net" style="color:white; text-decoration: none;">
-            Horizons Gaspésiens
-          </a>
-        </strong>
-      </v-col>
-    </v-footer>
-    <v-overlay :model-value="isLoadingFlow">
-      <v-progress-circular
-          indeterminate
-          size="64"
-      ></v-progress-circular>
-    </v-overlay>
+        <v-col
+            class="vh-center"
+            cols="12"
+        >
+          {{ new Date().getFullYear() }} —
+          <strong>
+            <a href="https://horizonsgaspesiens.net" style="color:white; text-decoration: none;">
+              Horizons Gaspésiens
+            </a>
+          </strong>
+        </v-col>
+      </v-footer>
+      <v-overlay :model-value="isLoadingFlow">
+        <v-progress-circular
+            indeterminate
+            size="64"
+        ></v-progress-circular>
+      </v-overlay>
+    </v-app>
   </div>
 </template>
 

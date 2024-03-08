@@ -10,10 +10,11 @@
 </template>
 
 <script>
+import PageWrap from '@/components/PageWrap'
 export default {
   name: "AboutApp",
   components: {
-    PageWrap: () => import('@/components/PageWrap'),
+    PageWrap: PageWrap
   },
   mounted: function () {
     if (this.$store.state.user !== null) {

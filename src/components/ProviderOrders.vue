@@ -7,7 +7,7 @@
       {{ $t('providerOrders:totalToOrder') }}
     </v-card-title>
     <v-card-subtitle class="vh-center text-h6">
-      {{ total | currency }}
+      {{ $filters.currency(total) }}
     </v-card-subtitle>
     <v-card-text v-if="!isLoading && !providerNames.length">
       {{ $t('providerOrders:noOrders') }}
@@ -39,7 +39,7 @@
                     {{ providerName }}
                   </v-list-item-title>
                   <v-list-item-subtitle class="text-left ml-6">
-                    {{ providerTotals[providerName] | currency }}
+                    {{ $filters.currency(providerTotals[providerName]) }}
                   </v-list-item-subtitle>
                 
               </v-list-item>

@@ -3,20 +3,20 @@
       align="center"
       justify="center"
       :class="{
-        'pl-4 pr-4 mb-12': $vuetify.breakpoint.smAndDown,
-        'pt-8 pb-8' : $vuetify.breakpoint.mdAndUp
+        'pl-4 pr-4 mb-12': $vuetify.display.smAndDown,
+        'pt-8 pb-8' : $vuetify.display.mdAndUp
       }"
   >
     <v-col cols="12" md="10" lg="9" xl="6" class="text-left">
       <v-form ref="loginForm">
         <v-alert
-            :value="wrongLogin"
+            v-model="wrongLogin"
             type="error"
         >
           {{ $t('login:wrongLogin') }}
         </v-alert>
         <v-alert
-            :value="userDisabledMessage"
+            v-model="userDisabledMessage"
             type="error"
         >
           {{ $t('login:userDisabled') }}

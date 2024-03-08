@@ -45,7 +45,7 @@
       ></ProductsTable>
       <v-row>
         <v-col cols="12" class="text-right text-h5 mt-8 pr-8">
-          Total: {{ orderTotal | currency }}
+          Total: {{ $filters.currency(orderTotal) }}
         </v-col>
       </v-row>
       <v-row v-if="buyGroupOrder.howToPay !== null">

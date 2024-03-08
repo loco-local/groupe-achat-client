@@ -138,7 +138,7 @@
             <v-divider></v-divider>
         </span>
         <span v-else>
-          {{ item.expectedTotalAfterRebateWithTaxes | currency }}
+          {{ $filters.currency(item.expectedTotalAfterRebateWithTaxes) }}
         </span>
       </template>
       <template v-slot:item.costTotal="{ item }" v-if="onlyShowCostTotal">
@@ -146,7 +146,7 @@
             <v-divider></v-divider>
         </span>
         <span v-else>
-          {{ item.costTotal | currency }}
+          {{ $filters.currency(item.costTotal) }}
         </span>
       </template>
       <template v-slot:item.totalAfterRebateWithTaxes="{ item }" v-if="hasQuantity">
@@ -154,12 +154,12 @@
             <v-divider></v-divider>
         </span>
         <strong v-else>
-          {{ item.totalAfterRebateWithTaxes | currency }}
+          {{ $filters.currency(item.totalAfterRebateWithTaxes) }}
         </strong>
       </template>
       <template v-slot:item.tps="{ item }">
         <span v-if="item.tps !== null && item.tps !== undefined && item.tps !== 0">
-          {{ item.tps | currency }}
+          {{ $filters.currency(item.tps) }}
         </span>
         <span v-else>
           <v-divider></v-divider>
@@ -167,7 +167,7 @@
       </template>
       <template v-slot:item.tvq="{ item }">
         <span v-if="item.tvq !== null && item.tvq !== undefined && item.tvq !== 0">
-          {{ item.tvq | currency }}
+          {{ $filters.currency(item.tvq) }}
         </span>
         <span v-else>
           <v-divider></v-divider>
@@ -184,16 +184,16 @@
         <!--        </span>-->
       </template>
       <template v-slot:item.expectedUnitPrice="{ item }">
-        {{ item.expectedUnitPrice | currency }}
+        {{ $filters.currency(item.expectedUnitPrice) }}
       </template>
       <template v-slot:item.expectedUnitPriceAfterRebate="{ item }">
-        {{ item.expectedUnitPriceAfterRebate | currency }}
+        {{ $filters.currency(item.expectedUnitPriceAfterRebate) }}
       </template>
       <template v-slot:item.unitPrice="{ item }">
-        {{ item.unitPrice | currency }}
+        {{ $filters.currency(item.unitPrice)}}
       </template>
       <template v-slot:item.expectedCostUnitPrice="{ item }">
-        {{ item.expectedCostUnitPrice | currency }}
+        {{ $filters.currency(item.expectedCostUnitPrice)}}
       </template>
       <template v-slot:item.costUnitPrice="{ item }">
         <v-text-field
@@ -207,7 +207,7 @@
             hide-details
             style="max-width:63px;"
         ></v-text-field>
-        <span v-else>{{ item.costUnitPrice | currency }}</span>
+        <span v-else>{{ $filters.currency(item.costUnitPrice) }}</span>
       </template>
       <template v-slot:item.hasTPS="{ item }">
         <span v-if="item.hasTPS">
