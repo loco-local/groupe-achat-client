@@ -29,13 +29,11 @@
             <v-fab-transition>
               <v-btn
                   color="primary"
-                  icon
-                  theme="dark"
+                  icon="mdi-plus"
                   location="right"
                   absolute
                   @click="enterNewProductFlow"
               >
-                <v-icon>mdi-plus</v-icon>
               </v-btn>
             </v-fab-transition>
           </v-col>
@@ -268,7 +266,6 @@
           <v-btn
               color="blue-darken-1"
               @click="save"
-              theme="dark"
               :loading="isSaveLoading"
               :disabled="isSaveLoading"
           >
