@@ -605,7 +605,6 @@ export default {
       this.memberOrdersQuantities.updateMemberOrder(orderItem);
       this.buildAllMembersQuantities();
       updatedProduct.allMembersQuantity = this.memberOrdersQuantities.getAllMembersQuantityForProductId(updatedProduct.id);
-      this.$set(this.products, this.products.indexOf(updatedProduct), updatedProduct);
       this.rebuildTotal(this.orderItems);
       this.buildItemsToDivide();
       this.buildOrderItemsAsProducts();

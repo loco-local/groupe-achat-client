@@ -91,7 +91,6 @@ export default {
       updatedItem.totalAfterRebateWithTaxes = prices[0].totalAfterRebateWithTaxes;
       updatedItem.tps = prices[0].tps;
       updatedItem.tvq = prices[0].tvq;
-      this.$set(this.adminProducts, this.adminProducts.indexOf(updatedItem), updatedItem);
       await this.$refs.feeOnAllBillsTable.showQuantityChangedSuccess();
     }
   }

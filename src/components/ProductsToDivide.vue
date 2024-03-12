@@ -105,7 +105,6 @@
 import I18n from "@/i18n";
 import BuyGroupOrderService from "@/service/BuyGroupOrderService";
 import OrderItem from "@/OrderItem";
-import latinize from "latinize";
 import Search from "@/Search";
 import MemberOrdersQuantity from "@/MemberOrdersQuantity";
 import ProductsTable from "@/components/ProductsTable.vue";
@@ -272,15 +271,8 @@ export default {
       updatedItem.tps = prices.tps;
       updatedItem.tvq = prices.tvq;
       updatedItem.id = prices.id;
-      this.$set(this.orderItems, this.orderItems.indexOf(updatedItem), updatedItem);
       this.memberOrdersQuantities.updateMemberOrder(updatedItem);
       this.remainingQuantities = this.memberOrdersQuantities.buildQuantities();
-    },
-    searchMatch: function (value, search) {
-      return value != null &&
-          search != null &&
-          typeof value === 'string' &&
-          latinize(value.toString().toLowerCase()).indexOf(latinize(search.toLowerCase())) !== -1
     }
   }
 }

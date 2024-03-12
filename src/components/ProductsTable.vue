@@ -80,7 +80,7 @@
               @keydown="enterKeyDownAction($event, item, changeExpectedQuantity)"
               @blur="changeExpectedQuantity($event, item)"
               v-if="canChangeExpectedQuantity"
-              style="width:95px;"
+              style="width:125px;"
               :hint="item.expectedQuantityHint"
               :persistent-hint="true"
               clearable
@@ -122,7 +122,7 @@
               v-if="canChangeQuantity"
               :hint="item.quantityHint"
               :persistent-hint="true"
-              style="width:95px;"
+              style="width:125px;"
               clearable
           ></v-text-field>
           <div v-else>
@@ -204,7 +204,7 @@
             v-if="canEditCostUnitPrice"
             suffix="$"
             hide-details
-            style="max-width:63px;"
+            style="max-width:125px;"
         ></v-text-field>
         <span v-else>{{ $filters.currency(item.costUnitPrice) }}</span>
       </template>

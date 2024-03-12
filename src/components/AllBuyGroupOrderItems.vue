@@ -81,7 +81,6 @@ export default {
       updatedItem.tps = prices.tps;
       updatedItem.tvq = prices.tvq;
       updatedItem.unitPrice = prices.unitPrice;
-      this.$set(this.userOrdersItems, this.userOrdersItems.indexOf(updatedItem), updatedItem);
       await this.$refs.allOrderItemsTable.showCostUnitPriceChangedSuccess();
     },
     updateOrderQuantity: async function (updatedItem) {
@@ -93,13 +92,11 @@ export default {
       updatedItem.totalAfterRebateWithTaxes = prices.totalAfterRebateWithTaxes;
       updatedItem.tps = prices.tps;
       updatedItem.tvq = prices.tvq;
-      this.$set(this.userOrdersItems, this.userOrdersItems.indexOf(updatedItem), updatedItem);
       this.memberOrdersQuantities.updateMemberOrder(updatedItem);
       this.memberOrdersQuantities.buildQuantities();
       this.userOrdersItems.forEach((orderItem) => {
         if (orderItem.ProductId === updatedItem.ProductId) {
           orderItem.allMembersQuantity = this.memberOrdersQuantities.getAllMembersQuantityForProductId(orderItem.ProductId);
-          this.$set(this.userOrdersItems, this.userOrdersItems.indexOf(orderItem), orderItem);
         }
       })
       await this.$refs.allOrderItemsTable.showQuantityChangedSuccess();
