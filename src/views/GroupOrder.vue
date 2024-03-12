@@ -119,13 +119,13 @@ export default {
   mounted: async function () {
     this.buyGroupId = parseInt(this.$route.params.buyGroupId);
     this.buyGroupOrderId = parseInt(this.$route.params.orderId);
-    if (this.$router.currentRoute.name === 'ProductsToDivide') {
+    if (this.$route.name === 'ProductsToDivide') {
       this.tab = 1;
-    } else if (['GroupOrderMemberBillsForMember', 'GroupOrderMemberBills'].indexOf(this.$router.currentRoute.name) > -1) {
+    } else if (['GroupOrderMemberBillsForMember', 'GroupOrderMemberBills'].indexOf(this.$route.name) > -1) {
       this.tab = 2;
-    } else if (this.$router.currentRoute.name === 'GroupOrderFeeOnAllBills') {
+    } else if (this.$route.name === 'GroupOrderFeeOnAllBills') {
       this.tab = 3;
-    } else if (['GroupOrderProvidersOrderForProvider', 'GroupOrderProvidersOrders'].indexOf(this.$router.currentRoute.name) > -1) {
+    } else if (['GroupOrderProvidersOrderForProvider', 'GroupOrderProvidersOrders'].indexOf(this.$route.name) > -1) {
       this.tab = 4;
     }
   },

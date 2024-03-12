@@ -191,7 +191,7 @@ export default {
   },
   methods: {
     getBillUrlOfMemberId: function (memberId) {
-      return new URL(this.$router.currentRoute.path + '/' + memberId, window.location.origin).href;
+      return new URL(this.$route.path + '/' + memberId, window.location.origin).href;
     },
     copyEmailsSuccess: function () {
       this.emailCopySnackbar = true;
@@ -240,8 +240,8 @@ export default {
     },
     viewReceipt: function (memberId) {
       LoadingFlow.enter();
-      const toPath = this.$router.currentRoute.path + "/" + memberId;
-      if (this.$router.currentRoute.path !== toPath) {
+      const toPath = this.$route.path + "/" + memberId;
+      if (this.$route.path !== toPath) {
         this.$router.push(
             toPath
         );

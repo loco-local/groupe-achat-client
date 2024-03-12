@@ -411,7 +411,7 @@ export default {
     }
   },
   mounted: async function () {
-    if (this.$router.currentRoute.name === 'AdminProductsDeprecated') {
+    if (this.$route.name === 'AdminProductsDeprecated') {
       this.tab = 1;
     }
   },

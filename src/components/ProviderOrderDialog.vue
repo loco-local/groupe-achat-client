@@ -66,7 +66,7 @@ export default {
       this.itemsLoading = true;
     },
     leave: function () {
-      let path = this.$router.currentRoute.path;
+      let path = this.$route.path;
       path = path.substring(0, path.lastIndexOf("/"));
       this.$router.push(
           path

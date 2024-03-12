@@ -125,8 +125,8 @@ export default {
     },
     viewProviderOrder: function (providerName) {
       LoadingFlow.enter();
-      const toPath = this.$router.currentRoute.path + "/" + providerName;
-      if (this.$router.currentRoute.path !== toPath) {
+      const toPath = this.$route.path + "/" + providerName;
+      if (this.$route.path !== toPath) {
         this.$router.push(
             toPath
         );

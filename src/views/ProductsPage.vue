@@ -393,7 +393,7 @@ export default {
     this.allSectionsRoutePath = `/${buyGroup}`;
     this.isLoading = true;
     this.isMemberLoading = true;
-    this.isAdminModificationFlow = this.$router.currentRoute.name === 'ProductsOrderOfMember';
+    this.isAdminModificationFlow = this.$route.name === 'ProductsOrderOfMember';
     if (this.isAdminModificationFlow) {
       this.memberId = this.$route.params.memberId;
     } else if (this.$store.state.user !== null) {
@@ -406,7 +406,7 @@ export default {
   },
   methods: {
     shouldShowSection: function (sectionName) {
-      return ['ProductsPage'].concat(sectionName).indexOf(this.$router.currentRoute.name) > -1;
+      return ['ProductsPage'].concat(sectionName).indexOf(this.$route.name) > -1;
     },
     goToShowAllSections: function () {
       console.log(this.$route.params.buyGroup)
