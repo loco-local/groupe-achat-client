@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card class="text-center">
     <v-card-text v-if="isLoading">
       <v-progress-circular indeterminate :size="80" :width="2"></v-progress-circular>
     </v-card-text>
@@ -41,26 +41,22 @@
           <v-list width="475">
             <div v-for="userOrder in userOrders" :key="userOrder.id">
               <v-list-item>
-                <v-list-item-action>
-                  <v-btn icon @click="downloadReceipt(userOrder.Member.id)" size="large">
+                <template v-slot:append>
+                  <v-btn variant="text" @click="downloadReceipt(userOrder.Member.id)" size="large">
                     <v-icon size="large">file_download</v-icon>
                   </v-btn>
-                </v-list-item-action>
-                <v-list-item-action>
                   <v-btn
-                      icon
+                      variant="text"
                       size="large"
                       v-clipboard="getBillUrlOfMemberId(userOrder.Member.id)"
                       v-clipboard:success="copyBillLinkSuccess"
                   >
                     <v-icon size="large">content_copy</v-icon>
                   </v-btn>
-                </v-list-item-action>
-                <v-list-item-action>
-                  <v-btn icon size="large" @click="viewReceipt(userOrder.Member.id)">
+                  <v-btn size="large" @click="viewReceipt(userOrder.Member.id)" variant="text">
                     <v-icon size="large">preview</v-icon>
                   </v-btn>
-                </v-list-item-action>
+                </template>
 
                 <v-list-item-title class="text-left ml-6">
                   {{ userOrder.Member.firstname }}
@@ -71,12 +67,11 @@
                       {{ $filters.currency(userOrder.expectedTotal) }}
                     </span>
                   <span>
-                      {{ $filters.currency(userOrder.total)}}
+                      {{ $filters.currency(userOrder.total) }}
                     </span>
                 </v-list-item-subtitle>
-
               </v-list-item>
-              <v-divider></v-divider>
+              <v-divider class="mt-2"></v-divider>
             </div>
           </v-list>
         </v-col>

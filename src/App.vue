@@ -32,7 +32,7 @@
       >
         <template v-slot:activator="{ props }">
           <v-btn
-              icon="mdi-menu"
+              icon="menu"
               v-bind="props"
               color="primary"
           ></v-btn>
@@ -43,25 +43,25 @@
             Administration
           </v-list-subheader>
           <v-list-item :to="'/groupe/'+$store.state.user.BuyGroupId+'/membres'" v-if="isAdmin">
-            <v-list-item-action>
+            <template v-slot:prepend>
               <v-icon>people</v-icon>
-            </v-list-item-action>
+            </template>
 
             {{ $t('app:members') }}
 
           </v-list-item>
           <v-list-item to="/commandes-de-groupe" v-if="isAdmin">
-            <v-list-item-action>
+            <template v-slot:prepend>
               <v-icon>groups_2</v-icon>
-            </v-list-item-action>
+            </template>
 
             {{ $t('app:groupOrder') }}
 
           </v-list-item>
           <v-list-item :to="'/groupe/' +  $store.state.user.BuyGroupId" v-if="isAdmin">
-            <v-list-item-action>
+            <template v-slot:prepend>
               <v-icon>settings</v-icon>
-            </v-list-item-action>
+            </template>
 
             {{ $t('app:yourGroup') }}
 
@@ -70,9 +70,9 @@
             {{ $t('app:products') }}
           </v-list-subheader>
           <v-list-item to="/produits/admin" v-if="isAdmin">
-            <v-list-item-action>
+            <template v-slot:prepend>
               <v-icon>list</v-icon>
-            </v-list-item-action>
+            </template>
 
             <v-list-item-title>
               {{ $t('app:listProducts') }}
@@ -91,9 +91,9 @@
           <!--            </v-list-item>-->
           <v-divider v-if="isAdmin"></v-divider>
           <v-list-item @click="logout">
-            <v-list-item-action>
+            <template v-slot:prepend>
               <v-icon>exit_to_app</v-icon>
-            </v-list-item-action>
+            </template>
             <v-list-item-title>
               {{ $t('app:logout') }}
             </v-list-item-title>

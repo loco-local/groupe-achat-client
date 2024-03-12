@@ -6,7 +6,7 @@
           color="primary"
       >
         <v-btn
-            icon="mdi-close"
+            icon="close"
             @click="leave"
         ></v-btn>
         <v-toolbar-title>

@@ -5,7 +5,7 @@
         {{ $t('groupOrders:title') }}
       </v-card-title>
       <v-card-actions class="vh-center">
-        <v-btn @click="enterNewOrderFlow" prepend-icon="mdi-plus">
+        <v-btn @click="enterNewOrderFlow" prepend-icon="add">
           {{ $t('groupOrders:newOrder') }}
         </v-btn>
       </v-card-actions>
@@ -21,9 +21,10 @@
       </v-card-text>
       <v-card-text v-if="orders.length > 0 && !isLoading" class="text-center">
         <v-list>
-          <v-list-item :to="'/groupe/' + $store.state.user.BuyGroupId + '/commande/'  + order.id" v-for="order in orders"
-                       :key="order.id">
-            
+          <div v-for="order in orders"
+               :key="order.id">
+            <v-list-item :to="'/groupe/' + $store.state.user.BuyGroupId + '/commande/'  + order.id">
+
               <v-list-item-title class="font-weight-bold mb-2 text-capitalize">
                 <GroupOrderStatusText :status="order.status"></GroupOrderStatusText>
               </v-list-item-title>
@@ -32,11 +33,12 @@
                 {{ $t('to') }}
                 {{ $filters.dayDate(order.endDate) }}
               </v-list-item-subtitle>
-            <template v-slot:append>
-              <v-btn @click.prevent="enterUpdateOrderFlow(order)" icon="mdi-pencil" variant="text"></v-btn>
-            </template>
-            <v-divider inset></v-divider>
-          </v-list-item>
+              <template v-slot:append>
+                <v-btn @click.prevent="enterUpdateOrderFlow(order)" icon="edit" variant="text"></v-btn>
+              </template>
+            </v-list-item>
+            <v-divider class="mt-2"></v-divider>
+          </div>
         </v-list>
       </v-card-text>
     </v-card>
@@ -55,7 +57,7 @@
                 {{ $t('modify') }}
             </span>
           </div>
-          <v-icon icon="mdi-close" @click="cancelSave" variant="text"></v-icon>
+          <v-icon icon="close" @click="cancelSave" variant="text"></v-icon>
         </v-card-title>
         <v-divider class="mb-4"></v-divider>
         <v-card-text>
@@ -85,7 +87,7 @@
                       <v-text-field
                           v-model="editedOrder.startDateFormattedForInput"
                           :label="$t('startDate')"
-                          prepend-icon="mdi-calendar"
+                          prepend-icon="event_available"
                           readonly
                          
                           v-bind="props"
@@ -113,7 +115,7 @@
                       <v-text-field
                           v-model="editedOrder.endDateFormattedForInput"
                           :label="$t('endDate')"
-                          prepend-icon="mdi-calendar"
+                          prepend-icon="event"
                           readonly
                          
                           v-bind="props"

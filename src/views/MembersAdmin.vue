@@ -80,7 +80,7 @@
           <div class="text-h5 text-medium-emphasis ps-2">
             {{ $t('modify') }}
           </div>
-          <v-icon icon="mdi-close" @click="cancelSave" variant="text"></v-icon>
+          <v-icon icon="close" @click="cancelSave" variant="text"></v-icon>
         </v-card-title>
         <v-divider class="mb-4"></v-divider>
         <v-card-text>
