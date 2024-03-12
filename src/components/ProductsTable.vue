@@ -60,7 +60,7 @@
           <v-col cols="12" class="text-right mt-0 pt-0">
             <v-spacer></v-spacer>
             <v-btn @click="downloadAsCsv()">
-              <v-icon start>download</v-icon>
+              <v-icon start>mdi-download</v-icon>
               {{ $t('download') }}
             </v-btn>
           </v-col>
@@ -239,7 +239,7 @@
         ></v-checkbox>
       </template>
       <template v-slot:item.edit="{ item }" v-if="showEditButton">
-        <v-btn icon="mdi-pencil" class="mx-0" @click="$emit('modify', item)"></v-btn>
+        <v-btn icon="mdi-pencil" class="mx-0" @click="$emit('modify', item)" variant="text"></v-btn>
       </template>
       <template v-slot:footer>
         <slot name="footer"></slot>

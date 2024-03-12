@@ -83,20 +83,22 @@
     </v-window>
     <v-dialog
         v-model="editProductDialog"
-        max-width="500px"
+        max-width="600px"
         v-if="editedProduct !== null"
     >
       <v-card>
-        <v-card-title class="text-h5">
+        <v-card-title class="d-flex justify-space-between align-center">
+          <div class="text-h5 text-medium-emphasis ps-2">
           <span v-if="isNewProductFlow">
               {{ $t('productsAdmin:newProduct') }}
           </span>
           <span v-else>
               {{ $t('modify') }}
           </span>
-          <v-spacer></v-spacer>
-          <v-icon @click="cancelSave">close</v-icon>
+          </div>
+          <v-icon icon="mdi-close" @click="cancelSave" variant="text"></v-icon>
         </v-card-title>
+        <v-divider class="mb-4"></v-divider>
         <v-card-text>
           <v-container>
             <v-form name="productForm" ref="productForm">
@@ -253,18 +255,16 @@
             </v-form>
           </v-container>
         </v-card-text>
-
-        <v-card-actions>
+        <v-divider class="mt-2"></v-divider>
+        <v-card-actions class="my-2 d-flex justify-end">
           <v-btn
-              color="blue-darken-1"
               variant="text"
               @click="cancelSave"
           >
             {{ $t('cancel') }}
           </v-btn>
-          <v-spacer></v-spacer>
           <v-btn
-              color="blue-darken-1"
+              color="primary"
               @click="save"
               :loading="isSaveLoading"
               :disabled="isSaveLoading"
