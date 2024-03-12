@@ -30,12 +30,12 @@ import ProductService from "@/service/ProductService";
 import MemberOrderService from "@/service/MemberOrderService";
 import BuyGroupOrderService from "@/service/BuyGroupOrderService";
 import GroupOrderAllBillsFeesService from "@/service/GroupOrderAllBillsFeesService";
-
+import {defineAsyncComponent} from "vue";
 export default {
   name: "FeeOnAllBills",
   props: ['buyGroupId', 'buyGroupOrderId'],
   components: {
-    ProductsTable: () => import('@/components/ProductsTable')
+    ProductsTable: defineAsyncComponent(() => import('@/components/ProductsTable'))
   },
   data: function () {
     return {

@@ -47,12 +47,12 @@
 <script>
 import MemberService from "@/service/MemberService";
 import OrderToCsv from "@/OrderToCsv";
-
+import {defineAsyncComponent} from "vue";
 export default {
   name: "UserBillDialog",
   props: ['buyGroupId', 'buyGroupOrderId', 'buyGroupPath'],
   components: {
-    UserBill: () => import('@/components/UserBill')
+    UserBill: defineAsyncComponent(() => import('@/components/UserBill'))
   },
   data: function () {
     return {

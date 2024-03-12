@@ -73,12 +73,12 @@
 <script>
 import BuyGroupOrderService from "@/service/BuyGroupOrderService";
 import I18n from "@/i18n";
-
+import {defineAsyncComponent} from "vue";
 export default {
   name: "UserBill",
   props: ['buyGroupId', 'buyGroupOrderId', 'buyGroupPath', 'userId'],
   components: {
-    ProductsTable: () => import('@/components/ProductsTable')
+    ProductsTable: defineAsyncComponent(() => import('@/components/ProductsTable'))
   },
   data: function () {
     const text = {

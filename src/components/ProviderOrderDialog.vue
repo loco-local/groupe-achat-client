@@ -6,12 +6,9 @@
           color="primary"
       >
         <v-btn
-            icon
-            theme="dark"
+            icon="mdi-close"
             @click="leave"
-        >
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
+        ></v-btn>
         <v-toolbar-title>
           {{ $t('providerOrders:orderForProvider') }} {{ providerName }}
         </v-toolbar-title>
@@ -41,12 +38,12 @@
 <script>
 
 import OrderToCsv from "@/OrderToCsv";
-
+import {defineAsyncComponent} from "vue";
 export default {
   name: "ProviderOrderDialog",
   props: ['buyGroupId', 'buyGroupOrderId', 'buyGroupPath'],
   components: {
-    ProviderOrder: () => import('@/components/ProviderOrder')
+    ProviderOrder: defineAsyncComponent(() => import('@/components/ProviderOrder'))
   },
   data: function () {
     return {

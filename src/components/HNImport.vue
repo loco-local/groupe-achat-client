@@ -31,11 +31,11 @@
 
 <script>
 import ProductUploadService from "@/service/ProductUploadService";
-
+import {defineAsyncComponent} from "vue";
 export default {
   name: "HNImport",
   components: {
-    ImportDetails: () => import('@/components/ImportDetails')
+    ImportDetails: defineAsyncComponent(() => import('@/components/ImportDetails'))
   },
   data: function () {
     return {

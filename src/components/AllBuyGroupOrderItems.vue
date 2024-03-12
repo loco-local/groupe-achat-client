@@ -36,12 +36,12 @@
 import BuyGroupOrderService from "@/service/BuyGroupOrderService";
 import MemberOrderService from "@/service/MemberOrderService";
 import MemberOrdersQuantity from "@/MemberOrdersQuantity";
-
+import {defineAsyncComponent} from "vue";
 export default {
   name: "AllBuyGroupOrderItems",
   props: ['buyGroupId', 'buyGroupOrderId'],
   components: {
-    ProductsTable: () => import('@/components/ProductsTable')
+    ProductsTable: defineAsyncComponent(() => import('@/components/ProductsTable'))
   },
   data: function () {
     return {

@@ -82,6 +82,8 @@ import AllBuyGroupOrderItems from "@/components/AllBuyGroupOrderItems";
 import FeeOnAllBills from "@/components/FeeOnAllBills";
 import ProviderOrders from "@/components/ProviderOrders";
 import ProductsToDivide from "@/components/ProductsToDivide";
+import PageWrap from '@/components/PageWrap'
+import {defineAsyncComponent} from "vue";
 
 export default {
   name: "GroupOrder",
@@ -90,9 +92,9 @@ export default {
     FeeOnAllBills,
     AllBuyGroupOrderItems,
     ProductsToDivide,
-    PageWrap: () => import('@/components/PageWrap'),
-    GroupOrderStatus: () => import('@/components/GroupOrderStatus'),
-    GroupOrderMembersBill: () => import('@/components/GroupOrderMembersBill')
+    PageWrap,
+    GroupOrderStatus: defineAsyncComponent(() => import('@/components/GroupOrderStatus')),
+    GroupOrderMembersBill: defineAsyncComponent(() => import('@/components/GroupOrderMembersBill'))
   },
   data: function () {
     const text = {

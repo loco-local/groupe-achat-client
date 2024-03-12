@@ -192,11 +192,11 @@
 
 <script>
 import ProductUploadService from "@/service/ProductUploadService";
-
+import {defineAsyncComponent} from "vue";
 export default {
   name: "ImportDetails",
   components: {
-    ProductsTable: () => import('@/components/ProductsTable')
+    ProductsTable: defineAsyncComponent(() => import('@/components/ProductsTable'))
   },
   props: ['isLoading', 'readyToConfirm'],
   data: function () {
