@@ -85,8 +85,9 @@ export default {
     changePassword: async function () {
       this.changePasswordSuccess = false;
       this.changePasswordError = false;
-      if (!this.$refs.changePasswordForm.validate()) {
-        return;
+      const formValidation = await this.$refs.changePasswordForm.validate()
+      if (!formValidation.valid) {
+        return
       }
       this.waiting = true;
       try {

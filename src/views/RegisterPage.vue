@@ -195,7 +195,8 @@ export default {
   },
   methods: {
     register: async function () {
-      if (!this.$refs.registerForm.validate()) {
+      const formValidation = await this.$refs.registerForm.validate()
+      if (!formValidation.valid) {
         return
       }
       this.registerLoading = true;

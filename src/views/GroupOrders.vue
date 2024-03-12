@@ -268,7 +268,8 @@ export default {
       this.isLoading = false;
     },
     save: async function () {
-      if (!this.$refs.groupOrderForm.validate()) {
+      const formValidation = await this.$refs.groupOrderForm.validate()
+      if (!formValidation.valid) {
         return
       }
       this.isSaveLoading = true;

@@ -101,8 +101,9 @@ export default {
       this.wrongLogin = false;
       this.userDisabledMessage = false;
       this.robotDoubt = false;
-      if (!this.$refs.loginForm.validate()) {
-        return;
+      const formValidation = await this.$refs.loginForm.validate()
+      if (!formValidation.valid) {
+        return
       }
       LoadingFlow.enter();
       await this.$store.dispatch('setUser', null);

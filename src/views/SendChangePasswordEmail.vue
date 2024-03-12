@@ -72,8 +72,9 @@ export default {
       this.error = null;
       this.emailDoesNotExist = false;
       this.emailSent = false;
-      if (!this.$refs.resetPasswordForm.validate()) {
-        return;
+      const formValidation = await this.$refs.resetPasswordForm.validate()
+      if (!formValidation.valid) {
+        return
       }
       AuthenticateService.resetPassword(this.email).then(() => {
         this.emailSent = true;

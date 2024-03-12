@@ -448,7 +448,8 @@ export default {
       this.editProductDialog = false;
     },
     save: async function () {
-      if (!this.$refs.productForm.validate()) {
+      const formValidation = await this.$refs.productForm.validate()
+      if (!formValidation.valid) {
         return
       }
       this.isSaveLoading = true;
