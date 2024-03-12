@@ -26,6 +26,7 @@
           :canEditCostUnitPrice="true"
           :showAllMembersQuantity="true"
           :hideCategory="true"
+          :hideCategoriesFilter="true"
           ref="allOrderItemsTable"
       ></ProductsTable>
     </v-card-text>

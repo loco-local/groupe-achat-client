@@ -76,6 +76,7 @@
             :showSelect="true"
             :showHasTaxes="true"
             :showExpectedCostUnitPrice="true"
+            :hideCategoriesFilter="true"
             @selectionChanged="updateSelection"
             @modify="enterUpdateProductFlow"
         ></ProductsTable>

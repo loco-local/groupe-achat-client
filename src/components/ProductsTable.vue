@@ -14,8 +14,8 @@
         :search="search"
         :custom-filter="searchIgnoreAccents"
     >
-      <template v-slot:top v-if="!hideSearch">
-        <v-card class="mb-8">
+      <template v-slot:top>
+        <v-card class="mb-8" v-if="!hideCategoriesFilter">
           <v-card-title color="primary" class="text-body-1">
             <strong class="text-left text-body-1">
               {{ $t('productTable:categoriesFilter') }}
@@ -39,7 +39,7 @@
             </v-chip-group>
           </v-card-text>
         </v-card>
-        <v-row class="vh-center pb-0">
+        <v-row class="vh-center pb-0" v-if="!hideSearch">
           <v-col cols="12" lg="3">
             <v-text-field
                 prepend-inner-icon="search"
