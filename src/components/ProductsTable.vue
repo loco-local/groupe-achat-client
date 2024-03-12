@@ -60,7 +60,7 @@
           <v-col cols="12" class="text-right mt-0 pt-0">
             <v-spacer></v-spacer>
             <v-btn @click="downloadAsCsv()">
-              <v-icon start>mdi-download</v-icon>
+              <v-icon start>download</v-icon>
               {{ $t('download') }}
             </v-btn>
           </v-col>

@@ -72,15 +72,17 @@
     </v-row>
     <v-dialog
         v-model="editMemberDialog"
-        max-width="500px"
+        max-width="600px"
         v-if="editedMember !== null"
     >
       <v-card>
-        <v-card-title class="text-h5">
-          {{ $t('modify') }}
-          <v-spacer></v-spacer>
-          <v-icon @click="cancelSave">close</v-icon>
+        <v-card-title class="d-flex justify-space-between align-center">
+          <div class="text-h5 text-medium-emphasis ps-2">
+            {{ $t('modify') }}
+          </div>
+          <v-icon icon="mdi-close" @click="cancelSave" variant="text"></v-icon>
         </v-card-title>
+        <v-divider class="mb-4"></v-divider>
         <v-card-text>
           <v-container>
             <v-form name="memberForm" ref="memberForm">
@@ -209,20 +211,17 @@
             </v-form>
           </v-container>
         </v-card-text>
-
-        <v-card-actions>
+        <v-divider class="mt-2"></v-divider>
+        <v-card-actions class="my-2 d-flex justify-end">
           <v-btn
-              color="blue-darken-1"
               variant="text"
               @click="cancelSave"
           >
             {{ $t('cancel') }}
           </v-btn>
-          <v-spacer></v-spacer>
           <v-btn
-              color="blue-darken-1"
+              color="primary"
               @click="save"
-              theme="dark"
               :loading="isSaveLoading"
               :disabled="isSaveLoading"
           >
@@ -260,11 +259,12 @@ import Rules from '@/Rules'
 import Members from "@/Member";
 import BuyGroupService from "@/service/BuyGroupService";
 import Member from "@/Member";
+import PageWrap from "@/components/PageWrap";
 
 export default {
   name: "MembersAdmin",
   components: {
-    PageWrap: () => import('@/components/PageWrap')
+    PageWrap: PageWrap
   },
   data: function () {
     Members.setupTranslation();
@@ -332,7 +332,8 @@ export default {
       );
     },
     save: async function () {
-      if (!this.$refs.memberForm.validate()) {
+      const formValidation = await this.$refs.memberForm.validate()
+      if (!formValidation.valid) {
         return
       }
       this.isSaveLoading = true;

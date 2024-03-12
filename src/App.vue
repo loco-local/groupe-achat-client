@@ -32,7 +32,7 @@
       >
         <template v-slot:activator="{ props }">
           <v-btn
-              icon="menu"
+              icon="mdi-menu"
               v-bind="props"
               color="primary"
           ></v-btn>

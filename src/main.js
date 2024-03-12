@@ -6,7 +6,7 @@ import router from './router'
 import store from './store'
 import CurrencyFilter from '@/currencyFilter'
 import DateUtil from '@/dateUtil'
-import VueClipboard from 'vue-clipboard2'
+import Clipboard from 'v-clipboard'
 import App from './App.vue'
 import { registerPlugins } from '@/plugins'
 
@@ -23,5 +23,5 @@ CurrencyFilter.setup(app);
 DateUtil.setup(app);
 app.use(router)
 app.use(store)
-app.use(VueClipboard)
+app.use(Clipboard)
 app.mount('#app')
