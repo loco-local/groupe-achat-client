@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card class="text-center">
     <v-card-text v-if="isLoading">
       <v-progress-circular indeterminate :size="80" :width="2"></v-progress-circular>
     </v-card-text>
@@ -24,17 +24,14 @@
           <v-list width="475">
             <div v-for="providerName in providerNames" :key="providerName">
               <v-list-item>
-                <v-list-item-action>
-                  <v-btn icon @click="downloadProviderOrder(providerName)" size="large">
+                <template v-slot:append>
+                  <v-btn variant="text" @click="downloadProviderOrder(providerName)" size="large">
                     <v-icon size="large">file_download</v-icon>
                   </v-btn>
-                </v-list-item-action>
-                <v-list-item-action>
-                  <v-btn icon size="large" @click="viewProviderOrder(providerName)">
+                  <v-btn variant="text" size="large" @click="viewProviderOrder(providerName)">
                     <v-icon size="large">preview</v-icon>
                   </v-btn>
-                </v-list-item-action>
-                
+                </template>
                   <v-list-item-title class="text-left ml-6">
                     {{ providerName }}
                   </v-list-item-title>
@@ -43,7 +40,7 @@
                   </v-list-item-subtitle>
                 
               </v-list-item>
-              <v-divider></v-divider>
+              <v-divider class="mt-2"></v-divider>
             </div>
           </v-list>
         </v-col>

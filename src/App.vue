@@ -27,7 +27,6 @@
               </span>
       <v-menu
           location="bottom left"
-          offset="50"
           v-if="$store.state.user !== null"
       >
         <template v-slot:activator="{ props }">

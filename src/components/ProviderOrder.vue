@@ -57,12 +57,13 @@
 import ProviderOrders from "@/ProviderOrders";
 import BuyGroupOrderService from "@/service/BuyGroupOrderService";
 import I18n from "@/i18n";
+import {defineAsyncComponent} from "vue";
 
 export default {
   name: "ProviderOrder",
   props: ['providerName', 'buyGroupId', 'buyGroupOrderId'],
   components: {
-    ProductsTable: () => import('@/components/ProductsTable')
+    ProductsTable: defineAsyncComponent(() => import('@/components/ProductsTable'))
   },
   data: function () {
     const text = {
