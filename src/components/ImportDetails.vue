@@ -176,7 +176,7 @@
         {{ $t('import:areDataOk') }}
       </v-card-title>
       <v-card-actions>
-        <v-btn color="success" @click="acceptImport"
+        <v-btn color="primary" @click="acceptImport"
                :loading="acceptUploadLoading"
                :disabled="acceptUploadLoading">
           {{ $t('import:yesDataOk') }}

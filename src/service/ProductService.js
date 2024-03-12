@@ -26,14 +26,10 @@ export default {
             )
         })
     },
-    putForward: async function (products) {
+    putForward: async function (productsId) {
         await Service.api().post(
             "/products/forward",
-            products.map((product) => {
-                return {
-                    id: product.id
-                }
-            })
+            productsId
         );
     },
     deprecate: async function (products) {

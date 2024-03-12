@@ -12,19 +12,19 @@
       <v-tab key="hn">
         Horizon Nature
       </v-tab>
-      <v-window v-model="tab">
-        <v-window-item
-            key="satau" class="text-left"
-        >
-          <SatauImport></SatauImport>
-        </v-window-item>
-        <v-window-item
-            key="hn" class="text-left"
-        >
-          <HNImport></HNImport>
-        </v-window-item>
-      </v-window>
     </v-tabs>
+    <v-window v-model="tab">
+      <v-window-item
+          key="satau" class="text-left"
+      >
+        <SatauImport></SatauImport>
+      </v-window-item>
+      <v-window-item
+          key="hn" class="text-left"
+      >
+        <HNImport></HNImport>
+      </v-window-item>
+    </v-window>
   </PageWrap>
 </template>
 
@@ -32,13 +32,14 @@
 import I18n from "@/i18n";
 import SatauImport from "@/components/SatauImport";
 import HNImport from "@/components/HNImport";
+import PageWrap from '@/components/PageWrap'
 
 export default {
   name: "ImportProducts",
   components: {
     HNImport,
     SatauImport,
-    PageWrap: () => import('@/components/PageWrap')
+    PageWrap
   },
   data: function () {
     const text = {

@@ -92,7 +92,7 @@
           <span v-if="isNewProductFlow">
               {{ $t('productsAdmin:newProduct') }}
           </span>
-          <span v-else>
+            <span v-else>
               {{ $t('modify') }}
           </span>
           </div>
@@ -126,11 +126,11 @@
                       :no-data-text="$t('productsAdmin:categoryInexistent')"
                   >
                     <v-list-item slot="append-item" @click="selectNewCategory()">
-                      
-                        <v-list-item-title>
-                          {{ $t('productsAdmin:newCategory') }} "{{ categorySearchText }}"
-                        </v-list-item-title>
-                      
+
+                      <v-list-item-title>
+                        {{ $t('productsAdmin:newCategory') }} "{{ categorySearchText }}"
+                      </v-list-item-title>
+
                     </v-list-item>
                   </v-autocomplete>
                 </v-col>
@@ -192,11 +192,11 @@
                       :no-data-text="$t('productsAdmin:makerInexistent')"
                   >
                     <v-list-item slot="append-item" @click="selectNewMaker()">
-                      
-                        <v-list-item-title>
-                          {{ $t('productsAdmin:newMaker') }} "{{ makerSearchText }}"
-                        </v-list-item-title>
-                      
+
+                      <v-list-item-title>
+                        {{ $t('productsAdmin:newMaker') }} "{{ makerSearchText }}"
+                      </v-list-item-title>
+
                     </v-list-item>
                   </v-autocomplete>
                 </v-col>
@@ -212,11 +212,11 @@
                       :no-data-text="$t('productsAdmin:providerInexistent')"
                   >
                     <v-list-item slot="append-item" @click="selectNewProvider()">
-                      
-                        <v-list-item-title>
-                          {{ $t('productsAdmin:newProvider') }} "{{ providerSearchText }}"
-                        </v-list-item-title>
-                      
+
+                      <v-list-item-title>
+                        {{ $t('productsAdmin:newProvider') }} "{{ providerSearchText }}"
+                      </v-list-item-title>
+
                     </v-list-item>
                   </v-autocomplete>
                 </v-col>
@@ -504,15 +504,16 @@ export default {
       this.deprecateLoading = false;
     },
     removeProductsOfSelection: function (products) {
-      this.selection.forEach((selected) => {
+      this.selection.forEach((productId) => {
         let l = products.length;
         while (l--) {
           const product = products[l];
-          if (product.id === selected.id) {
+          if (product.id === productId) {
             products.splice(l, 1);
           }
         }
       })
+      this.selection = []
     },
   },
   watch: {
