@@ -5,7 +5,7 @@
          :class="{
           'pl-4 pr-4' : $vuetify.display.smAndDown
     }">
-    <v-col cols="12" md="12" lg="12" xl="12" class="text-center" :class="{
+    <v-col cols="12" md="12" lg="12" xl="12" :class="{
       'pl-8 pr-8' : $vuetify.display.lgAndUp,
     }">
       <slot></slot>

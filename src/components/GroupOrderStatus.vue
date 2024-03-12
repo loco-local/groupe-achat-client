@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col cols="12" class="vh-center">
+    <v-col cols="12" class="vh-center text-center">
       <v-card max-width="400" border>
         <v-card-text v-if="isLoading">
           <v-progress-circular indeterminate :size="80" :width="2"></v-progress-circular>

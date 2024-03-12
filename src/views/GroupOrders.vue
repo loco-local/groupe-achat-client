@@ -48,7 +48,7 @@
     </v-card>
     <v-dialog
         v-model="editOrderDialog"
-        max-width="500px"
+        max-width="600px"
         v-if="editedOrder !== null"
     >
       <v-card>

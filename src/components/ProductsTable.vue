@@ -450,12 +450,14 @@ export default {
     I18n.i18next.addResources("en", "productTable", text);
     let headers = [
       {
-        text: this.$t('product:name'),
-        value: 'name'
+        title: this.$t('product:name'),
+        value: 'name',
+        align: 'start',
       },
       {
-        text: this.$t('product:format'),
+        title: this.$t('product:format'),
         value: 'format',
+        align: 'start',
         sort: function (a, b) {
           return Product.formatInKg(a) - Product.formatInKg(b);
         }
@@ -463,156 +465,180 @@ export default {
     ]
     if (!this.hideExpectedUnitPrice) {
       headers.push({
-        text: this.$t('product:expectedUnitPrice'),
-        value: 'expectedUnitPrice'
+        title: this.$t('product:expectedUnitPrice'),
+        value: 'expectedUnitPrice',
+        align: 'start',
       });
     }
     if (this.showExpectedUnitPriceAfterRebate) {
       headers.push({
-        text: this.$t('product:expectedUnitPrice'),
-        value: 'expectedUnitPriceAfterRebate'
+        title: this.$t('product:expectedUnitPrice'),
+        value: 'expectedUnitPriceAfterRebate',
+        align: 'start',
       });
     }
     if (this.showUnitPrice) {
       headers.push(
           {
-            text: this.$t('product:unitPrice'),
-            value: 'unitPrice'
+            title: this.$t('product:unitPrice'),
+            value: 'unitPrice',
+            align: 'start',
           }
       )
     }
     if (this.showExpectedCostUnitPrice) {
       headers.push(
           {
-            text: this.$t('product:expectedCostUnitPrice'),
-            value: 'expectedCostUnitPrice'
+            title: this.$t('product:expectedCostUnitPrice'),
+            value: 'expectedCostUnitPrice',
+            align: 'start',
           }
       )
     }
     if (this.showCostUnitPrice) {
       headers.push(
           {
-            text: this.$t('product:costUnitPrice'),
-            value: 'costUnitPrice'
+            title: this.$t('product:costUnitPrice'),
+            value: 'costUnitPrice',
+            align: 'start',
           }
       )
     }
     if (!this.hideCategory) {
       headers.push(
           {
-            text: this.$t('product:category'),
-            value: 'category'
+            title: this.$t('product:category'),
+            value: 'category',
+            align: 'start',
           }
       )
     }
     headers = headers.concat([
           {
-            text: this.$t('product:internalCode'),
-            value: 'internalCode'
+            title: this.$t('product:internalCode'),
+            value: 'internalCode',
+            align: 'start',
           },
           {
-            text: this.$t('product:maker'),
-            value: 'maker'
+            title: this.$t('product:maker'),
+            value: 'maker',
+            align: 'start',
           },
           {
-            text: this.$t('product:provider'),
-            value: 'provider'
+            title: this.$t('product:provider'),
+            value: 'provider',
+            align: 'start',
           },
         ]
     );
     if (this.hasQuantity) {
       headers.unshift({
-        text: this.$t('product:qtyShortFinal'),
-        value: 'quantity'
+        title: this.$t('product:qtyShortFinal'),
+        value: 'quantity',
+        align: 'start',
       });
     }
     if (this.showAllMembersQuantity) {
       headers.unshift({
-        text: this.$t('product:remainingQtyToDivide'),
-        value: 'allMembersQuantity'
+        title: this.$t('product:remainingQtyToDivide'),
+        value: 'allMembersQuantity',
+        align: 'start',
       });
     }
     if (this.hasExpectedQuantity) {
       headers.unshift({
-        text: this.$t('product:expectedQuantityShort'),
+        title: this.$t('product:expectedQuantityShort'),
         value: 'expectedQuantity',
+        align: 'start',
         sortable: true
       });
     }
     if (this.showTaxes) {
       headers.unshift({
-        text: this.$t('product:tps'),
-        value: 'tps'
+        title: this.$t('product:tps'),
+        value: 'tps',
+        align: 'start',
       });
       headers.unshift(
           {
-            text: this.$t('product:tvq'),
-            value: 'tvq'
+            title: this.$t('product:tvq'),
+            value: 'tvq',
+            align: 'start',
           }
       );
     }
     if (this.hasQuantity && !this.onlyShowCostTotal) {
       headers.unshift({
-        text: this.$t('product:totalFinal'),
-        value: 'totalAfterRebateWithTaxes'
+        title: this.$t('product:totalFinal'),
+        value: 'totalAfterRebateWithTaxes',
+        align: 'start',
       });
     }
     if (this.hasExpectedQuantity && !this.onlyShowCostTotal) {
       headers.unshift({
-        text: this.$t('product:expectedTotal'),
-        value: 'expectedTotalAfterRebateWithTaxes'
+        title: this.$t('product:expectedTotal'),
+        value: 'expectedTotalAfterRebateWithTaxes',
+        align: 'start',
       });
     }
     if (this.onlyShowCostTotal) {
       headers.unshift({
-        text: this.$t('product:totalFinal'),
-        value: 'costTotal'
+        title: this.$t('product:totalFinal'),
+        value: 'costTotal',
+        align: 'start',
       });
     }
     if (this.showHasTaxes) {
       headers.push({
-        text: this.$t('product:addTPS'),
-        value: 'hasTPS'
+        title: this.$t('product:addTPS'),
+        value: 'hasTPS',
+        align: 'start',
       });
       headers.push(
           {
-            text: this.$t('product:addTVQ'),
-            value: 'hasTVQ'
+            title: this.$t('product:addTVQ'),
+            value: 'hasTVQ',
+            align: 'start',
           }
       );
     }
     if (this.showIsAdminRelated) {
       headers.push({
-        text: this.$t('product:isAdminRelated'),
-        value: 'isAdminRelated'
+        title: this.$t('product:isAdminRelated'),
+        value: 'isAdminRelated',
+        align: 'start',
       });
     }
     if (this.canToggleAvailability) {
       headers.push({
-        text: this.$t('product:isAvailable'),
-        value: 'isAvailable'
+        title: this.$t('product:isAvailable'),
+        value: 'isAvailable',
+        align: 'start',
       });
     }
     const showEditButton = new Boolean(this.$attrs && this.$attrs.onModify).valueOf()
     if (showEditButton) {
       headers.push({
-        text: '',
+        title: '',
         sortable: false,
-        value: 'edit'
+        value: 'edit',
+        align: 'start',
       });
     }
     if (this.showMemberId) {
       headers.unshift({
-        text: "ID",
+        title: "ID",
         sortable: true,
-        value: 'MemberOrder.MemberId'
+        value: 'MemberOrder.MemberId',
+        align: 'start',
       });
     }
     if (this.showPersonName) {
       headers.unshift({
-        text: this.$t('product:personName'),
+        title: this.$t('product:personName'),
         sortable: true,
-        value: 'personFullname'
+        value: 'personFullname',
+        align: 'start',
       });
     }
     const tableOptions = {

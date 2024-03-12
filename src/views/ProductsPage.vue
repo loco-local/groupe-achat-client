@@ -35,7 +35,7 @@
                 type="info"
                 elevation="2"
                 v-if="isAdminModificationFlow"
-                class="ml-6 mr-6 info-accent-4"
+                class="ml-6 mr-6 info-accent-4 text-center"
             >
               <p class="text-h6 font-weight-regular">
                 {{ $t('products:actingAsAdministrator') }}
@@ -63,6 +63,7 @@
       <v-row class="vh-center mt-6" v-if="!isAdminModificationFlow">
         <v-col cols="12" lg="8" xl="6">
           <v-toolbar color="primary" dark>
+            <v-spacer></v-spacer>
             <v-btn variant="text" @click="tipsDialog=true">
               {{ $t('products:tips') }}
             </v-btn>
@@ -98,8 +99,7 @@
       </v-row>
       <v-col cols="12" v-if="memberId !== null && !isLoading && (!relevantOrder || relevantOrder.status !== 'CURRENT')"
              class="mt-8">
-        <v-alert class="text-body-1"
-                 text
+        <v-alert class="text-body-1 text-center"
                  color="warning"
                  border="start"
         >
