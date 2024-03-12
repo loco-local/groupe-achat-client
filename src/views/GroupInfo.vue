@@ -32,6 +32,7 @@
                   <v-text-field
                       v-model="buyGroup.name"
                       :label="$t('group:name')"
+                      :rules="[rules.required]"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12">
@@ -39,6 +40,7 @@
                       v-model="buyGroup.path"
                       :label="$t('group:path')"
                       prefix="/"
+                      :rules="[rules.required]"
                   ></v-text-field>
                 </v-col>
                 <v-col
@@ -49,6 +51,7 @@
                       :label="$t('group:salePercentage')"
                       prefix="%"
                       type="number"
+                      :rules="[rules.required]"
                   ></v-text-field>
                 </v-col>
                 <v-col
@@ -110,11 +113,13 @@ import BuyGroupTranslation from "@/BuyGroupTranslation";
 import BuyGroup from "@/BuyGroup";
 
 import I18n from "@/i18n";
-
+import PageWrap from '@/components/PageWrap'
+import Rules from '@/Rules'
+import VueScrollTo from "vue-scrollto";
 export default {
   name: "GroupInfo",
   components: {
-    PageWrap: () => import('@/components/PageWrap')
+    PageWrap: PageWrap
   },
   data: function () {
     BuyGroupTranslation.setup();
@@ -127,7 +132,8 @@ export default {
       buyGroup: null,
       isLoading: true,
       isSaving: false,
-      modifyGroupInfoSnackbar: false
+      modifyGroupInfoSnackbar: false,
+      rules: Rules,
     }
   },
   mounted: async function () {
@@ -138,6 +144,16 @@ export default {
   },
   methods: {
     update: async function () {
+      const formValidation = await this.$refs.groupForm.validate()
+      if (!formValidation.valid) {
+        VueScrollTo.scrollTo(
+            document.getElementById("app"), 500, {
+              easing: 'linear',
+              offset: 60
+            }
+        );
+        return
+      }
       this.isSaving = true;
       await BuyGroupService.update(
           this.buyGroup.id,
