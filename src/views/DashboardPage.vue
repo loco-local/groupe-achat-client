@@ -8,7 +8,7 @@
           </v-col>
           <v-col cols="12" v-if="$store.state.user === null && !isLoading">
           </v-col>
-          <v-col cols="12" v-if="$store.state.user !== null && $store.state.user.status !== 'pending' && !isLoading">
+          <v-col cols="12" v-if="$store.state.user !== null && $store.state.user.status !== 'pending' && !isLoading" class="text-center">
             <router-link :to="'/' + buyGroup.path" class="text-h5">
               {{ $t('dashboard:urlForProducts') }}
             </router-link>

@@ -60,7 +60,7 @@
           {{ $t('products:noResults') }}
         </v-sheet>
       </v-col>
-      <v-row class="vh-center mt-6" v-if="!isAdminModificationFlow">
+      <v-row class="vh-center mt-6" v-if="!isAdminModificationFlow && !isLoading">
         <v-col cols="12" lg="8" xl="6">
           <v-toolbar color="primary" dark>
             <v-spacer></v-spacer>
@@ -409,7 +409,6 @@ export default {
       return ['ProductsPage'].concat(sectionName).indexOf(this.$route.name) > -1;
     },
     goToShowAllSections: function () {
-      console.log(this.$route.params.buyGroup)
       this.$router.push({name: 'ProductsPage', params: {buyGroup: this.$route.params.buyGroup}})
     },
     buildAllMembersQuantities: function () {

@@ -3,7 +3,7 @@
     <v-app-bar
         color="white"
     >
-      <div class="d-flex align-center">
+      <div class="d-flex align-center ml-4">
         <router-link to="/">
           <v-img
               alt="Logo Groupe d'achat"
