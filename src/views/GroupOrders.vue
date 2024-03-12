@@ -5,8 +5,7 @@
         {{ $t('groupOrders:title') }}
       </v-card-title>
       <v-card-actions class="vh-center">
-        <v-btn @click="enterNewOrderFlow">
-          <v-icon start>add</v-icon>
+        <v-btn @click="enterNewOrderFlow" prepend-icon="mdi-plus">
           {{ $t('groupOrders:newOrder') }}
         </v-btn>
       </v-card-actions>
@@ -20,48 +19,45 @@
             indeterminate
         ></v-progress-circular>
       </v-card-text>
-      <v-card-text v-if="orders.length > 0 && !isLoading">
-        <div v-for="order in orders"
-             :key="order.id">
-          <v-list-item :to="'/groupe/' + $store.state.user.BuyGroupId + '/commande/'  + order.id">
+      <v-card-text v-if="orders.length > 0 && !isLoading" class="text-center">
+        <v-list>
+          <v-list-item :to="'/groupe/' + $store.state.user.BuyGroupId + '/commande/'  + order.id" v-for="order in orders"
+                       :key="order.id">
             
               <v-list-item-title class="font-weight-bold mb-2 text-capitalize">
                 <GroupOrderStatusText :status="order.status"></GroupOrderStatusText>
               </v-list-item-title>
               <v-list-item-subtitle class="mb-2">
-                {{ order.startDate | dayDate }}
+                {{ $filters.dayDate(order.startDate) }}
                 {{ $t('to') }}
-                {{ order.endDate | dayDate }}
+                {{ $filters.dayDate(order.endDate) }}
               </v-list-item-subtitle>
-            
-            <v-list-item-action>
-              <v-btn @click.prevent="enterUpdateOrderFlow(order)" icon>
-                <v-icon>
-                  edit
-                </v-icon>
-              </v-btn>
-            </v-list-item-action>
+            <template v-slot:append>
+              <v-btn @click.prevent="enterUpdateOrderFlow(order)" icon="mdi-pencil" variant="text"></v-btn>
+            </template>
+            <v-divider inset></v-divider>
           </v-list-item>
-          <v-divider></v-divider>
-        </div>
+        </v-list>
       </v-card-text>
     </v-card>
     <v-dialog
         v-model="editOrderDialog"
-        max-width="600px"
+        max-width="700px"
         v-if="editedOrder !== null"
     >
       <v-card>
-        <v-card-title>
-          <span v-if="isNewOrderFlow">
-              {{ $t('groupOrders:newOrder') }}
-          </span>
-          <span v-else>
-              {{ $t('modify') }}
-          </span>
-          <v-spacer></v-spacer>
-          <v-icon @click="cancelSave">close</v-icon>
+        <v-card-title class="d-flex justify-space-between align-center">
+          <div class="text-h5 text-medium-emphasis ps-2">
+            <span v-if="isNewOrderFlow">
+                {{ $t('groupOrders:newOrder') }}
+            </span>
+            <span v-else>
+                {{ $t('modify') }}
+            </span>
+          </div>
+          <v-icon icon="mdi-close" @click="cancelSave" variant="text"></v-icon>
         </v-card-title>
+        <v-divider class="mb-4"></v-divider>
         <v-card-text>
           <v-container>
             <v-form name="groupOrderForm" ref="groupOrderForm">
@@ -185,19 +181,17 @@
             </v-form>
           </v-container>
         </v-card-text>
-        <v-card-actions>
+        <v-divider class="mt-2"></v-divider>
+        <v-card-actions class="my-2 d-flex justify-end">
           <v-btn
-              color="blue-darken-1"
               variant="text"
               @click="cancelSave"
           >
             {{ $t('cancel') }}
           </v-btn>
-          <v-spacer></v-spacer>
           <v-btn
-              color="blue-darken-1"
+              color="primary"
               @click="save"
-              theme="dark"
               :loading="isSaveLoading"
               :disabled="isSaveLoading"
           >
@@ -223,13 +217,14 @@ import BuyGroupTranslation from "@/BuyGroupTranslation";
 import BuyGroupService from "@/service/BuyGroupService";
 import dateUtil from "@/dateUtil";
 import GroupOrder from "@/GroupOrder";
-
+import PageWrap from '@/components/PageWrap'
+import { defineAsyncComponent } from "vue";
 export default {
 
   name: "GroupOrders",
   components: {
-    PageWrap: () => import('@/components/PageWrap'),
-    GroupOrderStatusText: () => import('@/components/GroupOrderStatusText')
+    PageWrap,
+    GroupOrderStatusText: defineAsyncComponent(() => import('@/components/GroupOrderStatusText'))
   },
   data: () => {
     BuyGroupTranslation.setup();
