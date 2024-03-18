@@ -62,35 +62,11 @@
       </v-col>
       <v-row class="vh-center mt-6" v-if="!isAdminModificationFlow && !isLoading">
         <v-col cols="12" lg="8" xl="6">
-          <v-toolbar color="primary" dark>
-            <v-spacer></v-spacer>
-            <v-btn variant="text" @click="tipsDialog=true">
-              {{ $t('products:tips') }}
-            </v-btn>
-            <v-spacer></v-spacer>
-            <v-divider vertical></v-divider>
-            <v-spacer></v-spacer>
-            <v-btn variant="text" :to="yourOrderRoutePath" :disabled="yourOrderRoutePath === $route.path">
-              {{ $t('products:summary') }}
-            </v-btn>
-            <v-spacer></v-spacer>
-            <v-divider vertical></v-divider>
-            <v-spacer></v-spacer>
-            <v-btn variant="text" :to="toDivideRoutePath" :disabled="toDivideRoutePath === $route.path">
-              {{ $t('products:toDivide') }}
-            </v-btn>
-            <v-spacer></v-spacer>
-            <v-divider vertical></v-divider>
-            <v-spacer></v-spacer>
-            <v-btn variant="text" :to="allProductsRoutePath" :disabled="allProductsRoutePath === $route.path">
-              {{ $t('products:allProducts') }}
-            </v-btn>
-            <v-spacer></v-spacer>
-          </v-toolbar>
           <v-toolbar color="transparent" class="elevation-0">
             <v-spacer></v-spacer>
             <!--            -->
-            <v-btn variant="text" size="small" @click="goToShowAllSections()" :disabled="allSectionsRoutePath === $route.path">
+            <v-btn variant="text" size="small" @click.prevent="goToShowAllSections()"
+                   :disabled="allSectionsRoutePath === $route.path">
               {{ $t('products:allSections') }}
             </v-btn>
             <v-spacer></v-spacer>
@@ -308,6 +284,22 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-bottom-navigation bg-color="primary" v-if="!isLoading">
+<!--      <v-btn variant="text" @click="tipsDialog=true" >-->
+<!--        {{ $t('products:tips') }}-->
+<!--      </v-btn>-->
+      <v-btn variant="text" :to="yourOrderRoutePath" :disabled="yourOrderRoutePath === $route.path">
+        {{ $t('products:summary') }}
+      </v-btn>
+      <v-divider vertical></v-divider>
+      <v-btn variant="text" :to="toDivideRoutePath" :disabled="toDivideRoutePath === $route.path">
+        {{ $t('products:toDivide') }}
+      </v-btn>
+      <v-divider vertical></v-divider>
+      <v-btn variant="text" :to="allProductsRoutePath" :disabled="allProductsRoutePath === $route.path">
+        {{ $t('products:allProducts') }}
+      </v-btn>
+    </v-bottom-navigation>
   </PageWrap>
 </template>
 
@@ -322,7 +314,8 @@ import Member from "@/Member";
 import BuyGroupOrderService from "@/service/BuyGroupOrderService";
 import MemberOrdersQuantity from "@/MemberOrdersQuantity";
 import PageWrap from '@/components/PageWrap'
-import { defineAsyncComponent } from "vue";
+import {defineAsyncComponent} from "vue";
+
 export default {
   name: "ProductsPage",
   components: {
@@ -347,7 +340,7 @@ export default {
       allSections: "Toutes les sections",
       summary: "Votre commande",
       summaryInfo1: "À la fin de la commande en cours, ces produits seront commandés pour vous.",
-      toDivide: "Quantités restantes à diviser",
+      toDivide: "À diviser",
       noOrderItems: "Pas encore de produits commandés",
       noProductsToDivide: "Pas de produits à diviser",
       actingAsAdministrator: "Vous agissez en tant qu'administrateur",
@@ -357,7 +350,7 @@ export default {
       quantityTip2: "Vous pouvez saisir la quantité en kg, L ou g dépendamment du format, par exemple 5 kg.",
       quantityTip3: "Pour le partage, inscrivez des décimales, exemple 0,5, ou avec un point 0.5",
       quantityTip4: "Certains produits ont plusieurs paquets. Le format ressemble alors à 4x 3Kg. Vous pouvez inscrire 2x pour avoir 2 paquets ou 6 kg.",
-      allProducts: "Tous les produits"
+      allProducts: "Produits"
     };
     I18n.i18next.addResources("fr", "products", text);
     I18n.i18next.addResources("en", "products", text);
