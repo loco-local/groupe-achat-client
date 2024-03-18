@@ -66,17 +66,20 @@
               @quantityUpdate="updateOrderQuantity"
           >
             <template v-slot:footer>
-              <div class="d-inline-block">
-                <v-select
-                    :items="membersWhoOrdered"
-                    item-title="fullnameAndId"
-                    item-value="memberId"
-                    :label="$t('divide:addMember')"
-                    return-object
-                    class="ml-2 mb-2"
-                    @update:model-value="addMemberToProduct($event, productsToDivide[productId], productId)"
-                ></v-select>
-              </div>
+              <v-row>
+                <v-col cols="12">
+                  <v-select
+                      :items="membersWhoOrdered"
+                      item-title="fullnameAndId"
+                      item-value="memberId"
+                      :label="$t('divide:addMember')"
+                      return-object
+                      class="ml-2 mb-2"
+                      width="500"
+                      @update:model-value="addMemberToProduct($event, productsToDivide[productId], productId)"
+                  ></v-select>
+                </v-col>
+              </v-row>
             </template>
           </ProductsTable>
         </v-card-text>

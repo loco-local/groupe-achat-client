@@ -85,10 +85,17 @@
         </v-alert>
       </v-col>
       <v-col cols="12">
-        <v-card flat class="" color="transparent">
-          <v-card-text class="font-weight-bold text-left text-body-1" v-if="memberId !== null">
+        <v-card flat class="" color="transparent" :class="{
+          'pa-0' : $vuetify.display.smAndDown
+        }">
+          <v-card-text class="font-weight-bold text-left text-body-1" v-if="memberId !== null" :class="{
+          'pa-0' : $vuetify.display.smAndDown
+        }">
             <v-card
                 v-if="shouldShowSection('ProductsPageYourOrder')"
+                :class="{
+          'pa-0' : $vuetify.display.smAndDown
+        }"
             >
               <v-card-title>
                 {{ $t('products:summary') }}
@@ -100,12 +107,13 @@
                 <span class="">{{ $t('total') }} : </span>
                 {{ $filters.currency(total) }}
               </v-card-subtitle>
-              <v-card-text class="text-body-1" v-if="orderItemsAsProducts.length > 0">
+              <v-card-text class="text-body-1" v-if="orderItemsAsProducts.length > 0" :class="{
+          'pa-0' : $vuetify.display.smAndDown
+        }">
                 <ProductsTable
                     :products="orderItemsAsProducts || []"
                     :hideSearch="true"
                     :preventSearchFlickr="false"
-                    :hideCategory="true"
                     :hideCategoriesFilter="true"
                     :canToggleAvailability="false"
                     :canChangeExpectedQuantity="canChangeExpectedQuantity"
@@ -140,7 +148,6 @@
                     :products="itemsToDivide || []"
                     :hideSearch="true"
                     :preventSearchFlickr="false"
-                    :hideCategory="true"
                     :hideCategoriesFilter="true"
                     :canToggleAvailability="false"
                     :canChangeExpectedQuantity="canChangeExpectedQuantity"

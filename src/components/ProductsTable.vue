@@ -1,6 +1,6 @@
 <template>
   <div :style="minHeightStyle">
-    <v-data-table-virtual
+    <v-data-table
         :headers="headers"
         :items="filteredProducts"
         :options="tableOptions"
@@ -13,6 +13,10 @@
         v-model="selected"
         :search="search"
         :custom-filter="searchIgnoreAccents"
+        :class="{
+          'pa-0' : $vuetify.display.smAndDown
+        }"
+        items-per-page="50"
     >
       <template v-slot:top>
         <v-row v-if="!hideCategoriesFilter" class="mb-8">
@@ -74,7 +78,16 @@
           {{ title }}
         </v-card-title>
       </template>
-      <template v-slot:item.expectedQuantity="{ item }" v-if="hasExpectedQuantity">
+      <template v-slot:header.expectedUnitPriceAfterRebate="{ column }">
+        <strong>{{ column.title}}</strong>
+      </template>
+      <template v-slot:header.expectedTotalAfterRebateWithTaxes="{ column }">
+        <strong>{{ column.title}}</strong>
+      </template>
+      <template v-slot:header.totalAfterRebateWithTaxes="{ column }">
+        <strong>{{ column.title}}</strong>
+      </template>
+      <template v-slot:item.expectedQuantity="{ item }">
         <div v-if="showDecimalQuantityNotFractions">
           <span class="text-no-wrap">{{ item.expectedQuantity.toFixed(2) }}</span>
         </div>
@@ -99,7 +112,7 @@
         </div>
       </template>
       <template v-slot:item.allMembersQuantity="{ item }" v-if="showAllMembersQuantity">
-        <div v-if="item.allMembersQuantity !== undefined && item.allMembersQuantity.remainingFraction > 0">
+        <span v-if="item.allMembersQuantity !== undefined && item.allMembersQuantity.remainingFraction > 0">
           <span class="">
             Il reste
           </span>
@@ -109,10 +122,10 @@
             {{ item.allMembersQuantity.remainingFraction }}
             {{ item.allMembersQuantity.format }}
           </span>
-        </div>
-        <!--        <span v-else class="red&#45;&#45;text font-weight-bold">-->
-        <!--          {{ item.allMembersQuantity.total }}-->
-        <!--        </span>-->
+        </span>
+        <span v-else>
+          <v-divider></v-divider>
+        </span>
       </template>
       <template v-slot:item.quantity="{ item }" v-if="hasQuantity">
         <div v-if="showDecimalQuantityNotFractions">
@@ -137,15 +150,15 @@
           </div>
         </div>
       </template>
-      <template v-slot:item.expectedTotalAfterRebateWithTaxes="{ item }" v-if="hasExpectedQuantity">
+      <template v-slot:item.expectedTotalAfterRebateWithTaxes="{ item }">
         <span v-if="item.expectedTotalAfterRebateWithTaxes === undefined">
             <v-divider></v-divider>
         </span>
-        <span v-else>
+        <span v-else class="font-weight-bold">
           {{ $filters.currency(item.expectedTotalAfterRebateWithTaxes) }}
         </span>
       </template>
-      <template v-slot:item.costTotal="{ item }" v-if="onlyShowCostTotal">
+      <template v-slot:item.costTotal="{ item }">
         <span v-if="item.costTotal === undefined">
             <v-divider></v-divider>
         </span>
@@ -153,11 +166,11 @@
           {{ $filters.currency(item.costTotal) }}
         </span>
       </template>
-      <template v-slot:item.totalAfterRebateWithTaxes="{ item }" v-if="hasQuantity">
+      <template v-slot:item.totalAfterRebateWithTaxes="{ item }">
         <span v-if="item.totalAfterRebateWithTaxes === undefined">
             <v-divider></v-divider>
         </span>
-        <strong v-else>
+        <strong v-else class="font-weight-bold">
           {{ $filters.currency(item.totalAfterRebateWithTaxes) }}
         </strong>
       </template>
@@ -188,10 +201,14 @@
         <!--        </span>-->
       </template>
       <template v-slot:item.expectedUnitPrice="{ item }">
-        {{ $filters.currency(item.expectedUnitPrice) }}
+        <strong>
+          {{ $filters.currency(item.expectedUnitPrice) }}
+        </strong>
       </template>
       <template v-slot:item.expectedUnitPriceAfterRebate="{ item }">
-        {{ $filters.currency(item.expectedUnitPriceAfterRebate) }}
+        <strong>
+          {{ $filters.currency(item.expectedUnitPriceAfterRebate) }}
+        </strong>
       </template>
       <template v-slot:item.unitPrice="{ item }">
         {{ $filters.currency(item.unitPrice) }}
@@ -246,10 +263,10 @@
       <template v-slot:item.edit="{ item }" v-if="showEditButton">
         <v-btn icon="edit" class="mx-0" @click="$emit('modify', item)" variant="text"></v-btn>
       </template>
-      <template v-slot:bottom>
+      <template v-slot:body.append>
         <slot name="footer"></slot>
       </template>
-    </v-data-table-virtual>
+    </v-data-table>
     <v-snackbar
         v-model="quantityUpdateSnackbar"
         location="top"
@@ -455,6 +472,19 @@ export default {
     I18n.i18next.addResources("en", "productTable", text);
     let headers = [
       {
+        title: this.$t('product:expectedQuantityShort'),
+        value: 'expectedQuantity',
+        align: 'start',
+        sortable: true,
+        show: this.hasExpectedQuantity
+      },
+      {
+        title: this.$t('product:qtyShortFinal'),
+        value: 'quantity',
+        align: 'start',
+        show: this.hasQuantity
+      },
+      {
         title: this.$t('product:name'),
         value: 'name',
         align: 'start',
@@ -466,191 +496,147 @@ export default {
         sort: function (a, b) {
           return Product.formatInKg(a) - Product.formatInKg(b);
         }
-      }
-    ]
-    if (!this.hideExpectedUnitPrice) {
-      headers.push({
-        title: this.$t('product:expectedUnitPrice'),
-        value: 'expectedUnitPrice',
+      },
+      {
+        title: this.$t('product:costUnitPrice'),
+        value: 'costUnitPrice',
         align: 'start',
-      });
-    }
-    if (this.showExpectedUnitPriceAfterRebate) {
-      headers.push({
-        title: this.$t('product:expectedUnitPrice'),
-        value: 'expectedUnitPriceAfterRebate',
-        align: 'start',
-      });
-    }
-    if (this.showUnitPrice) {
-      headers.push(
-          {
-            title: this.$t('product:unitPrice'),
-            value: 'unitPrice',
-            align: 'start',
-          }
-      )
-    }
-    if (this.showExpectedCostUnitPrice) {
-      headers.push(
-          {
-            title: this.$t('product:expectedCostUnitPrice'),
-            value: 'expectedCostUnitPrice',
-            align: 'start',
-          }
-      )
-    }
-    if (this.showCostUnitPrice) {
-      headers.push(
-          {
-            title: this.$t('product:costUnitPrice'),
-            value: 'costUnitPrice',
-            align: 'start',
-          }
-      )
-    }
-    if (!this.hideCategory) {
-      headers.push(
-          {
-            title: this.$t('product:category'),
-            value: 'category',
-            align: 'start',
-          }
-      )
-    }
-    headers = headers.concat([
-          {
-            title: this.$t('product:internalCode'),
-            value: 'internalCode',
-            align: 'start',
-          },
-          {
-            title: this.$t('product:maker'),
-            value: 'maker',
-            align: 'start',
-          },
-          {
-            title: this.$t('product:provider'),
-            value: 'provider',
-            align: 'start',
-          },
-        ]
-    );
-    if (this.hasQuantity) {
-      headers.unshift({
-        title: this.$t('product:qtyShortFinal'),
-        value: 'quantity',
-        align: 'start',
-      });
-    }
-    if (this.showAllMembersQuantity) {
-      headers.unshift({
-        title: this.$t('product:remainingQtyToDivide'),
-        value: 'allMembersQuantity',
-        align: 'start',
-      });
-    }
-    if (this.hasExpectedQuantity) {
-      headers.unshift({
-        title: this.$t('product:expectedQuantityShort'),
-        value: 'expectedQuantity',
-        align: 'start',
-        sortable: true
-      });
-    }
-    if (this.showTaxes) {
-      headers.unshift({
-        title: this.$t('product:tps'),
-        value: 'tps',
-        align: 'start',
-      });
-      headers.unshift(
-          {
-            title: this.$t('product:tvq'),
-            value: 'tvq',
-            align: 'start',
-          }
-      );
-    }
-    if (this.hasQuantity && !this.onlyShowCostTotal) {
-      headers.unshift({
+        show: this.showCostUnitPrice
+      },
+      {
         title: this.$t('product:totalFinal'),
         value: 'totalAfterRebateWithTaxes',
         align: 'start',
-      });
-    }
-    if (this.hasExpectedQuantity && !this.onlyShowCostTotal) {
-      headers.unshift({
+        show: this.hasQuantity && !this.onlyShowCostTotal
+      },
+      {
+        title: this.$t('product:expectedUnitPrice'),
+        value: 'expectedUnitPrice',
+        align: 'start',
+        show: !this.hideExpectedUnitPrice
+      },
+      {
+        title: this.$t('product:expectedUnitPrice'),
+        value: 'expectedUnitPriceAfterRebate',
+        align: 'start',
+        show: this.showExpectedUnitPriceAfterRebate
+      },
+      {
         title: this.$t('product:expectedTotal'),
         value: 'expectedTotalAfterRebateWithTaxes',
         align: 'start',
-      });
-    }
-    if (this.onlyShowCostTotal) {
-      headers.unshift({
+        show: this.hasExpectedQuantity && !this.onlyShowCostTotal
+      },
+      {
+        title: this.$t('product:unitPrice'),
+        value: 'unitPrice',
+        align: 'start',
+        show: this.showUnitPrice
+      },
+      {
+        title: this.$t('product:expectedCostUnitPrice'),
+        value: 'expectedCostUnitPrice',
+        align: 'start',
+        show: this.showExpectedCostUnitPrice
+      },
+      {
+        title: this.$t('product:remainingQtyToDivide'),
+        value: 'allMembersQuantity',
+        align: 'center',
+        show: this.showAllMembersQuantity
+      },
+      {
+        title: this.$t('product:category'),
+        value: 'category',
+        align: 'start',
+        show: !this.hideCategory
+      },
+      {
+        title: this.$t('product:internalCode'),
+        value: 'internalCode',
+        align: 'start',
+      },
+      {
+        title: this.$t('product:maker'),
+        value: 'maker',
+        align: 'start',
+      },
+      {
+        title: this.$t('product:provider'),
+        value: 'provider',
+        align: 'start',
+      },
+      {
+        title: this.$t('product:tps'),
+        value: 'tps',
+        align: 'start',
+        show: this.showTaxes
+      },
+      {
+        title: this.$t('product:tvq'),
+        value: 'tvq',
+        align: 'start',
+        show: this.showTaxes
+      },
+      {
         title: this.$t('product:totalFinal'),
         value: 'costTotal',
         align: 'start',
-      });
-    }
-    if (this.showHasTaxes) {
-      headers.push({
+        show: this.onlyShowCostTotal
+      },
+      {
         title: this.$t('product:addTPS'),
         value: 'hasTPS',
         align: 'start',
-      });
-      headers.push(
-          {
-            title: this.$t('product:addTVQ'),
-            value: 'hasTVQ',
-            align: 'start',
-          }
-      );
-    }
-    if (this.showIsAdminRelated) {
-      headers.push({
+        show: this.showHasTaxes
+      },
+      {
+        title: this.$t('product:addTVQ'),
+        value: 'hasTVQ',
+        align: 'start',
+        show: this.showHasTaxes
+      },
+      {
         title: this.$t('product:isAdminRelated'),
         value: 'isAdminRelated',
         align: 'start',
-      });
-    }
-    if (this.canToggleAvailability) {
-      headers.push({
+        show: this.showIsAdminRelated
+      },
+      {
         title: this.$t('product:isAvailable'),
         value: 'isAvailable',
         align: 'start',
-      });
-    }
-    const showEditButton = new Boolean(this.$attrs && this.$attrs.onModify).valueOf()
-    if (showEditButton) {
-      headers.push({
+        show: this.canToggleAvailability
+      },
+      {
         title: '',
         sortable: false,
         value: 'edit',
         align: 'start',
-      });
-    }
-    if (this.showMemberId) {
-      headers.unshift({
+        show: this.showEditButton
+      },
+      {
         title: "ID",
         sortable: true,
         value: 'MemberOrder.MemberId',
         align: 'start',
-      });
-    }
-    if (this.showPersonName) {
-      headers.unshift({
+        show: this.showMemberId
+      },
+      {
         title: this.$t('product:personName'),
         sortable: true,
         value: 'personFullname',
         align: 'start',
-      });
-    }
+        show: this.showPersonName
+      }
+    ]
+    headers = headers.filter((header) => {
+      return header.show === undefined || header.show
+    })
     const tableOptions = {
       sortBy: ['name'],
       sortDesc: [true],
-      page: 1,
-      itemsPerPage: 50
+      page: 1
     };
     if (this.canChangeQuantity || this.hasQuantity || this.canChangeExpectedQuantity || this.hasExpectedQuantity) {
       tableOptions.sortBy = [];
@@ -660,7 +646,7 @@ export default {
       search: null,
       tableOptions: tableOptions,
       headers: headers,
-      showEditButton: showEditButton,
+      showEditButton: new Boolean(this.$attrs && this.$attrs.onModify).valueOf(),
       quantityUpdateSnackbar: false,
       costUnitPriceUpdateSnackbar: false,
       wrongFormatSnackbar: false,
@@ -669,7 +655,7 @@ export default {
       searchElementId: "search-" + Math.random(),
       chosenCategory: undefined,
       minHeightStyle: this.preventSearchFlickr ? "min-height: 1000px;" : "",
-      categoriesPanel: 'categories'
+      categoriesPanel: 'categories',
     }
   },
   mounted: function () {

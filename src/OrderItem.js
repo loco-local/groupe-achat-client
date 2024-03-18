@@ -39,7 +39,7 @@ const OrderItem = {
         }
         return quantity;
     },
-    isQtyDefined(quantity){
+    isQtyDefined(quantity) {
         return quantity !== null && quantity !== undefined
     },
     defineQuantitiesFraction(orderItem) {
@@ -91,7 +91,11 @@ const OrderItem = {
             orderItem[percentagePropertyName] = Math.round(orderItem[propertyName] * 100);
             let hint;
             if (orderItem[propertyName] % 1 === 0) {
-                hint = orderItem[propertyName] + "x";
+                hint = orderItem[propertyName];
+                if (hint === null) {
+                    hint = "0"
+                }
+                hint += "x";
             } else {
                 hint = (percentagePropertyName <= 0 ? "" : orderItem[percentagePropertyName] + "%");
             }

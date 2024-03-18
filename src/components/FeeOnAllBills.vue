@@ -17,6 +17,7 @@
           :hide-search="true"
           :hide-expected-unit-price="true"
           :canToggleAvailability="false"
+          :hideCategoriesFilter="true"
           @quantityUpdate="updateQuantity"
           ref="feeOnAllBillsTable"
       >
