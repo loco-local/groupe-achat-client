@@ -15,29 +15,35 @@
         :custom-filter="searchIgnoreAccents"
     >
       <template v-slot:top>
-        <v-card class="mb-8" v-if="!hideCategoriesFilter">
-          <v-card-title color="primary" class="text-body-1">
-            <strong class="text-left text-body-1">
-              {{ $t('productTable:categoriesFilter') }}
-            </strong>
-          </v-card-title>
-          <v-card-text>
-            <v-chip-group
-                v-model="chosenCategory"
-                color="primary"
-                column
-            >
-              <v-chip
-                  v-for="category in categories"
-                  :key="category"
-                  :value="category"
-                  variant="outlined"
-              >
-                {{ category }}
-              </v-chip>
-            </v-chip-group>
-          </v-card-text>
-        </v-card>
+        <v-row v-if="!hideCategoriesFilter" class="mb-8">
+          <v-col cols="12">
+            <v-expansion-panels variant="accordion" v-model="categoriesPanel">
+              <v-expansion-panel value="categories">
+                <v-expansion-panel-title>
+                  <strong class="text-left text-body-1">
+                    {{ $t('productTable:categoriesFilter') }}
+                  </strong>
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
+                  <v-chip-group
+                      v-model="chosenCategory"
+                      color="primary"
+                      column
+                  >
+                    <v-chip
+                        v-for="category in categories"
+                        :key="category"
+                        :value="category"
+                        variant="outlined"
+                    >
+                      {{ category }}
+                    </v-chip>
+                  </v-chip-group>
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+            </v-expansion-panels>
+          </v-col>
+        </v-row>
         <v-row class="vh-center pb-0" v-if="!hideSearch">
           <v-col cols="12" lg="3">
             <v-text-field
@@ -662,8 +668,12 @@ export default {
       productFormat: "",
       searchElementId: "search-" + Math.random(),
       chosenCategory: undefined,
-      minHeightStyle: this.preventSearchFlickr ? "min-height: 1000px;" : ""
+      minHeightStyle: this.preventSearchFlickr ? "min-height: 1000px;" : "",
+      categoriesPanel: 'categories'
     }
+  },
+  mounted: function () {
+    this.categoriesPanel = this.$vuetify.display.smAndDown ? null : 'categories';
   },
   computed: {
     filteredProducts: function () {
