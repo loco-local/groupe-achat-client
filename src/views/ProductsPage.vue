@@ -288,15 +288,15 @@
 <!--      <v-btn variant="text" @click="tipsDialog=true" >-->
 <!--        {{ $t('products:tips') }}-->
 <!--      </v-btn>-->
-      <v-btn variant="text" :to="yourOrderRoutePath" :disabled="yourOrderRoutePath === $route.path">
+      <v-btn variant="text" @click.prevent="goToPathAndScrollTop(yourOrderRoutePath)" :disabled="yourOrderRoutePath === $route.path">
         {{ $t('products:summary') }}
       </v-btn>
       <v-divider vertical></v-divider>
-      <v-btn variant="text" :to="toDivideRoutePath" :disabled="toDivideRoutePath === $route.path">
+      <v-btn variant="text" @click.prevent="goToPathAndScrollTop(toDivideRoutePath)" :disabled="toDivideRoutePath === $route.path">
         {{ $t('products:toDivide') }}
       </v-btn>
       <v-divider vertical></v-divider>
-      <v-btn variant="text" :to="allProductsRoutePath" :disabled="allProductsRoutePath === $route.path">
+      <v-btn variant="text" @click.prevent="goToPathAndScrollTop(allProductsRoutePath)" :disabled="allProductsRoutePath === $route.path">
         {{ $t('products:allProducts') }}
       </v-btn>
     </v-bottom-navigation>
@@ -315,6 +315,7 @@ import BuyGroupOrderService from "@/service/BuyGroupOrderService";
 import MemberOrdersQuantity from "@/MemberOrdersQuantity";
 import PageWrap from '@/components/PageWrap'
 import {defineAsyncComponent} from "vue";
+import VueScrollTo from "vue-scrollto";
 
 export default {
   name: "ProductsPage",
@@ -398,6 +399,15 @@ export default {
     this.isMemberLoading = false;
   },
   methods: {
+    goToPathAndScrollTop: function(path){
+      this.$router.push(path);
+      VueScrollTo.scrollTo(
+          document.getElementById("app"), 500, {
+            easing: 'linear',
+            offset: 60
+          }
+      );
+    },
     shouldShowSection: function (sectionName) {
       return ['ProductsPage'].concat(sectionName).indexOf(this.$route.name) > -1;
     },

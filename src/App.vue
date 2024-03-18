@@ -179,7 +179,7 @@ export default {
   }
 };
 </script>
-<style>
+<style lang="scss">
 .vh-center {
   display: flex;
   align-items: center;

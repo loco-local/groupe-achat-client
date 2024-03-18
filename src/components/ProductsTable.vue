@@ -1,6 +1,6 @@
 <template>
   <div :style="minHeightStyle">
-    <v-data-table
+    <v-data-table-virtual
         :headers="headers"
         :items="filteredProducts"
         :options="tableOptions"
@@ -23,10 +23,9 @@
           </v-card-title>
           <v-card-text>
             <v-chip-group
-                v-model="chosenCategories"
+                v-model="chosenCategory"
                 color="primary"
                 column
-                multiple
             >
               <v-chip
                   v-for="category in categories"
@@ -244,7 +243,7 @@
       <template v-slot:footer>
         <slot name="footer"></slot>
       </template>
-    </v-data-table>
+    </v-data-table-virtual>
     <v-snackbar
         v-model="quantityUpdateSnackbar"
         location="top"
@@ -662,17 +661,17 @@ export default {
       inputFormat: "",
       productFormat: "",
       searchElementId: "search-" + Math.random(),
-      chosenCategories: [],
+      chosenCategory: undefined,
       minHeightStyle: this.preventSearchFlickr ? "min-height: 1000px;" : ""
     }
   },
   computed: {
     filteredProducts: function () {
-      if (this.chosenCategories.length === 0) {
+      if (this.chosenCategory === undefined) {
         return this.products;
       }
       return this.products.filter((product) => {
-        return this.chosenCategories.indexOf(product.category) > -1;
+        return this.chosenCategory === product.category;
       });
     },
     categories: function () {
