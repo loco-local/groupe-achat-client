@@ -55,6 +55,7 @@
           <ProductsTable
               :products="productsToDivide[productId]"
               :hide-search="true"
+              :hideCategoriesFilter="true"
               :preventSearchFlickr="false"
               :show-person-name="true"
               :canChangeQuantity="true"
@@ -64,17 +65,19 @@
               :showMemberId="true"
               @quantityUpdate="updateOrderQuantity"
           >
-            <div slot="footer" class="d-inline-block">
-              <v-select
-                  :items="membersWhoOrdered"
-                  item-title="fullnameAndId"
-                  item-value="memberId"
-                  :label="$t('divide:addMember')"
-                  return-object
-                  class="ml-2 mb-2"
-                  @update:model-value="addMemberToProduct($event, productsToDivide[productId], productId)"
-              ></v-select>
-            </div>
+            <template v-slot:footer>
+              <div class="d-inline-block">
+                <v-select
+                    :items="membersWhoOrdered"
+                    item-title="fullnameAndId"
+                    item-value="memberId"
+                    :label="$t('divide:addMember')"
+                    return-object
+                    class="ml-2 mb-2"
+                    @update:model-value="addMemberToProduct($event, productsToDivide[productId], productId)"
+                ></v-select>
+              </div>
+            </template>
           </ProductsTable>
         </v-card-text>
       </v-card>

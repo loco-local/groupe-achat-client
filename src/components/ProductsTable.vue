@@ -246,7 +246,7 @@
       <template v-slot:item.edit="{ item }" v-if="showEditButton">
         <v-btn icon="edit" class="mx-0" @click="$emit('modify', item)" variant="text"></v-btn>
       </template>
-      <template v-slot:footer>
+      <template v-slot:bottom>
         <slot name="footer"></slot>
       </template>
     </v-data-table-virtual>
