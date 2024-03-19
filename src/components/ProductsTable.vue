@@ -38,7 +38,7 @@
                         v-for="category in categories"
                         :key="category"
                         :value="category"
-                        variant="outlined"
+                        label
                     >
                       {{ category }}
                     </v-chip>
@@ -655,7 +655,7 @@ export default {
       searchElementId: "search-" + Math.random(),
       chosenCategory: undefined,
       minHeightStyle: this.preventSearchFlickr ? "min-height: 1000px;" : "",
-      categoriesPanel: 'categories',
+      categoriesPanel: 'categories'
     }
   },
   mounted: function () {

@@ -60,19 +60,6 @@
           {{ $t('products:noResults') }}
         </v-sheet>
       </v-col>
-      <v-row class="vh-center mt-6" v-if="!isAdminModificationFlow && !isLoading">
-        <v-col cols="12" lg="8" xl="6">
-          <v-toolbar color="transparent" class="elevation-0">
-            <v-spacer></v-spacer>
-            <!--            -->
-            <v-btn variant="text" size="small" @click.prevent="goToShowAllSections()"
-                   :disabled="allSectionsRoutePath === $route.path">
-              {{ $t('products:allSections') }}
-            </v-btn>
-            <v-spacer></v-spacer>
-          </v-toolbar>
-        </v-col>
-      </v-row>
       <v-col cols="12" v-if="memberId !== null && !isLoading && (!relevantOrder || relevantOrder.status !== 'CURRENT')"
              class="mt-8">
         <v-alert class="text-body-1 text-center"
@@ -308,6 +295,13 @@
       <v-btn variant="text" @click.prevent="goToPathAndScrollTop(allProductsRoutePath)" :disabled="allProductsRoutePath === $route.path">
         {{ $t('products:allProducts') }}
       </v-btn>
+      <v-divider vertical></v-divider>
+      <v-btn variant="text" size="small" @click.prevent="goToShowAllSections()"
+             :disabled="allSectionsRoutePath === $route.path"
+             v-if="$vuetify.display.mdAndUp"
+      >
+        {{ $t('products:allSections') }}
+      </v-btn>
     </v-bottom-navigation>
   </PageWrap>
 </template>
@@ -347,7 +341,7 @@ export default {
       tipsNoConfirmation: "Pas de confirmation",
       tipsShare: "Partage",
       tipsQuantities: "Saisie des quantités",
-      allSections: "Toutes les sections",
+      allSections: "Tout",
       summary: "Votre commande",
       summaryInfo1: "À la fin de la commande en cours, ces produits seront commandés pour vous.",
       toDivide: "À diviser",
