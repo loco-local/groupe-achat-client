@@ -16,7 +16,7 @@
         :class="{
           'pa-0' : $vuetify.display.smAndDown
         }"
-        items-per-page="50"
+        :items-per-page="nbItemsPerPage"
     >
       <template v-slot:top>
         <v-row v-if="!hideCategoriesFilter" class="mb-8">
@@ -266,6 +266,7 @@
       <template v-slot:body.append>
         <slot name="footer"></slot>
       </template>
+      <template v-slot:bottom v-if="filteredProducts.length < nbItemsPerPage"></template>
     </v-data-table>
     <v-snackbar
         v-model="quantityUpdateSnackbar"
@@ -655,7 +656,8 @@ export default {
       searchElementId: "search-" + Math.random(),
       chosenCategory: undefined,
       minHeightStyle: this.preventSearchFlickr ? "min-height: 1000px;" : "",
-      categoriesPanel: 'categories'
+      categoriesPanel: 'categories',
+      nbItemsPerPage: 50
     }
   },
   mounted: function () {

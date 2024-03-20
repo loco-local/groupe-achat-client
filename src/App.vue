@@ -11,11 +11,14 @@
               cover
               :src="require('@/assets/logo-loco-horizontal-initiale.png')"
               transition="scale-transition"
-              width="40"
+              :width="logoWidth"
           />
         </router-link>
       </div>
-      <v-toolbar-title class="text-h5 pt-2 pb-2 ml-2">
+      <v-toolbar-title class="pt-2 pb-2" :class="{
+        'text-subtitle-1 ml-0' : $vuetify.display.smAndDown,
+        'text-h5 ml-2': $vuetify.display.mdAndUp
+      }">
         <router-link to="/" style="text-decoration: none; color: inherit;">
           Groupe d'achat
         </router-link>
@@ -147,10 +150,14 @@ export default {
     I18n.i18next.addResources("en", "app", text);
     return {
       isLoadingFlow: false,
-      loadingFlows: LoadingFlow.loadingFlows
+      loadingFlows: LoadingFlow.loadingFlows,
+      logoWidth: 40
     };
   },
   mounted: async function () {
+    if(this.$vuetify.display.smAndDown){
+      this.logoWidth = 25;
+    }
     if (this.$store.state.user !== null) {
       const member = await MemberService.getForId(this.$store.state.user.id);
       if (member === false) {
