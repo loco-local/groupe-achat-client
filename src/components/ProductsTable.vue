@@ -11,7 +11,7 @@
         :loading-text="$t('productTable:loadingText')"
         :show-select="showSelect"
         v-model="selected"
-        :search="search"
+        :search="searchTextConfirmed"
         :custom-filter="searchIgnoreAccents"
         :class="{
           'pa-0' : $vuetify.display.smAndDown
@@ -48,23 +48,34 @@
             </v-expansion-panels>
           </v-col>
         </v-row>
-        <v-row class="vh-center pb-0" v-if="!hideSearch">
-          <v-col cols="12" lg="3">
-            <v-text-field
-                prepend-inner-icon="search"
-                label="Recherche"
-                single-line
-                hide-details
-                v-model="search"
-                class="mx-4 mb-6"
-                clearable
-                :id="searchElementId"
-                variant="outlined"
-                rounded
-                bg-color="primary"
-            ></v-text-field>
-          </v-col>
-        </v-row>
+        <div v-if="!hideSearch">
+          <v-row class="vh-center">
+            <v-col cols="12" lg="3">
+              <v-text-field
+                  prepend-inner-icon="search"
+                  :label="$t('productTable:searchPlaceholder')"
+                  single-line
+                  hide-details
+                  v-model="searchText"
+                  class="mx-4"
+                  clearable
+                  :id="searchElementId"
+                  variant="outlined"
+                  rounded
+                  bg-color="primary"
+                  @keyup.enter="applySearch"
+                  @click:clear="applySearch"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row class="vh-center mb-6">
+            <v-col cols="12" lg="3" class="vh-center">
+              <v-btn color="primary" @click="applySearch" prepend-icon="search">
+                {{$t('productTable:search')}}
+              </v-btn>
+            </v-col>
+          </v-row>
+        </div>
         <v-row class="mb-8 pt-0 mt-0" v-if="showDownload">
           <v-col cols="12" class="text-right mt-0 pt-0">
             <v-spacer></v-spacer>
@@ -338,7 +349,6 @@ import ProductService from "@/service/ProductService";
 import Product from "@/Product";
 import QuantityInterpreter from "@/QuantityInterpreter";
 import OrderItem from "@/OrderItem";
-import VueScrollTo from 'vue-scrollto'
 import BuildUniquePropertySetsInProducts from "@/BuildUniquePropertySetsInProducts";
 import Search from "@/Search";
 import OrderToCsv from "@/OrderToCsv";
@@ -467,7 +477,9 @@ export default {
       wrongFormat1: "Le format entré",
       wrongFormat2: "ne correspond pas au format du produit",
       categoriesFilter: "Catégories",
-      displayAllIfNoCategory: "Tous les produits s'affichent si rien n'est sélectionné"
+      displayAllIfNoCategory: "Tous les produits s'affichent si rien n'est sélectionné",
+      searchPlaceholder:"Produit",
+      search:"Recherche"
     };
     I18n.i18next.addResources("fr", "productTable", text);
     I18n.i18next.addResources("en", "productTable", text);
@@ -644,7 +656,8 @@ export default {
     }
     return {
       selected: [],
-      search: null,
+      searchText: null,
+      searchTextConfirmed: null,
       tableOptions: tableOptions,
       headers: headers,
       showEditButton: new Boolean(this.$attrs && this.$attrs.onModify).valueOf(),
@@ -695,17 +708,11 @@ export default {
     }
   },
   methods: {
+    applySearch : function(){
+      this.searchTextConfirmed = this.searchText
+    },
     downloadAsCsv: function () {
       OrderToCsv.exportForOnlyItems(this.filteredProducts)
-    },
-    searchItem: function (item) {
-      this.search = item.description === undefined ? item.name : item.description;
-      VueScrollTo.scrollTo(
-          document.getElementById(this.searchElementId), 500, {
-            easing: 'linear',
-            offset: 60
-          }
-      );
     },
     searchIgnoreAccents(value, search) {
       return Search.matches(value, search);

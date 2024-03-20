@@ -87,10 +87,10 @@
               <v-card-title>
                 {{ $t('products:summary') }}
               </v-card-title>
-              <v-card-subtitle class="font-weight-bold">
+              <v-card-text class="font-weight-bold text-grey-darken-1">
                 {{ $t('products:summaryInfo1') }}
-              </v-card-subtitle>
-              <v-card-subtitle class="font-weight-bold">
+              </v-card-text>
+              <v-card-subtitle class="font-weight-bold text-h6">
                 <span class="">{{ $t('total') }} : </span>
                 {{ $filters.currency(total) }}
               </v-card-subtitle>
