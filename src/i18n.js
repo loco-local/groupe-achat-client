@@ -69,7 +69,8 @@ export default {
                         download: "Télécharger",
                         mustBeLowerOrEqualTo: "Doit être plus petit ou égal à",
                         mustBeHigherOrEqualTo: "Doit être égal ou plus grand que",
-                        so: "Donc"
+                        so: "Donc",
+                        at: "at"
                     }
                 },
                 fr: {
@@ -126,7 +127,8 @@ export default {
                         download: "Télécharger",
                         mustBeLowerOrEqualTo: "Doit être plus petit ou égal à",
                         mustBeHigherOrEqualTo: "Doit être égal ou plus grand que",
-                        so: "Donc"
+                        so: "Donc",
+                        at: "à"
                     }
                 }
             }

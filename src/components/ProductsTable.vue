@@ -71,7 +71,7 @@
           <v-row class="vh-center mb-6">
             <v-col cols="12" lg="3" class="vh-center">
               <v-btn color="primary" @click="applySearch" prepend-icon="search">
-                {{$t('productTable:search')}}
+                {{ $t('productTable:search') }}
               </v-btn>
             </v-col>
           </v-row>
@@ -90,13 +90,13 @@
         </v-card-title>
       </template>
       <template v-slot:header.expectedUnitPriceAfterRebate="{ column }">
-        <strong>{{ column.title}}</strong>
+        <strong>{{ column.title }}</strong>
       </template>
       <template v-slot:header.expectedTotalAfterRebateWithTaxes="{ column }">
-        <strong>{{ column.title}}</strong>
+        <strong>{{ column.title }}</strong>
       </template>
       <template v-slot:header.totalAfterRebateWithTaxes="{ column }">
-        <strong>{{ column.title}}</strong>
+        <strong>{{ column.title }}</strong>
       </template>
       <template v-slot:item.expectedQuantity="{ item }">
         <div v-if="showDecimalQuantityNotFractions">
@@ -275,6 +275,40 @@
         <v-btn icon="edit" class="mx-0" @click="$emit('modify', item)" variant="text"></v-btn>
       </template>
       <template v-slot:body.append>
+        <td :colspan="headers.length - 1" v-if="totals !== null">
+          <v-row class="text-right mb-4">
+            <v-col cols="12">
+              <v-row>
+                <v-col cols="8"></v-col>
+                <v-col cols="4">
+                  <v-divider></v-divider>
+                </v-col>
+              </v-row>
+              <v-row class="justify-end text-body-1">
+                <v-col class="d-flex justify-end">{{ $t("productTable:subtotal") }}</v-col>
+                <v-col cols="1">{{ $filters.currency(totals.subTotal) }}</v-col>
+              </v-row>
+              <v-row class="">
+                <v-col class="d-flex justify-end">TPS</v-col>
+                <v-col cols="1">{{ $filters.currency(totals.tps) }}</v-col>
+              </v-row>
+              <v-row class="">
+                <v-col class="d-flex justify-end">TVQ</v-col>
+                <v-col cols="1">{{ $filters.currency(totals.tvq) }}</v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="10"></v-col>
+                <v-col cols="2" class="d-flex justify-end">
+                  <v-divider></v-divider>
+                </v-col>
+              </v-row>
+              <v-row class="text-h6">
+                <v-col class="d-flex justify-end">Total</v-col>
+                <v-col cols="1">{{ $filters.currency(totals.total) }}</v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+        </td>
         <slot name="footer"></slot>
       </template>
       <template v-slot:bottom v-if="filteredProducts.length < nbItemsPerPage"></template>
@@ -462,6 +496,10 @@ export default {
     showDownload: {
       type: Boolean,
       default: false
+    },
+    totals: {
+      type: Object,
+      default: null
     }
   },
   data: function () {
@@ -478,8 +516,9 @@ export default {
       wrongFormat2: "ne correspond pas au format du produit",
       categoriesFilter: "Catégories",
       displayAllIfNoCategory: "Tous les produits s'affichent si rien n'est sélectionné",
-      searchPlaceholder:"Produit",
-      search:"Recherche"
+      searchPlaceholder: "Produit",
+      search: "Recherche",
+      subtotal: "Sous-total"
     };
     I18n.i18next.addResources("fr", "productTable", text);
     I18n.i18next.addResources("en", "productTable", text);
@@ -708,7 +747,7 @@ export default {
     }
   },
   methods: {
-    applySearch : function(){
+    applySearch: function () {
       this.searchTextConfirmed = this.searchText
     },
     downloadAsCsv: function () {

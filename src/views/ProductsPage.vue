@@ -79,22 +79,25 @@
           'pa-0' : $vuetify.display.smAndDown
         }">
             <v-card
+                flat
                 v-if="shouldShowSection('ProductsPageYourOrder')"
                 :class="{
           'pa-0' : $vuetify.display.smAndDown
         }"
             >
-              <v-card-title>
-                {{ $t('products:summary') }}
+              <v-card-title class="d-flex justify-space-between align-center">
+                <div class="text-h5 text-medium-emphasis ps-2">
+                  {{ $t('products:summary') }}
+                </div>
               </v-card-title>
-              <v-card-text class="font-weight-bold text-grey-darken-1">
+              <v-card-text class="font-weight-bold text-grey-darken-1 pt-0 text-body-1 ml-2" v-if="relevantOrder">
                 {{ $t('products:summaryInfo1') }}
+                {{ $filters.dayDate(relevantOrder.endDate)}}
+                {{ $t('at') }}
+                23h59.
               </v-card-text>
-              <v-card-subtitle class="font-weight-bold text-h6">
-                <span class="">{{ $t('total') }} : </span>
-                {{ $filters.currency(total) }}
-              </v-card-subtitle>
-              <v-card-text class="text-body-1" v-if="orderItemsAsProducts.length > 0" :class="{
+              <v-divider class="mb-2"></v-divider>
+              <v-card-text class="text-body-1 pt-0" v-if="orderItemsAsProducts.length > 0" :class="{
           'pa-0' : $vuetify.display.smAndDown
         }">
                 <ProductsTable
@@ -115,6 +118,7 @@
                     :showAllMembersQuantity="showAllMembersQuantity"
                     @quantityUpdate="updateOrderQuantity"
                     ref="summaryProductsTable"
+                    :totals="orderTotals"
                 ></ProductsTable>
               </v-card-text>
               <v-card-text v-if="orderItems.length === 0 && !isLoading">
@@ -281,18 +285,21 @@
       </v-card>
     </v-dialog>
     <v-bottom-navigation bg-color="primary" v-if="!isLoading">
-<!--      <v-btn variant="text" @click="tipsDialog=true" >-->
-<!--        {{ $t('products:tips') }}-->
-<!--      </v-btn>-->
-      <v-btn variant="text" @click.prevent="goToPathAndScrollTop(yourOrderRoutePath)" :disabled="yourOrderRoutePath === $route.path">
+      <!--      <v-btn variant="text" @click="tipsDialog=true" >-->
+      <!--        {{ $t('products:tips') }}-->
+      <!--      </v-btn>-->
+      <v-btn variant="text" @click.prevent="goToPathAndScrollTop(yourOrderRoutePath)"
+             :disabled="yourOrderRoutePath === $route.path">
         {{ $t('products:summary') }}
       </v-btn>
       <v-divider vertical></v-divider>
-      <v-btn variant="text" @click.prevent="goToPathAndScrollTop(toDivideRoutePath)" :disabled="toDivideRoutePath === $route.path">
+      <v-btn variant="text" @click.prevent="goToPathAndScrollTop(toDivideRoutePath)"
+             :disabled="toDivideRoutePath === $route.path">
         {{ $t('products:toDivide') }}
       </v-btn>
       <v-divider vertical></v-divider>
-      <v-btn variant="text" @click.prevent="goToPathAndScrollTop(allProductsRoutePath)" :disabled="allProductsRoutePath === $route.path">
+      <v-btn variant="text" @click.prevent="goToPathAndScrollTop(allProductsRoutePath)"
+             :disabled="allProductsRoutePath === $route.path">
         {{ $t('products:allProducts') }}
       </v-btn>
       <v-divider vertical></v-divider>
@@ -343,7 +350,7 @@ export default {
       tipsQuantities: "Saisie des quantités",
       allSections: "Tout",
       summary: "Votre commande",
-      summaryInfo1: "À la fin de la commande en cours, ces produits seront commandés pour vous.",
+      summaryInfo1: "Ces produits seront commandés automatiquement pour vous, le",
       toDivide: "À diviser",
       noOrderItems: "Pas encore de produits commandés",
       noProductsToDivide: "Pas de produits à diviser",
@@ -372,7 +379,7 @@ export default {
       hasExpectedQuantity: false,
       isAdminModificationFlow: false,
       showAllMembersQuantity: true,
-      total: 0.0,
+      orderTotals: null,
       relevantOrder: null,
       quantityTipDialog: false,
       tipsDialog: false,
@@ -402,7 +409,7 @@ export default {
     this.isMemberLoading = false;
   },
   methods: {
-    goToPathAndScrollTop: function(path){
+    goToPathAndScrollTop: function (path) {
       this.$router.push(path);
       VueScrollTo.scrollTo(
           document.getElementById("app"), 500, {
@@ -438,12 +445,23 @@ export default {
       this.$refs.productsTable.searchItem(item);
     },
     rebuildTotal: function (orderItems) {
-      this.total = orderItems.reduce((total, orderItem) => {
+      this.orderTotals = orderItems.reduce((totals, orderItem) => {
         let orderItemTotal = (orderItem.totalAfterRebateWithTaxes === null || orderItem.totalAfterRebateWithTaxes === undefined) ?
             orderItem.expectedTotalAfterRebateWithTaxes : orderItem.totalAfterRebateWithTaxes;
         orderItem.total = orderItemTotal = parseFloat(orderItemTotal);
-        return parseFloat((orderItemTotal || 0.0) + total);
-      }, 0)
+        let orderItemTotalBeforeTaxes = (orderItem.totalAfterRebate === null || orderItem.totalAfterRebate === undefined) ?
+            orderItem.expectedTotalAfterRebate : orderItem.totalAfterRebate;
+        totals.total = parseFloat((orderItemTotal || 0.0) + totals.total);
+        totals.subTotal = parseFloat((orderItemTotalBeforeTaxes || 0.0) + totals.subTotal);
+        totals.tps = parseFloat((orderItem.tps || 0.0) + totals.tps);
+        totals.tvq = parseFloat((orderItem.tvq || 0.0) + totals.tvq);
+        return totals;
+      }, {
+        subTotal: 0.0,
+        tps: 0.0,
+        tvq: 0.0,
+        total: 0.0,
+      })
     },
     setBuyGroup: async function (buyGroup, latestOrder) {
       this.relevantOrder = buyGroup.relevantOrder;
