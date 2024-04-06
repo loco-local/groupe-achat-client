@@ -281,7 +281,7 @@
       </template>
       <template v-slot:body.append>
         <td :colspan="headers.length - 1" v-if="totals !== null">
-          <v-row class="text-right mb-4">
+          <v-row class="text-left mb-4">
             <v-col cols="12">
               <v-row>
                 <v-col cols="8"></v-col>
@@ -289,27 +289,30 @@
                   <v-divider></v-divider>
                 </v-col>
               </v-row>
-              <v-row class="justify-end text-body-1">
-                <v-col class="d-flex justify-end">{{ $t("productTable:subtotal") }}</v-col>
-                <v-col cols="1">{{ $filters.currency(totals.subTotal) }}</v-col>
+              <v-row class="text-body-1">
+                <v-col cols="1" class="ml-2">{{ $t("productTable:subtotal") }}</v-col>
+                <v-col cols="2">{{ $filters.currency(totals.subTotal) }}</v-col>
               </v-row>
               <v-row class="">
-                <v-col class="d-flex justify-end">TPS</v-col>
-                <v-col cols="1">{{ $filters.currency(totals.tps) }}</v-col>
+                <v-col cols="1" class="ml-2">TPS</v-col>
+                <v-col cols="2">{{ $filters.currency(totals.tps) }}</v-col>
               </v-row>
               <v-row class="">
-                <v-col class="d-flex justify-end">TVQ</v-col>
-                <v-col cols="1">{{ $filters.currency(totals.tvq) }}</v-col>
+                <v-col cols="1" class="ml-2">TVQ</v-col>
+                <v-col cols="2">{{ $filters.currency(totals.tvq) }}</v-col>
               </v-row>
               <v-row>
-                <v-col cols="10"></v-col>
-                <v-col cols="2" class="d-flex justify-end">
-                  <v-divider></v-divider>
+                <v-col cols="2" class="">
+                  <v-divider class="ml-2"></v-divider>
                 </v-col>
               </v-row>
               <v-row class="text-h6">
-                <v-col class="d-flex justify-end">Total</v-col>
-                <v-col cols="1">{{ $filters.currency(totals.total) }}</v-col>
+                <v-col cols="12" class="ml-2">
+                  Total
+                  <span class="ml-4">
+                    {{ $filters.currency(totals.total) }}
+                  </span>
+                </v-col>
               </v-row>
             </v-col>
           </v-row>
@@ -505,6 +508,18 @@ export default {
     totals: {
       type: Object,
       default: null
+    },
+    hideInternalCode:{
+      type:Boolean,
+      default:false
+    },
+    hideMaker:{
+      type:Boolean,
+      default:false
+    },
+    hideProvider:{
+      type:Boolean,
+      default:false
     }
   },
   data: function () {
@@ -652,16 +667,19 @@ export default {
         title: this.$t('product:internalCode'),
         value: 'internalCode',
         align: 'start',
+        show:!this.hideInternalCode
       },
       {
         title: this.$t('product:maker'),
         value: 'maker',
         align: 'start',
+        show: !this.hideMaker
       },
       {
         title: this.$t('product:provider'),
         value: 'provider',
         align: 'start',
+        show: !this.hideProvider
       },
       {
         title: this.$t('product:tps'),
