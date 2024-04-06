@@ -92,6 +92,9 @@
       <template v-slot:header.expectedUnitPriceAfterRebate="{ column }">
         <strong>{{ column.title }}</strong>
       </template>
+      <template v-slot:header.unitPrice="{ column }">
+        <strong>{{ column.title }}</strong>
+      </template>
       <template v-slot:header.expectedTotalAfterRebateWithTaxes="{ column }">
         <strong>{{ column.title }}</strong>
       </template>
@@ -222,7 +225,9 @@
         </strong>
       </template>
       <template v-slot:item.unitPrice="{ item }">
-        {{ $filters.currency(item.unitPrice) }}
+        <strong>
+          {{ $filters.currency(item.unitPrice) }}
+        </strong>
       </template>
       <template v-slot:item.expectedCostUnitPrice="{ item }">
         {{ $filters.currency(item.expectedCostUnitPrice) }}
@@ -237,7 +242,7 @@
             v-if="canEditCostUnitPrice"
             suffix="$"
             hide-details
-            style="max-width:125px;"
+            style="width:115px;"
         ></v-text-field>
         <span v-else>{{ $filters.currency(item.costUnitPrice) }}</span>
       </template>
@@ -518,23 +523,38 @@ export default {
       displayAllIfNoCategory: "Tous les produits s'affichent si rien n'est sélectionné",
       searchPlaceholder: "Produit",
       search: "Recherche",
-      subtotal: "Sous-total"
+      subtotal: "Sous-total",
+      quantity: "Quantité",
+      expectedFemale: "Prévue",
+      finalFemale: "Finale",
+      expected: "Prévu",
+      final: "Final",
+      price: "Prix",
+      total: "Total",
+      costPrice: "Prix Coûtant"
     };
     I18n.i18next.addResources("fr", "productTable", text);
     I18n.i18next.addResources("en", "productTable", text);
     let headers = [
       {
-        title: this.$t('product:expectedQuantityShort'),
-        value: 'expectedQuantity',
-        align: 'start',
-        sortable: true,
-        show: this.hasExpectedQuantity
-      },
-      {
-        title: this.$t('product:qtyShortFinal'),
-        value: 'quantity',
-        align: 'start',
-        show: this.hasQuantity
+        title: this.$t('productTable:quantity'),
+        align: 'center',
+        children: [
+          {
+            title: this.$t('productTable:expectedFemale'),
+            titleWhenNoParent: this.$t('product:expectedQuantityShort'),
+            value: 'expectedQuantity',
+            align: 'center',
+            show: this.hasExpectedQuantity
+          },
+          {
+            title: this.$t('productTable:finalFemale'),
+            titleWhenNoParent: this.$t('product:qtyShortFinal'),
+            value: 'quantity',
+            align: 'center',
+            show: this.hasQuantity
+          },
+        ]
       },
       {
         title: this.$t('product:name'),
@@ -550,46 +570,71 @@ export default {
         }
       },
       {
-        title: this.$t('product:costUnitPrice'),
-        value: 'costUnitPrice',
-        align: 'start',
-        show: this.showCostUnitPrice
+        title: this.$t('productTable:costPrice'),
+        align: 'center',
+        children: [
+          {
+            title: this.$t('productTable:expected'),
+            titleWhenNoParent: this.$t('product:expectedCostUnitPrice'),
+            value: 'expectedCostUnitPrice',
+            align: 'center',
+            show: this.showExpectedCostUnitPrice
+          },
+          {
+            title: this.$t('productTable:final'),
+            titleWhenNoParent: this.$t('product:costUnitPrice'),
+            value: 'costUnitPrice',
+            align: 'center',
+            show: this.showCostUnitPrice
+          },
+        ]
       },
       {
-        title: this.$t('product:totalFinal'),
-        value: 'totalAfterRebateWithTaxes',
-        align: 'start',
-        show: this.hasQuantity && !this.onlyShowCostTotal
+        title: this.$t('productTable:price'),
+        align: 'center',
+        children: [
+          {
+            title: this.$t('productTable:expected'),
+            titleWhenNoParent: this.$t('product:expectedUnitPrice'),
+            value: 'expectedUnitPrice',
+            align: 'center',
+            show: !this.hideExpectedUnitPrice
+          },
+          {
+            title: this.$t('productTable:expected'),
+            titleWhenNoParent: this.$t('product:expectedUnitPrice'),
+            value: 'expectedUnitPriceAfterRebate',
+            align: 'center',
+            show: this.showExpectedUnitPriceAfterRebate
+          },
+          {
+            title: this.$t('productTable:final'),
+            titleWhenNoParent: this.$t('product:unitPrice'),
+            value: 'unitPrice',
+            align: 'center',
+            show: this.showUnitPrice
+          },
+        ]
       },
       {
-        title: this.$t('product:expectedUnitPrice'),
-        value: 'expectedUnitPrice',
-        align: 'start',
-        show: !this.hideExpectedUnitPrice
-      },
-      {
-        title: this.$t('product:expectedUnitPrice'),
-        value: 'expectedUnitPriceAfterRebate',
-        align: 'start',
-        show: this.showExpectedUnitPriceAfterRebate
-      },
-      {
-        title: this.$t('product:expectedTotal'),
-        value: 'expectedTotalAfterRebateWithTaxes',
-        align: 'start',
-        show: this.hasExpectedQuantity && !this.onlyShowCostTotal
-      },
-      {
-        title: this.$t('product:unitPrice'),
-        value: 'unitPrice',
-        align: 'start',
-        show: this.showUnitPrice
-      },
-      {
-        title: this.$t('product:expectedCostUnitPrice'),
-        value: 'expectedCostUnitPrice',
-        align: 'start',
-        show: this.showExpectedCostUnitPrice
+        title: this.$t('productTable:total'),
+        align: 'center',
+        children: [
+          {
+            title: this.$t('productTable:expected'),
+            titleWhenNoParent: this.$t('product:expectedTotal'),
+            value: 'expectedTotalAfterRebateWithTaxes',
+            align: 'center',
+            show: this.hasExpectedQuantity && !this.onlyShowCostTotal
+          },
+          {
+            title: this.$t('productTable:final'),
+            titleWhenNoParent: this.$t('product:totalFinal'),
+            value: 'totalAfterRebateWithTaxes',
+            align: 'center',
+            show: this.hasQuantity && !this.onlyShowCostTotal
+          },
+        ]
       },
       {
         title: this.$t('product:remainingQtyToDivide'),
@@ -682,8 +727,26 @@ export default {
         show: this.showPersonName
       }
     ]
-    headers = headers.filter((header) => {
+    headers = headers.map((header) => {
+      if (header.children) {
+        header.children = header.children.filter((subheader) => {
+          return subheader.show === undefined || subheader.show
+        })
+      }
+      return header;
+    }).filter((header) => {
+      if (header.children && header.children.length === 0) {
+        return false;
+      }
       return header.show === undefined || header.show
+    }).map((header) => {
+      if (header.children && header.children.length === 1) {
+        const childHeader = header.children[0];
+        header.title = childHeader.titleWhenNoParent;
+        header.value = childHeader.value;
+        delete header.children;
+      }
+      return header;
     })
     const tableOptions = {
       sortBy: ['name'],
