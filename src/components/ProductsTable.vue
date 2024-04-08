@@ -110,6 +110,7 @@
               v-model="item.expectedQuantityInput"
               :placeholder="$t('quantityShort')"
               @keydown.enter.prevent="changeExpectedQuantity($event, item)"
+              @blur="verifyConfirmQuantityChange($event, item)"
               v-if="canChangeExpectedQuantity"
               style="width:125px;"
               :hint="item.expectedQuantityHint"
@@ -405,6 +406,35 @@
         </v-btn>
       </template>
     </v-snackbar>
+    <v-dialog
+        v-model="saveQuantityDialog"
+        max-width="700px"
+    >
+      <v-card>
+        <v-card-title class="d-flex justify-space-between align-center">
+          <div class="text-h5 text-medium-emphasis ps-2">
+            {{ $t('productTable:confirmQuantityChange') }}
+          </div>
+          <v-icon icon="close" @click="setPreviousQuantity" variant="text"></v-icon>
+        </v-card-title>
+        <v-divider class="mb-4"></v-divider>
+        <v-card-text>
+          {{ itemQuantityChanged.name }}
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="primary"
+                 @click="confirmQuantityChange"
+                 :loading="confirmQuantityChangeLoading"
+          >
+            {{ $t('productTable:yesIwant') }} {{ modifiedQuantityToConfirm }}
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn @click="setPreviousQuantity">
+            {{ $t('productTable:noKeep') }} {{ previousQuantityToConfirm }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -571,7 +601,11 @@ export default {
       final: "Final",
       price: "Prix",
       total: "Total",
-      costPrice: "Prix Coûtant"
+      costPrice: "Prix Coûtant",
+      confirmQuantityChange: "Quantité non sauvegardée",
+      yesIwant: "Oui j'en veux",
+      noKeep: "Non, garder",
+      modifiedQuantityToConfirm: null
     };
     I18n.i18next.addResources("fr", "productTable", text);
     I18n.i18next.addResources("en", "productTable", text);
@@ -816,7 +850,13 @@ export default {
       chosenCategory: undefined,
       minHeightStyle: this.preventSearchFlickr ? "min-height: 1000px;" : "",
       categoriesPanel: 'categories',
-      nbItemsPerPage: 50
+      nbItemsPerPage: 50,
+      saveQuantityDialog: false,
+      itemQuantityChanged: null,
+      quantityChangedBlurEvent: null,
+      confirmQuantityChangeLoading: false,
+      previousQuantityToConfirm: null,
+      quantityChangedIsForExpected: null
     }
   },
   mounted: function () {
@@ -854,6 +894,36 @@ export default {
     }
   },
   methods: {
+    verifyConfirmExpectedQuantityChange: function (event, item) {
+      this.verifyConfirmQuantityChange(event, item, true)
+    },
+    verifyConfirmFinalQuantityChange: function (event, item) {
+      this.verifyConfirmQuantityChange(event, item, false)
+    },
+    verifyConfirmQuantityChange: function (event, item, isForExpected) {
+      const hasQuantityChanged = this.hasQuantityChanged(event, item, isForExpected);
+      if (!hasQuantityChanged) {
+        return false;
+      }
+      this.quantityChangedBlurEvent = event;
+      this.itemQuantityChanged = item;
+      this.modifiedQuantityToConfirm = event.target.value;
+      this.previousQuantityToConfirm = item.previousExpectedQuantityInput;
+      this.quantityChangedIsForExpected = isForExpected;
+      this.saveQuantityDialog = true;
+    },
+    confirmQuantityChange: async function () {
+      this.confirmQuantityChangeLoading = true;
+      const changeMethod = this.quantityChangedIsForExpected ? this.changeExpectedQuantity : this.changeQuantity;
+      await changeMethod(this.quantityChangedBlurEvent, this.itemQuantityChanged);
+      this.confirmQuantityChangeLoading = false;
+      this.saveQuantityDialog = false;
+    },
+    setPreviousQuantity: function () {
+      const quantityInputPrefix = this.quantityChangedIsForExpected ? "expected" : ""
+      this.quantityChangedBlurEvent.target.value = this.itemQuantityChanged[quantityInputPrefix + "QuantityInput"] = this.previousQuantityToConfirm;
+      this.saveQuantityDialog = false;
+    },
     applySearch: function () {
       this.searchTextConfirmed = this.searchText
     },
@@ -916,9 +986,21 @@ export default {
       } else {
         product[previousPropertyName] = product[inputPropertyName];
       }
-    }
-    ,
+    },
     _changeExpectedOrFinalQuantity: async function (event, product, isForExpected) {
+      const hasQuantityChanged = this.hasQuantityChanged(event, product, isForExpected);
+      if (!hasQuantityChanged) {
+        return false;
+      }
+      if (isForExpected) {
+        OrderItem.defineExpectedQuantityFraction(product);
+      } else {
+        OrderItem.defineQuantityFraction(product);
+      }
+      await this.$emit('quantityUpdate', product)
+      return true;
+    },
+    hasQuantityChanged: function (event, product, isForExpected) {
       const propertyName = isForExpected ? 'expectedQuantity' : 'quantity';
       const inputPropertyName = propertyName + 'Input';
       const propertyNameUpper = isForExpected ? 'ExpectedQuantity' : 'Quantity';
@@ -955,14 +1037,8 @@ export default {
       if (qty < 0) {
         return false;
       }
-      if (isForExpected) {
-        OrderItem.defineExpectedQuantityFraction(product);
-      } else {
-        OrderItem.defineQuantityFraction(product);
-      }
-      await this.$emit('quantityUpdate', product)
-    }
-    ,
+      return true;
+    },
     showQuantityChangedSuccess: async function () {
       const timeout = this.quantityUpdateSnackbar ? 500 : 0;
       this.quantityUpdateSnackbar = false;
@@ -986,8 +1062,7 @@ export default {
       setTimeout(() => {
         this.costUnitPriceUpdateSnackbar = true;
       }, timeout)
-    }
-    ,
+    },
     toggleIsAvailable: async function (product) {
       if (product.isAvailable) {
         await ProductService.makeAvailable(product.id);
