@@ -93,11 +93,10 @@
         <span class="text-body-1">
           {{ $t('divide:memberAlreadyHasProduct') }}
         </span>
-      <template v-slot:action="{ attrs }">
+      <template v-slot:actions>
         <v-btn
             color="white"
             variant="text"
-            v-bind="attrs"
             @click="memberAlreadyHasProductSnackbar = false"
         >
           {{ $t('close') }}

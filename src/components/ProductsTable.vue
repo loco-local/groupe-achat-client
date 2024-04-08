@@ -337,12 +337,29 @@
         <span class="text-body-1">
           {{ $t('productTable:quantityUpdated') }}
         </span>
-      <template v-slot:action="{ attrs }">
+      <template v-slot:actions>
         <v-btn
             color="white"
             variant="text"
-            v-bind="attrs"
             @click="quantityUpdateSnackbar = false"
+        >
+          {{ $t('close') }}
+        </v-btn>
+      </template>
+    </v-snackbar>
+    <v-snackbar
+        v-model="quantityUnchangedSnackbar"
+        location="top"
+        :timeout="7000"
+    >
+        <span class="text-body-1">
+          {{ $t('productTable:quantityUnchanged') }}
+        </span>
+      <template v-slot:actions>
+        <v-btn
+            color="white"
+            variant="text"
+            @click="quantityUnchangedSnackbar = false"
         >
           {{ $t('close') }}
         </v-btn>
@@ -356,11 +373,10 @@
         <span class="text-body-1">
           {{ $t('productTable:costUnitPriceUpdated') }}
         </span>
-      <template v-slot:action="{ attrs }">
+      <template v-slot:actions>
         <v-btn
             color="white"
             variant="text"
-            v-bind="attrs"
             @click="costUnitPriceUpdateSnackbar = false"
         >
           {{ $t('close') }}
@@ -539,6 +555,7 @@ export default {
       loadingText: "Liste de produits en chargement",
       noProducts: "Pas de produits",
       quantityUpdated: "Quantité mise à jour",
+      quantityUnchanged: "La quantité est la même et n'a pas été mise à jour.",
       costUnitPriceUpdated: "Prix coûtant mis à jour",
       wrongFormat1: "Le format entré",
       wrongFormat2: "ne correspond pas au format du produit",
@@ -790,6 +807,7 @@ export default {
       headers: headers,
       showEditButton: new Boolean(this.$attrs && this.$attrs.onModify).valueOf(),
       quantityUpdateSnackbar: false,
+      quantityUnchangedSnackbar: false,
       costUnitPriceUpdateSnackbar: false,
       wrongFormatSnackbar: false,
       inputFormat: "",
@@ -894,6 +912,7 @@ export default {
             OrderItem.defineQuantityFraction(product);
           }
         }
+        this.showQuantityUnchangedSnackbar();
       } else {
         product[previousPropertyName] = product[inputPropertyName];
       }
@@ -951,8 +970,15 @@ export default {
       setTimeout(() => {
         this.quantityUpdateSnackbar = true;
       }, timeout)
-    }
-    ,
+    },
+    showQuantityUnchangedSnackbar: async function () {
+      const timeout = this.quantityUnchangedSnackbar ? 500 : 0;
+      this.quantityUnchangedSnackbar = false;
+      await this.$nextTick();
+      setTimeout(() => {
+        this.quantityUnchangedSnackbar = true;
+      }, timeout)
+    },
     showCostUnitPriceChangedSuccess: async function () {
       const timeout = this.costUnitPriceUpdateSnackbar ? 500 : 0;
       this.costUnitPriceUpdateSnackbar = false;

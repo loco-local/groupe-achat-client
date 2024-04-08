@@ -289,11 +289,10 @@
         <span class="text-body-1">
           {{ $t('productsAdmin:internalCodeExists') }}
         </span>
-      <template v-slot:action="{ attrs }">
+      <template v-slot:actions>
         <v-btn
             color="white"
             variant="text"
-            v-bind="attrs"
             @click="internalCodeExistsSnackbar = false"
         >
           {{ $t('close') }}
@@ -313,11 +312,10 @@
             {{ createdProduct.internalCode }}
           </strong>
         </span>
-      <template v-slot:action="{ attrs }">
+      <template v-slot:actions>
         <v-btn
             color="white"
             variant="text"
-            v-bind="attrs"
             @click="productCreatedSnackbar = false"
         >
           {{ $t('close') }}
@@ -333,11 +331,10 @@
         <span class="text-body-1">
           {{ $t('productsAdmin:productUpdated') }}
         </span>
-      <template v-slot:action="{ attrs }">
+      <template v-slot:actions>
         <v-btn
             color="white"
             variant="text"
-            v-bind="attrs"
             @click="productUpdatedSnackbar = false"
         >
           {{ $t('close') }}

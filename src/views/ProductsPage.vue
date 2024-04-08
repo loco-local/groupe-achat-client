@@ -615,6 +615,8 @@ export default {
             orderItem.expectedQuantity
         )
       }
+      orderItem.tps = updatedProduct.tps = parseFloat(prices.tps)
+      orderItem.tvq = updatedProduct.tvq = parseFloat(prices.tvq)
       if (this.isAdminModificationFlow) {
         orderItem.totalAfterRebateWithTaxes = updatedProduct.totalAfterRebateWithTaxes = parseFloat(prices.totalAfterRebateWithTaxes);
         orderItem.totalAfterRebate = updatedProduct.totalAfterRebate = parseFloat(prices.totalAfterRebate);

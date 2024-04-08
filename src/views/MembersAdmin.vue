@@ -238,11 +238,10 @@
         <span class="text-body-1">
           {{ $t('members:emailsCopied') }}
         </span>
-      <template v-slot:action="{ attrs }">
+      <template v-slot:actions>
         <v-btn
             color="white"
             variant="text"
-            v-bind="attrs"
             @click="emailCopySnackbar = false"
         >
           {{ $t('close') }}
