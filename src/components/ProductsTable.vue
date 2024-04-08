@@ -109,14 +109,22 @@
           <v-text-field
               v-model="item.expectedQuantityInput"
               :placeholder="$t('quantityShort')"
-              @keydown="enterKeyDownAction($event, item, changeExpectedQuantity)"
-              @blur="changeExpectedQuantity($event, item)"
+              @keydown.enter.prevent="changeExpectedQuantity($event, item)"
               v-if="canChangeExpectedQuantity"
               style="width:125px;"
               :hint="item.expectedQuantityHint"
               :persistent-hint="true"
-              clearable
+              :clearable="false"
           >
+            <template v-slot:append-inner="{ isFocused }">
+              <v-btn
+                  @click.prevent="changeExpectedQuantity($event, item)"
+                  v-show="isFocused._value === true"
+                  icon="done"
+                  variant="text"
+                  size="x-small"
+              ></v-btn>
+            </template>
           </v-text-field>
           <div v-else>
             <span class="text-no-wrap">{{ item.expectedQuantityInput }}</span>
@@ -509,17 +517,17 @@ export default {
       type: Object,
       default: null
     },
-    hideInternalCode:{
-      type:Boolean,
-      default:false
+    hideInternalCode: {
+      type: Boolean,
+      default: false
     },
-    hideMaker:{
-      type:Boolean,
-      default:false
+    hideMaker: {
+      type: Boolean,
+      default: false
     },
-    hideProvider:{
-      type:Boolean,
-      default:false
+    hideProvider: {
+      type: Boolean,
+      default: false
     }
   },
   data: function () {
@@ -667,7 +675,7 @@ export default {
         title: this.$t('product:internalCode'),
         value: 'internalCode',
         align: 'start',
-        show:!this.hideInternalCode
+        show: !this.hideInternalCode
       },
       {
         title: this.$t('product:maker'),
@@ -867,8 +875,7 @@ export default {
           product,
           true
       );
-    }
-    ,
+    },
     _tryToChangeExpectedOrFinalQuantity: async function (event, product, isForExpected) {
       const propertyName = isForExpected ? 'expectedQuantity' : 'quantity';
       const propertyNameUpper = isForExpected ? 'ExpectedQuantity' : 'Quantity';

@@ -616,13 +616,15 @@ export default {
         )
       }
       if (this.isAdminModificationFlow) {
-        orderItem.totalAfterRebateWithTaxes = updatedProduct.totalAfterRebateWithTaxes = prices.totalAfterRebateWithTaxes;
+        orderItem.totalAfterRebateWithTaxes = updatedProduct.totalAfterRebateWithTaxes = parseFloat(prices.totalAfterRebateWithTaxes);
+        orderItem.totalAfterRebate = updatedProduct.totalAfterRebate = parseFloat(prices.totalAfterRebate);
         updatedProduct.quantity = prices.quantity;
         updatedProduct.costUnitPrice = prices.costUnitPrice;
         updatedProduct.unitPrice = prices.unitPrice;
         updatedProduct.unitPriceAfterRebate = prices.unitPriceAfterRebate;
       } else {
-        orderItem.expectedTotalAfterRebateWithTaxes = updatedProduct.expectedTotalAfterRebateWithTaxes = prices.expectedTotalAfterRebateWithTaxes;
+        orderItem.expectedTotalAfterRebateWithTaxes = updatedProduct.expectedTotalAfterRebateWithTaxes = parseFloat(prices.expectedTotalAfterRebateWithTaxes);
+        orderItem.expectedTotalAfterRebate = updatedProduct.expectedTotalAfterRebate = parseFloat(prices.expectedTotalAfterRebate);
         updatedProduct.expectedQuantity = orderItem.expectedQuantity = prices.expectedQuantity;
       }
       OrderItem.defineQuantitiesFraction(updatedProduct)
