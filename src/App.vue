@@ -155,13 +155,13 @@ export default {
     };
   },
   mounted: async function () {
-    if(this.$vuetify.display.smAndDown){
+    if (this.$vuetify.display.smAndDown) {
       this.logoWidth = 25;
     }
     if (this.$store.state.user !== null) {
       const member = await MemberService.getForId(this.$store.state.user.id);
       if (member === false) {
-        // this.logout();
+        await this.logout();
       } else if (member.status !== this.$store.state.user.status) {
         await this.$store.dispatch('setUser', member);
       }

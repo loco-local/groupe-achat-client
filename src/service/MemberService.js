@@ -4,10 +4,12 @@ import Member from "@/Member";
 const MemberService = {
     getForId: async function (memberId) {
         let errorResponseStatus;
+        let errorName;
         const response = await Service.api().get("/members/" + memberId).catch((error) => {
             errorResponseStatus = error.response.status;
+            errorName = error.response.data.errorName
         })
-        if (errorResponseStatus === 401) {
+        if (errorResponseStatus === 401 && errorName === 'needToBeAuthenticated') {
             return false;
         } else {
             return Member.format(response.data);
