@@ -5,7 +5,7 @@
       <v-card-title class="d-flex justify-space-between align-center">
         <div class="text-medium-emphasis ps-2"
              :class="{
-                  'text-h5': $vuetify.display.mdAndUp,
+                  'text-h6': $vuetify.display.mdAndUp,
                   'text-body-2 font-weight-bold': $vuetify.display.smAndDown
                }"
         >
@@ -17,10 +17,17 @@
       <v-card-text>
         <v-row class="small text-medium-emphasis ps-2">
           <v-col cols="12" class="pa-0">
-            {{ $t('product:format') }}:
             {{ itemToChangeQuantity.format }}
-            <v-divider vertical :thickness="2" color="primary" class="ml-1 mr-1"></v-divider>
-            {{ $t('product:maker') }}:
+            <v-divider vertical :thickness="2" color="primary" class="ml-1 mr-1"
+                       v-if="itemToChangeQuantity.qtyInBox > 1"></v-divider>
+            <span v-if="itemToChangeQuantity.qtyInBox > 1">
+              <strong>
+                {{ itemToChangeQuantity.qtyInBox }}x
+              </strong>
+              {{ $t('quantity:inBox') }}
+            </span>
+          </v-col>
+          <v-col cols="12" class="pl-0 pr-0 pb-0">
             {{ itemToChangeQuantity.maker }}
           </v-col>
           <v-col cols="12" class="pl-0 pr-0">
@@ -39,7 +46,7 @@
         <v-text-field
             v-if="quantityChangeIsForExpected"
             v-model="newQuantity"
-            :placeholder="$t('quantityShort')"
+            :placeholder="$t('quantity:quantity')"
             @keydown.enter.prevent="confirmQuantityChange"
             @keyup="quantityChangeKeyup"
             :hint="itemToChangeQuantityHint"
@@ -47,6 +54,7 @@
             clearable
             @click:clear="quantityClear"
             ref="changeQuantityTextField"
+            class="bigger-hint"
         ></v-text-field>
       </v-card-text>
       <v-card-text class="small">
@@ -134,7 +142,12 @@ export default {
       wrongFormat1: "Le format entré",
       wrongFormat2: "ne correspond pas au format du produit",
       sameError: "La quantité n'a pas été modifiée.",
-      otherError: ""
+      otherError: "",
+      inBox: "dans la boîte.",
+      hintNbInBox: "Aussi, pour commander, par exemple, 2 unités dans une boîte, vous pouvez écrire 2x.",
+      hintExample: 'Exemple "1", "0.5", "2,5" ou "5',
+      quantityHintPrefix: "Quantité en entier, décimale ou en",
+      quantity: "Quantity"
     }
     I18n.i18next.addResources("fr", "quantity", text);
     I18n.i18next.addResources("en", "quantity", text);
@@ -155,6 +168,7 @@ export default {
   },
   methods: {
     show: async function (item, isForExpected) {
+      this.showErrorAlert = false;
       this.itemToChangeQuantity = item;
       const quantityPropertyName = isForExpected ? "expectedQuantityInput" : "quantityInput";
       this.newQuantity = item[quantityPropertyName];
@@ -164,7 +178,11 @@ export default {
       this.quantityChangeIsForExpected = isForExpected;
       this.calculateQuantitiesAndTotalForQuantityChange();
       this.itemToChangeFormat = QuantityInterpreter.getFormat(item.format).toUpperCase();
-      this.itemToChangeQuantityHint = this.$t('productTable:quantityHintPrefix') + " " + this.itemToChangeFormat;
+      this.itemToChangeQuantityHint = this.$t('quantity:quantityHintPrefix') + " " + this.itemToChangeFormat + ". ";
+      this.itemToChangeQuantityHint += this.$t('quantity:hintExample') + " " + this.itemToChangeFormat + '". ';
+      if (this.itemToChangeQuantity.qtyInBox > 1) {
+        this.itemToChangeQuantityHint += this.$t('quantity:hintNbInBox')
+      }
       this.changeQuantityDialog = true;
       if (this.$vuetify.display.mdAndUp) {
         await this.$nextTick();

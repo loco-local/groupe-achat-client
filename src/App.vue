@@ -192,4 +192,14 @@ export default {
   align-items: center;
   justify-content: center;
 }
+.bigger-hint {
+  .v-text-field__details, .v-messages {
+    min-height: 20px;
+  }
+
+  .v-messages__message {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+}
 </style>

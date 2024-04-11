@@ -546,11 +546,7 @@ export default {
       costPrice: "Prix Coûtant",
       confirmQuantityChange: "Quantité non sauvegardée",
       yesIwant: "Oui j'en veux",
-      noKeep: "Non, garder",
-      modifiedQuantityToConfirm: null,
-      itemToChangeQuantityHint: "",
-      quantityHintPrefix: "Quantité en unité, décimale ou en",
-      itemToChangeFormat: ""
+      noKeep: "Non, garder"
     };
     I18n.i18next.addResources("fr", "productTable", text);
     I18n.i18next.addResources("en", "productTable", text);
