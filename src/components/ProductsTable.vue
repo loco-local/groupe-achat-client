@@ -147,18 +147,21 @@
         <div v-if="showDecimalQuantityNotFractions">
           <span class="text-no-wrap">{{ item.quantity.toFixed(2) }}</span>
         </div>
-        <div v-else>
-          <v-text-field
-              v-model="item.quantityInput"
-              :placeholder="$t('quantityShort')"
-              @keydown="enterKeyDownAction($event, item, changeQuantity)"
-              @blur="changeQuantity($event, item)"
-              v-if="canChangeQuantity"
-              :hint="item.quantityHint"
-              :persistent-hint="true"
-              style="width:125px;"
-              clearable
-          ></v-text-field>
+        <div v-else class="vh-center">
+          <v-btn v-if="item.quantityInput === undefined"
+                 icon="add"
+                 color="primary"
+                 variant="text"
+                 @click="enterChangeQuantityFlow(item, false)"
+          ></v-btn>
+          <v-btn
+              v-if="item.quantityInput !== undefined"
+              color="primary" rounded variant="text"
+              @click="enterChangeQuantityFlow(item, false)"
+          >
+            {{ item.quantityInput }}
+            <v-icon end>edit</v-icon>
+          </v-btn>
           <div v-else>
             <span class="text-no-wrap">{{ item.quantityInput }}</span>
             <br>
@@ -375,131 +378,7 @@
         </v-btn>
       </template>
     </v-snackbar>
-    <v-snackbar
-        v-model="wrongFormatSnackbar"
-        location="top"
-        :timeout="7000"
-    >
-        <span class="text-body-1">
-          {{ $t('productTable:wrongFormat1') }}
-          '{{ inputFormat }}'
-          {{ $t('productTable:wrongFormat2') }}
-          '{{ productFormat }}'
-        </span>
-      <template v-slot:action="{ attrs }">
-        <v-btn
-            color="white"
-            variant="text"
-            v-bind="attrs"
-            @click="wrongFormatSnackbar = false"
-        >
-          {{ $t('close') }}
-        </v-btn>
-      </template>
-    </v-snackbar>
-    <v-dialog v-model="changeQuantityDialog" v-if="changeQuantityDialog" width="600"
-              :fullscreen="$vuetify.display.smAndDown">
-      <v-card>
-        <v-card-title class="d-flex justify-space-between align-center">
-          <div class="text-medium-emphasis ps-2"
-               :class="{
-                  'text-h5': $vuetify.display.mdAndUp,
-                  'text-body-2 font-weight-bold': $vuetify.display.smAndDown
-               }"
-          >
-            {{ itemToChangeQuantity.name }}
-          </div>
-          <v-icon icon="close" @click="changeQuantityDialog = false" variant="text"></v-icon>
-        </v-card-title>
-        <v-divider class=""></v-divider>
-        <v-card-text>
-          <v-row class="small text-medium-emphasis ps-2">
-            <v-col cols="12" class="pa-0">
-              {{ $t('product:format') }}:
-              {{ itemToChangeQuantity.format }}
-              <v-divider vertical :thickness="2" color="primary" class="ml-1 mr-1"></v-divider>
-              {{ $t('product:maker') }}:
-              {{ itemToChangeQuantity.maker }}
-            </v-col>
-            <v-col cols="12" class="pl-0 pr-0">
-              <span v-if="quantityChangeIsForExpected">
-                {{ $t('product:expectedCostUnitPrice') }}:
-                {{ $filters.currency(itemToChangeQuantity.expectedUnitPriceAfterRebate) }}
-              </span>
-              <span v-else>
-                {{ $t('product:costUnitPrice') }}:
-                {{ $filters.currency(itemToChangeQuantity.unitPriceAfterRebate) }}
-              </span>
-            </v-col>
-          </v-row>
-        </v-card-text>
-        <v-card-text>
-          <v-text-field
-              v-if="quantityChangeIsForExpected"
-              v-model="newQuantity"
-              :placeholder="$t('quantityShort')"
-              @keydown.enter.prevent="confirmQuantityChange"
-              @keyup="quantityChangeKeyup"
-              :hint="itemToChangeQuantityHint"
-              :persistent-hint="true"
-              clearable
-              @click:clear="quantityClear"
-              ref="changeQuantityTextField"
-          ></v-text-field>
-        </v-card-text>
-        <v-card-text class="small">
-          <v-row>
-            <v-col cols="5" md="3" class="pt-1 pb-1">
-              {{ $t('productTable:subtotal') }}
-            </v-col>
-            <v-col cols="7" md="9" class="pt-1 pb-1">
-              {{ $filters.currency(newQuantityTotals.subTotal) }}
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="5" md="3" class="pt-1 pb-1">
-              TPS
-            </v-col>
-            <v-col cols="7" md="9" class="pt-1 pb-1">
-              {{ $filters.currency(newQuantityTotals.tps) }}
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="5" md="3" class="pt-1 pb-1">
-              TVQ
-            </v-col>
-            <v-col cols="7" md="9" class="pt-1 pb-1">
-              {{ $filters.currency(newQuantityTotals.tvq) }}
-            </v-col>
-          </v-row>
-          <v-row class="font-weight-bold">
-            <v-col cols="5" md="3" class="pt-1 pb-1">
-              <span v-if="quantityChangeIsForExpected">
-                {{ $t('product:expectedTotal') }}:
-              </span>
-              <span v-else>
-                {{ $t('product:total') }}:
-              </span>
-            </v-col>
-            <v-col cols="7" md="9" class="pt-1 pb-1">
-              {{ $filters.currency(newQuantityTotals.total) }}
-            </v-col>
-          </v-row>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn color="primary"
-                 @click="confirmQuantityChange"
-                 :loading="confirmQuantityLoading"
-          >
-            {{ $t('confirm') }} {{newQuantities.inFormatQuantity}}
-          </v-btn>
-          <v-spacer></v-spacer>
-          <v-btn @click="changeQuantityDialog = false">
-            {{ $t('cancel') }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <QuantityChangeDialog ref="quantityChangeDialog" @quantityUpdate="updateQuantity"></QuantityChangeDialog>
   </div>
 </template>
 
@@ -508,15 +387,15 @@ import ProductTranslation from "@/ProductTranslation";
 import I18n from "@/i18n";
 import ProductService from "@/service/ProductService";
 import Product from "@/Product";
-import QuantityInterpreter from "@/QuantityInterpreter";
-import OrderItem from "@/OrderItem";
 import BuildUniquePropertySetsInProducts from "@/BuildUniquePropertySetsInProducts";
 import Search from "@/Search";
 import OrderToCsv from "@/OrderToCsv";
+import QuantityChangeDialog from "@/components/ChangeQuantityDialog.vue";
 
 const ENTER_KEY_CODE = 13;
 export default {
   name: "ProductsTable",
+  components: {QuantityChangeDialog},
   props: {
     title: {
       type: String,
@@ -652,8 +531,6 @@ export default {
       quantityUpdated: "Quantité mise à jour",
       quantityUnchanged: "La quantité est la même et n'a pas été mise à jour.",
       costUnitPriceUpdated: "Prix coûtant mis à jour",
-      wrongFormat1: "Le format entré",
-      wrongFormat2: "ne correspond pas au format du produit",
       categoriesFilter: "Catégories",
       displayAllIfNoCategory: "Tous les produits s'affichent si rien n'est sélectionné",
       searchPlaceholder: "Produit",
@@ -911,22 +788,11 @@ export default {
       quantityUpdateSnackbar: false,
       quantityUnchangedSnackbar: false,
       costUnitPriceUpdateSnackbar: false,
-      wrongFormatSnackbar: false,
-      inputFormat: "",
-      productFormat: "",
       searchElementId: "search-" + Math.random(),
       chosenCategory: undefined,
       minHeightStyle: this.preventSearchFlickr ? "min-height: 1000px;" : "",
       categoriesPanel: 'categories',
-      nbItemsPerPage: 50,
-      changeQuantityDialog: false,
-      itemToChangeQuantity: null,
-      confirmQuantityLoading: false,
-      quantityChangeIsForExpected: null,
-      newQuantity: null,
-      newQuantityConversions: {},
-      newQuantityTotals: null,
-      newQuantities: {}
+      nbItemsPerPage: 50
     }
   },
   mounted: function () {
@@ -964,89 +830,11 @@ export default {
     }
   },
   methods: {
-    quantityClear: function () {
-      this.newQuantity = "0";
-      this.calculateQuantitiesAndTotalForQuantityChange();
-    },
-    quantityChangeKeyup: function () {
-      const isValidQuantity = this.isNewQuantityValidForProduct(
-          this.newQuantity,
-          this.itemToChangeQuantity,
-          this.quantityChangeIsForExpected
-      );
-      if (!isValidQuantity.isValid) {
-        return;
-      }
-      this.calculateQuantitiesAndTotalForQuantityChange();
-    },
-    calculateQuantitiesAndTotalForQuantityChange: function () {
-      const quantityInDecimal = this.getDecimalQuantityForQuantityInput(
-          this.newQuantity,
-          this.itemToChangeQuantity
-      )
-      this.newQuantities = OrderItem.getQuantities(
-          this.itemToChangeQuantity,
-          quantityInDecimal
-      )
-      const unitPricePropertyName = this.quantityChangeIsForExpected ? "expectedUnitPriceAfterRebate" : "unitPriceAfterRebate";
-      const unitPrice = this.itemToChangeQuantity[unitPricePropertyName];
-      const tps = OrderItem.calculateTPS(
-          this.itemToChangeQuantity,
-          quantityInDecimal,
-          unitPrice
-      )
-      const tvq = OrderItem.calculateTVQ(
-          this.itemToChangeQuantity,
-          quantityInDecimal,
-          unitPrice
-      )
-      const subTotal = unitPrice * quantityInDecimal;
-      this.newQuantityTotals = {
-        subTotal: subTotal,
-        tps: tps,
-        tvq: tvq,
-        total: subTotal + tps + tvq
-      }
-    },
     enterChangeQuantityFlow: async function (item, isForExpected) {
-      this.itemToChangeQuantity = item;
-      const quantityPropertyName = isForExpected ? "expectedQuantityInput" : "quantityInput";
-      this.newQuantity = item[quantityPropertyName];
-      this.quantityChangeIsForExpected = isForExpected;
-      this.calculateQuantitiesAndTotalForQuantityChange();
-      this.itemToChangeFormat = QuantityInterpreter.getFormat(item.format).toUpperCase();
-      this.itemToChangeQuantityHint = this.$t('productTable:quantityHintPrefix') + " " + this.itemToChangeFormat;
-      this.changeQuantityDialog = true;
-      if (this.$vuetify.display.mdAndUp) {
-        await this.$nextTick();
-        this.$refs.changeQuantityTextField.focus();
-      }
+      this.$refs.quantityChangeDialog.show(item, isForExpected)
     },
-    confirmQuantityChange: async function () {
-      this.confirmQuantityLoading = true;
-      const changeMethod = this.quantityChangeIsForExpected ? this.changeExpectedQuantity : this.changeQuantity;
-      await changeMethod(this.itemToChangeQuantity);
-      this.confirmQuantityLoading = false;
-      this.changeQuantityDialog = false;
-    },
-    getDecimalQuantityForQuantityInput: function (quantityInput, orderItem) {
-      let decimalQuantity = 0;
-      let format = QuantityInterpreter.getFormat(quantityInput);
-      if (format === "unit") {
-        decimalQuantity = QuantityInterpreter.getQty(quantityInput);
-      } else if (format === "nb") {
-        let qty = QuantityInterpreter.getQty(quantityInput)
-        if (orderItem.qtyInBox !== null && orderItem.qtyInBox > 1) {
-          qty = qty / orderItem.qtyInBox;
-        }
-        decimalQuantity = qty;
-      } else {
-        decimalQuantity = QuantityInterpreter.convertFractionToDecimal(
-            QuantityInterpreter.getQty(quantityInput),
-            orderItem
-        )
-      }
-      return decimalQuantity;
+    updateQuantity: async function(item){
+      await this.$emit('quantityUpdate', item)
     },
     applySearch: function () {
       this.searchTextConfirmed = this.searchText
@@ -1071,107 +859,6 @@ export default {
         return;
       }
       await this.$emit('costUnitPriceUpdate', product)
-    }
-    ,
-    changeQuantity: async function (event, product) {
-      await this._tryToChangeExpectedOrFinalQuantity(
-          event,
-          product,
-          false
-      );
-    }
-    ,
-    changeExpectedQuantity: async function (event, product) {
-      await this._tryToChangeExpectedOrFinalQuantity(
-          event,
-          product,
-          true
-      );
-    },
-    _tryToChangeExpectedOrFinalQuantity: async function (event, product, isForExpected) {
-      const propertyName = isForExpected ? 'expectedQuantity' : 'quantity';
-      const propertyNameUpper = isForExpected ? 'ExpectedQuantity' : 'Quantity';
-      const inputPropertyName = propertyName + 'Input';
-      const previousPropertyName = 'previous' + propertyNameUpper + 'Input'
-      const hasChanged = await this._changeExpectedOrFinalQuantity(event, product, isForExpected);
-      if (hasChanged === false) {
-        if (product[previousPropertyName] === undefined) {
-          product[previousPropertyName] = "";
-        }
-        event.target.value = product[inputPropertyName] = product[previousPropertyName];
-        if (product[previousPropertyName] !== "") {
-          if (isForExpected) {
-            OrderItem.defineExpectedQuantityFraction(product);
-          } else {
-            OrderItem.defineQuantityFraction(product);
-          }
-        }
-        this.showQuantityUnchangedSnackbar();
-      } else {
-        product[previousPropertyName] = product[inputPropertyName];
-      }
-    },
-    _changeExpectedOrFinalQuantity: async function (event, product, isForExpected) {
-      const hasQuantityChanged = this.hasQuantityChanged(event, product, isForExpected);
-      if (!hasQuantityChanged) {
-        return false;
-      }
-      if (isForExpected) {
-        OrderItem.defineExpectedQuantityFraction(product);
-      } else {
-        OrderItem.defineQuantityFraction(product);
-      }
-      await this.$emit('quantityUpdate', product)
-      return true;
-    },
-    isNewQuantityValidForProduct: function (quantity, product, isForExpected) {
-      const propertyName = isForExpected ? 'expectedQuantity' : 'quantity';
-      const inputPropertyName = propertyName + 'Input';
-      if (quantity === null || String(quantity).trim() === "") {
-        quantity = "0";
-      }
-      const inputFormat = QuantityInterpreter.getFormat(String(quantity));
-      if (inputFormat === 'unit') {
-        if (quantity === undefined || isNaN(String(quantity).replaceAll(",", "."))) {
-          return {
-            isValid: false
-          }
-        }
-      } else if (inputFormat === 'nb') {
-        if (QuantityInterpreter.getQty(quantity) === null) {
-          return {
-            isValid: false
-          }
-        }
-      } else {
-        const productFormat = QuantityInterpreter.getFormat(product.format)
-        if (productFormat !== inputFormat) {
-          return {
-            isValid: false,
-            errorName: "wrongFormat",
-            inputFormat: inputFormat,
-            productFormat: productFormat
-          }
-        }
-      }
-      if (product[inputPropertyName] == quantity) {
-        return {
-          isValid: false,
-          errorName: "sameQuantity"
-        }
-      }
-      let qty = QuantityInterpreter.getQty(String(quantity));
-      if (qty === null) {
-        qty = 0;
-      }
-      if (qty < 0) {
-        return {
-          isValid: false
-        }
-      }
-      return {
-        isValid: true
-      }
     },
     showQuantityChangedSuccess: async function () {
       const timeout = this.quantityUpdateSnackbar ? 500 : 0;
