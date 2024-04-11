@@ -399,10 +399,15 @@
         </v-btn>
       </template>
     </v-snackbar>
-    <v-dialog v-model="changeQuantityDialog" v-if="changeQuantityDialog" width="600">
+    <v-dialog v-model="changeQuantityDialog" v-if="changeQuantityDialog" width="600" :fullscreen="$vuetify.display.smAndDown">
       <v-card>
         <v-card-title class="d-flex justify-space-between align-center">
-          <div class="text-h5 text-medium-emphasis ps-2">
+          <div class="text-medium-emphasis ps-2"
+               :class="{
+                  'text-h5': $vuetify.display.mdAndUp,
+                  'body-2': $vuetify.display.smAndDown
+               }"
+          >
             {{ itemToChangeQuantity.name }}
           </div>
           <v-icon icon="close" @click="changeQuantityDialog = false" variant="text"></v-icon>
@@ -444,31 +449,31 @@
         </v-card-text>
         <v-card-text class="small">
           <v-row>
-            <v-col cols="3" class="pt-1 pb-1">
+            <v-col cols="5" md="3" class="pt-1 pb-1">
               {{ $t('productTable:subtotal') }}
             </v-col>
-            <v-col cols="4" class="pt-1 pb-1">
+            <v-col cols="7" md="9" class="pt-1 pb-1">
               {{ $filters.currency(newQuantityTotals.subTotal) }}
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="3" class="pt-1 pb-1">
+            <v-col cols="5" md="3" class="pt-1 pb-1">
               TPS
             </v-col>
-            <v-col cols="4" class="pt-1 pb-1">
+            <v-col cols="7" md="9" class="pt-1 pb-1">
               {{ $filters.currency(newQuantityTotals.tps) }}
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="3" class="pt-1 pb-1">
+            <v-col cols="5" md="3" class="pt-1 pb-1">
               TVQ
             </v-col>
-            <v-col cols="4" class="pt-1 pb-1">
+            <v-col cols="7" md="9" class="pt-1 pb-1">
               {{ $filters.currency(newQuantityTotals.tvq) }}
             </v-col>
           </v-row>
           <v-row class="font-weight-bold">
-            <v-col cols="3" class="pt-1 pb-1">
+            <v-col cols="5" md="3" class="pt-1 pb-1">
               <span v-if="quantityChangeIsForExpected">
                 {{ $t('product:expectedTotal') }}:
               </span>
@@ -476,7 +481,7 @@
                 {{ $t('product:total') }}:
               </span>
             </v-col>
-            <v-col cols="4" class="pt-1 pb-1">
+            <v-col cols="7" md="9" class="pt-1 pb-1">
               {{ $filters.currency(newQuantityTotals.total) }}
             </v-col>
           </v-row>
@@ -1002,8 +1007,10 @@ export default {
       const unit = QuantityInterpreter.getFormat(item.format).toUpperCase();
       this.itemToChangeQuantityHint = this.$t('productTable:quantityHintPrefix') + " " + unit;
       this.changeQuantityDialog = true;
-      await this.$nextTick();
-      this.$refs.changeQuantityTextField.focus();
+      if(this.$vuetify.display.mdAndUp){
+        await this.$nextTick();
+        this.$refs.changeQuantityTextField.focus();
+      }
     },
     confirmQuantityChange: async function () {
       this.confirmQuantityLoading = true;

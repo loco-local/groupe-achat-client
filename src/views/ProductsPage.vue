@@ -92,7 +92,7 @@
               </v-card-title>
               <v-card-text class="font-weight-bold text-grey-darken-1 pt-0 text-body-1 ml-2" v-if="relevantOrder">
                 {{ $t('products:summaryInfo1') }}
-                {{ $filters.dayDate(relevantOrder.endDate)}}
+                {{ $filters.dayDate(relevantOrder.endDate) }}
                 {{ $t('at') }}
                 23h59.
               </v-card-text>
@@ -138,7 +138,11 @@
               <v-card-title>
                 {{ $t('products:toDivide') }}
               </v-card-title>
-              <v-card-text class="text-body-1" v-if="itemsToDivide.length > 0">
+              <v-card-text class="text-body-1" v-if="itemsToDivide.length > 0"
+                           :class="{
+                              'pa-0' : $vuetify.display.smAndDown
+                            }"
+              >
                 <ProductsTable
                     :products="itemsToDivide || []"
                     :hideSearch="true"
