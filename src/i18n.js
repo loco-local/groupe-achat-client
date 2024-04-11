@@ -17,6 +17,7 @@ export default {
             resources: {
                 en: {
                     translation: {
+                        or:"or",
                         startDate: "Date de début",
                         endDate: "Date de fin",
                         name: "Name",
@@ -75,6 +76,7 @@ export default {
                 },
                 fr: {
                     translation: {
+                        or:"ou",
                         startDate: "Date de début",
                         endDate: "Date de fin",
                         name: "Nom",

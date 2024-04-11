@@ -292,29 +292,27 @@
                 </v-col>
               </v-row>
               <v-row class="text-body-1">
-                <v-col cols="1" class="ml-2">{{ $t("productTable:subtotal") }}</v-col>
+                <v-col cols="2" md="1" class="ml-2">
+                  {{ $t("productTable:subtotal") }}
+                </v-col>
                 <v-col cols="2">{{ $filters.currency(totals.subTotal) }}</v-col>
               </v-row>
               <v-row class="">
-                <v-col cols="1" class="ml-2">TPS</v-col>
+                <v-col cols="2" md="1" class="ml-2">TPS</v-col>
                 <v-col cols="2">{{ $filters.currency(totals.tps) }}</v-col>
               </v-row>
               <v-row class="">
-                <v-col cols="1" class="ml-2">TVQ</v-col>
+                <v-col cols="2" md="1" class="ml-2">TVQ</v-col>
                 <v-col cols="2">{{ $filters.currency(totals.tvq) }}</v-col>
               </v-row>
               <v-row>
-                <v-col cols="2" class="">
+                <v-col cols="4" md="2" class="">
                   <v-divider class="ml-2"></v-divider>
                 </v-col>
               </v-row>
               <v-row class="text-h6">
-                <v-col cols="12" class="ml-2">
-                  Total
-                  <span class="ml-4">
-                    {{ $filters.currency(totals.total) }}
-                  </span>
-                </v-col>
+                <v-col cols="2" md="1" class="ml-2">Total</v-col>
+                <v-col cols="2">{{ $filters.currency(totals.total) }}</v-col>
               </v-row>
             </v-col>
           </v-row>
@@ -399,13 +397,14 @@
         </v-btn>
       </template>
     </v-snackbar>
-    <v-dialog v-model="changeQuantityDialog" v-if="changeQuantityDialog" width="600" :fullscreen="$vuetify.display.smAndDown">
+    <v-dialog v-model="changeQuantityDialog" v-if="changeQuantityDialog" width="600"
+              :fullscreen="$vuetify.display.smAndDown">
       <v-card>
         <v-card-title class="d-flex justify-space-between align-center">
           <div class="text-medium-emphasis ps-2"
                :class="{
                   'text-h5': $vuetify.display.mdAndUp,
-                  'text-caption': $vuetify.display.smAndDown
+                  'text-body-2 font-weight-bold': $vuetify.display.smAndDown
                }"
           >
             {{ itemToChangeQuantity.name }}
@@ -444,6 +443,7 @@
               :hint="itemToChangeQuantityHint"
               :persistent-hint="true"
               clearable
+              @click:clear="quantityClear"
               ref="changeQuantityTextField"
           ></v-text-field>
         </v-card-text>
@@ -491,7 +491,7 @@
                  @click="confirmQuantityChange"
                  :loading="confirmQuantityLoading"
           >
-            {{ $t('confirm') }}
+            {{ $t('confirm') }} {{newQuantities.inFormatQuantity}}
           </v-btn>
           <v-spacer></v-spacer>
           <v-btn @click="changeQuantityDialog = false">
@@ -672,7 +672,8 @@ export default {
       noKeep: "Non, garder",
       modifiedQuantityToConfirm: null,
       itemToChangeQuantityHint: "",
-      quantityHintPrefix: "Quantité en unité, décimale ou en"
+      quantityHintPrefix: "Quantité en unité, décimale ou en",
+      itemToChangeFormat: ""
     };
     I18n.i18next.addResources("fr", "productTable", text);
     I18n.i18next.addResources("en", "productTable", text);
@@ -924,7 +925,8 @@ export default {
       quantityChangeIsForExpected: null,
       newQuantity: null,
       newQuantityConversions: {},
-      newQuantityTotals: null
+      newQuantityTotals: null,
+      newQuantities: {}
     }
   },
   mounted: function () {
@@ -962,6 +964,10 @@ export default {
     }
   },
   methods: {
+    quantityClear: function () {
+      this.newQuantity = "0";
+      this.calculateQuantitiesAndTotalForQuantityChange();
+    },
     quantityChangeKeyup: function () {
       const isValidQuantity = this.isNewQuantityValidForProduct(
           this.newQuantity,
@@ -977,6 +983,10 @@ export default {
       const quantityInDecimal = this.getDecimalQuantityForQuantityInput(
           this.newQuantity,
           this.itemToChangeQuantity
+      )
+      this.newQuantities = OrderItem.getQuantities(
+          this.itemToChangeQuantity,
+          quantityInDecimal
       )
       const unitPricePropertyName = this.quantityChangeIsForExpected ? "expectedUnitPriceAfterRebate" : "unitPriceAfterRebate";
       const unitPrice = this.itemToChangeQuantity[unitPricePropertyName];
@@ -1004,10 +1014,10 @@ export default {
       this.newQuantity = item[quantityPropertyName];
       this.quantityChangeIsForExpected = isForExpected;
       this.calculateQuantitiesAndTotalForQuantityChange();
-      const unit = QuantityInterpreter.getFormat(item.format).toUpperCase();
-      this.itemToChangeQuantityHint = this.$t('productTable:quantityHintPrefix') + " " + unit;
+      this.itemToChangeFormat = QuantityInterpreter.getFormat(item.format).toUpperCase();
+      this.itemToChangeQuantityHint = this.$t('productTable:quantityHintPrefix') + " " + this.itemToChangeFormat;
       this.changeQuantityDialog = true;
-      if(this.$vuetify.display.mdAndUp){
+      if (this.$vuetify.display.mdAndUp) {
         await this.$nextTick();
         this.$refs.changeQuantityTextField.focus();
       }
