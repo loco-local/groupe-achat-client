@@ -1,6 +1,5 @@
 import Store from '@/store'
 import router from './router'
-
 const loggedOutAllowedPages = [
     'LoginPage',
     'RegisterPage',
@@ -22,7 +21,7 @@ const loggedOutOnlyPages = [
 export default {
     do: async function () {
         if (Store.state.user === null) {
-            const isOnLoggedOutAllowedPage = loggedOutAllowedPages.indexOf(router.currentRoute.name) !== -1
+            const isOnLoggedOutAllowedPage = loggedOutAllowedPages.indexOf(router.currentRoute._value.name) !== -1
             if (!isOnLoggedOutAllowedPage) {
                 await router.push({
                     name: 'LoginPage'
@@ -31,7 +30,7 @@ export default {
             }
             return false;
         } else {
-            const isOnLoggedOutOnlyPage = loggedOutOnlyPages.indexOf(router.currentRoute.name) !== -1;
+            const isOnLoggedOutOnlyPage = loggedOutOnlyPages.indexOf(router.currentRoute._value.name) !== -1;
             if (isOnLoggedOutOnlyPage) {
                 await router.push({
                     name: 'DashboardPage'

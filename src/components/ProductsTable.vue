@@ -405,7 +405,7 @@
           <div class="text-medium-emphasis ps-2"
                :class="{
                   'text-h5': $vuetify.display.mdAndUp,
-                  'body-2': $vuetify.display.smAndDown
+                  'text-caption': $vuetify.display.smAndDown
                }"
           >
             {{ itemToChangeQuantity.name }}

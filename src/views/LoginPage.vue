@@ -1,55 +1,57 @@
 <template>
-  <v-row
-      align="center"
-      justify="center"
-      :class="{
+  <PageWrap>
+    <v-row
+        align="center"
+        justify="center"
+        :class="{
         'pl-4 pr-4 mb-12': $vuetify.display.smAndDown,
         'pt-8 pb-8' : $vuetify.display.mdAndUp
       }"
-  >
-    <v-col cols="12" md="10" lg="9" xl="6" class="text-left">
-      <v-form ref="loginForm">
-        <v-alert
-            v-model="wrongLogin"
-            type="error"
-        >
-          {{ $t('login:wrongLogin') }}
-        </v-alert>
-        <v-alert
-            v-model="userDisabledMessage"
-            type="error"
-        >
-          {{ $t('login:userDisabled') }}
-        </v-alert>
-        <v-text-field
-            v-model="user.email"
-            :label="$t('login:email')"
-            :rules="[Rules.required]"
-            required
-        ></v-text-field>
-        <v-text-field
-            v-model="user.password"
-            :rules="[Rules.required]"
-            required
-            :label="$t('login:password')"
-            type="password"
-        ></v-text-field>
-        <v-btn
-            color="primary"
-            class="mr-4 pull-left"
-            @click="login"
-        >
-          {{ $t('login:loginBtn') }}
-        </v-btn>
-        <div class="mt-4">
-          <router-link to="/send-change-password-email">
-            {{ $t('login:forgotPassword') }}
-          </router-link>
-        </div>
-      </v-form>
-      <!--      <RecaptchaInfo></RecaptchaInfo>-->
-    </v-col>
-  </v-row>
+    >
+      <v-col cols="12" md="10" lg="9" xl="6" class="text-left">
+        <v-form ref="loginForm">
+          <v-alert
+              v-model="wrongLogin"
+              type="error"
+          >
+            {{ $t('login:wrongLogin') }}
+          </v-alert>
+          <v-alert
+              v-model="userDisabledMessage"
+              type="error"
+          >
+            {{ $t('login:userDisabled') }}
+          </v-alert>
+          <v-text-field
+              v-model="user.email"
+              :label="$t('login:email')"
+              :rules="[Rules.required]"
+              required
+          ></v-text-field>
+          <v-text-field
+              v-model="user.password"
+              :rules="[Rules.required]"
+              required
+              :label="$t('login:password')"
+              type="password"
+          ></v-text-field>
+          <v-btn
+              color="primary"
+              class="mr-4 pull-left"
+              @click="login"
+          >
+            {{ $t('login:loginBtn') }}
+          </v-btn>
+          <div class="mt-4">
+            <router-link to="/send-change-password-email">
+              {{ $t('login:forgotPassword') }}
+            </router-link>
+          </div>
+        </v-form>
+        <!--      <RecaptchaInfo></RecaptchaInfo>-->
+      </v-col>
+    </v-row>
+  </PageWrap>
 </template>
 
 <script>
@@ -58,11 +60,13 @@ import AuthenticateService from "@/service/AuthenticateService";
 import Rules from "@/Rules";
 import I18n from "@/i18n";
 import RedirectIfWrongPage from "@/RedirectIfWrongPage";
+import PageWrap from "@/components/PageWrap.vue";
 // import Vue from 'vue'
 // import {VueReCaptcha} from "vue-recaptcha-v3"
 
 export default {
   name: "LoginPage",
+  components: {PageWrap},
   // components: {
   //   RecaptchaInfo: () => import('@/components/RecaptchaInfo')
   // },
