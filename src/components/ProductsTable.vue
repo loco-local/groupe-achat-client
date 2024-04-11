@@ -105,28 +105,21 @@
         <div v-if="showDecimalQuantityNotFractions">
           <span class="text-no-wrap">{{ item.expectedQuantity.toFixed(2) }}</span>
         </div>
-        <div v-else>
-          <v-text-field
-              v-model="item.expectedQuantityInput"
-              :placeholder="$t('quantityShort')"
-              @keydown.enter.prevent="changeExpectedQuantity($event, item)"
-              @blur="verifyConfirmQuantityChange($event, item)"
-              v-if="canChangeExpectedQuantity"
-              style="width:125px;"
-              :hint="item.expectedQuantityHint"
-              :persistent-hint="true"
-              :clearable="false"
+        <div v-else class="vh-center">
+          <v-btn v-if="canChangeExpectedQuantity && item.expectedQuantityInput === undefined"
+                 icon="add"
+                 color="primary"
+                 variant="text"
+                 @click="enterChangeQuantityFlow(item, true)"
+          ></v-btn>
+          <v-btn
+              v-if="canChangeExpectedQuantity && item.expectedQuantityInput !== undefined"
+              color="primary" rounded variant="text"
+              @click="enterChangeQuantityFlow(item, true)"
           >
-            <template v-slot:append-inner="{ isFocused }">
-              <v-btn
-                  @click.prevent="changeExpectedQuantity($event, item)"
-                  v-show="isFocused._value === true"
-                  icon="done"
-                  variant="text"
-                  size="x-small"
-              ></v-btn>
-            </template>
-          </v-text-field>
+            {{ item.expectedQuantityInput }}
+            <v-icon end>edit</v-icon>
+          </v-btn>
           <div v-else>
             <span class="text-no-wrap">{{ item.expectedQuantityInput }}</span>
             <br>
@@ -406,31 +399,69 @@
         </v-btn>
       </template>
     </v-snackbar>
-    <v-dialog
-        v-model="saveQuantityDialog"
-        max-width="700px"
-    >
+    <v-dialog v-model="changeQuantityDialog" v-if="changeQuantityDialog" width="600">
       <v-card>
         <v-card-title class="d-flex justify-space-between align-center">
           <div class="text-h5 text-medium-emphasis ps-2">
-            {{ $t('productTable:confirmQuantityChange') }}
+            {{ itemToChangeQuantity.name }}
           </div>
-          <v-icon icon="close" @click="setPreviousQuantity" variant="text"></v-icon>
+          <v-icon icon="close" @click="changeQuantityDialog = false" variant="text"></v-icon>
         </v-card-title>
-        <v-divider class="mb-4"></v-divider>
+        <v-divider class=""></v-divider>
         <v-card-text>
-          {{ itemQuantityChanged.name }}
+          <v-row class="small text-medium-emphasis ps-2">
+            <v-col cols="12" class="pa-0">
+              {{ $t('product:format') }}:
+              {{ itemToChangeQuantity.format }}
+            </v-col>
+            <v-col cols="12" class="pa-0">
+              <span v-if="quantityChangeIsForExpected">
+                {{ $t('product:expectedCostUnitPrice') }}:
+                {{ $filters.currency(itemToChangeQuantity.expectedUnitPriceAfterRebate) }}
+              </span>
+              <span v-else>
+                {{ $t('product:costUnitPrice') }}:
+                {{ $filters.currency(itemToChangeQuantity.unitPriceAfterRebate) }}
+              </span>
+            </v-col>
+            <v-col cols="12" class="pa-0">
+              {{ $t('product:maker') }}:
+              {{ itemToChangeQuantity.maker }}
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-text>
+          <v-text-field
+              v-model="itemToChangeQuantity.expectedQuantityInput"
+              :placeholder="$t('quantityShort')"
+              @keydown.enter.prevent="confirmQuantityChange"
+              v-if="canChangeExpectedQuantity"
+              :hint="itemToChangeQuantity.expectedQuantityHint"
+              :persistent-hint="true"
+              clearable
+              ref="changeQuantityTextField"
+          ></v-text-field>
+        </v-card-text>
+        <v-card-text class="small font-weight-bold">
+          <span v-if="quantityChangeIsForExpected">
+            {{ $t('product:expectedTotal') }}:
+            {{ $filters.currency(itemToChangeQuantity.expectedTotalAfterRebateWithTaxes)}}
+          </span>
+          <span v-else>
+            {{ $t('product:total') }}:
+            {{ $filters.currency(itemToChangeQuantity.totalAfterRebateWithTaxes) }}
+          </span>
         </v-card-text>
         <v-card-actions>
           <v-btn color="primary"
                  @click="confirmQuantityChange"
-                 :loading="confirmQuantityChangeLoading"
+                 :loading="confirmQuantityLoading"
           >
-            {{ $t('productTable:yesIwant') }} {{ modifiedQuantityToConfirm }}
+            {{ $t('confirm') }}
           </v-btn>
           <v-spacer></v-spacer>
-          <v-btn @click="setPreviousQuantity">
-            {{ $t('productTable:noKeep') }} {{ previousQuantityToConfirm }}
+          <v-btn @click="changeQuantityDialog = false">
+            {{ $t('cancel') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -851,12 +882,10 @@ export default {
       minHeightStyle: this.preventSearchFlickr ? "min-height: 1000px;" : "",
       categoriesPanel: 'categories',
       nbItemsPerPage: 50,
-      saveQuantityDialog: false,
-      itemQuantityChanged: null,
-      quantityChangedBlurEvent: null,
-      confirmQuantityChangeLoading: false,
-      previousQuantityToConfirm: null,
-      quantityChangedIsForExpected: null
+      changeQuantityDialog: false,
+      itemToChangeQuantity: null,
+      confirmQuantityLoading: false,
+      quantityChangeIsForExpected: null
     }
   },
   mounted: function () {
@@ -894,35 +923,19 @@ export default {
     }
   },
   methods: {
-    verifyConfirmExpectedQuantityChange: function (event, item) {
-      this.verifyConfirmQuantityChange(event, item, true)
-    },
-    verifyConfirmFinalQuantityChange: function (event, item) {
-      this.verifyConfirmQuantityChange(event, item, false)
-    },
-    verifyConfirmQuantityChange: function (event, item, isForExpected) {
-      const hasQuantityChanged = this.hasQuantityChanged(event, item, isForExpected);
-      if (!hasQuantityChanged) {
-        return false;
-      }
-      this.quantityChangedBlurEvent = event;
-      this.itemQuantityChanged = item;
-      this.modifiedQuantityToConfirm = event.target.value;
-      this.previousQuantityToConfirm = item.previousExpectedQuantityInput;
-      this.quantityChangedIsForExpected = isForExpected;
-      this.saveQuantityDialog = true;
+    enterChangeQuantityFlow: async function (item, isForExpected) {
+      this.itemToChangeQuantity = item;
+      this.quantityChangeIsForExpected = isForExpected;
+      this.changeQuantityDialog = true;
+      await this.$nextTick();
+      this.$refs.changeQuantityTextField.focus();
     },
     confirmQuantityChange: async function () {
-      this.confirmQuantityChangeLoading = true;
-      const changeMethod = this.quantityChangedIsForExpected ? this.changeExpectedQuantity : this.changeQuantity;
-      await changeMethod(this.quantityChangedBlurEvent, this.itemQuantityChanged);
-      this.confirmQuantityChangeLoading = false;
-      this.saveQuantityDialog = false;
-    },
-    setPreviousQuantity: function () {
-      const quantityInputPrefix = this.quantityChangedIsForExpected ? "expected" : ""
-      this.quantityChangedBlurEvent.target.value = this.itemQuantityChanged[quantityInputPrefix + "QuantityInput"] = this.previousQuantityToConfirm;
-      this.saveQuantityDialog = false;
+      this.confirmQuantityLoading = true;
+      const changeMethod = this.quantityChangeIsForExpected ? this.changeExpectedQuantity : this.changeQuantity;
+      await changeMethod(this.itemToChangeQuantity);
+      this.confirmQuantityLoading = false;
+      this.changeQuantityDialog = false;
     },
     applySearch: function () {
       this.searchTextConfirmed = this.searchText
