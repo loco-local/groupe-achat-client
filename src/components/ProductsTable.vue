@@ -432,34 +432,54 @@
         <v-card-text>
           <v-text-field
               v-if="quantityChangeIsForExpected"
-              v-model="itemToChangeQuantity.expectedQuantityInput"
+              v-model="newQuantity"
               :placeholder="$t('quantityShort')"
               @keydown.enter.prevent="confirmQuantityChange"
-              :hint="itemToChangeQuantityHint"
-              :persistent-hint="true"
-              clearable
-              ref="changeQuantityTextField"
-          ></v-text-field>
-          <v-text-field
-              v-else
-              v-model="itemToChangeQuantity.quantityInput"
-              :placeholder="$t('quantityShort')"
-              @keydown.enter.prevent="confirmQuantityChange"
+              @keyup="quantityChangeKeyup"
               :hint="itemToChangeQuantityHint"
               :persistent-hint="true"
               clearable
               ref="changeQuantityTextField"
           ></v-text-field>
         </v-card-text>
-        <v-card-text class="small font-weight-bold">
-          <span v-if="quantityChangeIsForExpected">
-            {{ $t('product:expectedTotal') }}:
-            {{ $filters.currency(itemToChangeQuantity.expectedTotalAfterRebateWithTaxes) }}
-          </span>
-          <span v-else>
-            {{ $t('product:total') }}:
-            {{ $filters.currency(itemToChangeQuantity.totalAfterRebateWithTaxes) }}
-          </span>
+        <v-card-text class="small">
+          <v-row>
+            <v-col cols="3" class="pt-1 pb-1">
+              {{ $t('productTable:subtotal') }}
+            </v-col>
+            <v-col cols="4" class="pt-1 pb-1">
+              {{ $filters.currency(newQuantityTotals.subTotal) }}
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="3" class="pt-1 pb-1">
+              TPS
+            </v-col>
+            <v-col cols="4" class="pt-1 pb-1">
+              {{ $filters.currency(newQuantityTotals.tps) }}
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="3" class="pt-1 pb-1">
+              TVQ
+            </v-col>
+            <v-col cols="4" class="pt-1 pb-1">
+              {{ $filters.currency(newQuantityTotals.tvq) }}
+            </v-col>
+          </v-row>
+          <v-row class="font-weight-bold">
+            <v-col cols="3" class="pt-1 pb-1">
+              <span v-if="quantityChangeIsForExpected">
+                {{ $t('product:expectedTotal') }}:
+              </span>
+              <span v-else>
+                {{ $t('product:total') }}:
+              </span>
+            </v-col>
+            <v-col cols="4" class="pt-1 pb-1">
+              {{ $filters.currency(newQuantityTotals.total) }}
+            </v-col>
+          </v-row>
         </v-card-text>
         <v-card-actions>
           <v-btn color="primary"
@@ -647,7 +667,7 @@ export default {
       noKeep: "Non, garder",
       modifiedQuantityToConfirm: null,
       itemToChangeQuantityHint: "",
-      quantityHintPrefix:"Quantité en décimale ou en"
+      quantityHintPrefix: "Quantité en unité, décimale ou en"
     };
     I18n.i18next.addResources("fr", "productTable", text);
     I18n.i18next.addResources("en", "productTable", text);
@@ -896,7 +916,10 @@ export default {
       changeQuantityDialog: false,
       itemToChangeQuantity: null,
       confirmQuantityLoading: false,
-      quantityChangeIsForExpected: null
+      quantityChangeIsForExpected: null,
+      newQuantity: null,
+      newQuantityConversions: {},
+      newQuantityTotals: null
     }
   },
   mounted: function () {
@@ -934,9 +957,48 @@ export default {
     }
   },
   methods: {
+    quantityChangeKeyup: function () {
+      const isValidQuantity = this.isNewQuantityValidForProduct(
+          this.newQuantity,
+          this.itemToChangeQuantity,
+          this.quantityChangeIsForExpected
+      );
+      if (!isValidQuantity.isValid) {
+        return;
+      }
+      this.calculateQuantitiesAndTotalForQuantityChange();
+    },
+    calculateQuantitiesAndTotalForQuantityChange: function () {
+      const quantityInDecimal = this.getDecimalQuantityForQuantityInput(
+          this.newQuantity,
+          this.itemToChangeQuantity
+      )
+      const unitPricePropertyName = this.quantityChangeIsForExpected ? "expectedUnitPriceAfterRebate" : "unitPriceAfterRebate";
+      const unitPrice = this.itemToChangeQuantity[unitPricePropertyName];
+      const tps = OrderItem.calculateTPS(
+          this.itemToChangeQuantity,
+          quantityInDecimal,
+          unitPrice
+      )
+      const tvq = OrderItem.calculateTVQ(
+          this.itemToChangeQuantity,
+          quantityInDecimal,
+          unitPrice
+      )
+      const subTotal = unitPrice * quantityInDecimal;
+      this.newQuantityTotals = {
+        subTotal: subTotal,
+        tps: tps,
+        tvq: tvq,
+        total: subTotal + tps + tvq
+      }
+    },
     enterChangeQuantityFlow: async function (item, isForExpected) {
       this.itemToChangeQuantity = item;
+      const quantityPropertyName = isForExpected ? "expectedQuantityInput" : "quantityInput";
+      this.newQuantity = item[quantityPropertyName];
       this.quantityChangeIsForExpected = isForExpected;
+      this.calculateQuantitiesAndTotalForQuantityChange();
       const unit = QuantityInterpreter.getFormat(item.format).toUpperCase();
       this.itemToChangeQuantityHint = this.$t('productTable:quantityHintPrefix') + " " + unit;
       this.changeQuantityDialog = true;
@@ -949,6 +1011,25 @@ export default {
       await changeMethod(this.itemToChangeQuantity);
       this.confirmQuantityLoading = false;
       this.changeQuantityDialog = false;
+    },
+    getDecimalQuantityForQuantityInput: function (quantityInput, orderItem) {
+      let decimalQuantity = 0;
+      let format = QuantityInterpreter.getFormat(quantityInput);
+      if (format === "unit") {
+        decimalQuantity = QuantityInterpreter.getQty(quantityInput);
+      } else if (format === "nb") {
+        let qty = QuantityInterpreter.getQty(quantityInput)
+        if (orderItem.qtyInBox !== null && orderItem.qtyInBox > 1) {
+          qty = qty / orderItem.qtyInBox;
+        }
+        decimalQuantity = qty;
+      } else {
+        decimalQuantity = QuantityInterpreter.convertFractionToDecimal(
+            QuantityInterpreter.getQty(quantityInput),
+            orderItem
+        )
+      }
+      return decimalQuantity;
     },
     applySearch: function () {
       this.searchTextConfirmed = this.searchText
@@ -1026,44 +1107,54 @@ export default {
       await this.$emit('quantityUpdate', product)
       return true;
     },
-    hasQuantityChanged: function (event, product, isForExpected) {
+    isNewQuantityValidForProduct: function (quantity, product, isForExpected) {
       const propertyName = isForExpected ? 'expectedQuantity' : 'quantity';
       const inputPropertyName = propertyName + 'Input';
-      const propertyNameUpper = isForExpected ? 'ExpectedQuantity' : 'Quantity';
-      const previousPropertyName = 'previous' + propertyNameUpper + 'Input';
-      if (product[inputPropertyName] === null || String(product[inputPropertyName]).trim() === "") {
-        product[propertyName] = 0;
-        product[inputPropertyName] = "0";
+      if (quantity === null || String(quantity).trim() === "") {
+        quantity = "0";
       }
-      const inputFormat = QuantityInterpreter.getFormat(String(product[inputPropertyName]));
+      const inputFormat = QuantityInterpreter.getFormat(String(quantity));
       if (inputFormat === 'unit') {
-        if (product[inputPropertyName] === undefined || isNaN(String(product[inputPropertyName]).replaceAll(",", "."))) {
-          return false;
+        if (quantity === undefined || isNaN(String(quantity).replaceAll(",", "."))) {
+          return {
+            isValid: false
+          }
         }
       } else if (inputFormat === 'nb') {
-        if (QuantityInterpreter.getQty(product[inputPropertyName]) === null) {
-          return false;
+        if (QuantityInterpreter.getQty(quantity) === null) {
+          return {
+            isValid: false
+          }
         }
       } else {
         const productFormat = QuantityInterpreter.getFormat(product.format)
         if (productFormat !== inputFormat) {
-          this.inputFormat = inputFormat;
-          this.productFormat = productFormat;
-          this.wrongFormatSnackbar = true;
-          return false;
+          return {
+            isValid: false,
+            errorName: "wrongFormat",
+            inputFormat: inputFormat,
+            productFormat: productFormat
+          }
         }
       }
-      if (product[previousPropertyName] == product[inputPropertyName]) {
-        return false;
+      if (product[inputPropertyName] == quantity) {
+        return {
+          isValid: false,
+          errorName: "sameQuantity"
+        }
       }
-      let qty = QuantityInterpreter.getQty(String(product[inputPropertyName]));
+      let qty = QuantityInterpreter.getQty(String(quantity));
       if (qty === null) {
         qty = 0;
       }
       if (qty < 0) {
-        return false;
+        return {
+          isValid: false
+        }
       }
-      return true;
+      return {
+        isValid: true
+      }
     },
     showQuantityChangedSuccess: async function () {
       const timeout = this.quantityUpdateSnackbar ? 500 : 0;

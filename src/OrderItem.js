@@ -60,46 +60,32 @@ const OrderItem = {
     },
     defineExpectedOrFinalQuantityFraction(orderItem, isForExpectedQuantity) {
         const propertyName = isForExpectedQuantity ? 'expectedQuantity' : 'quantity'
+        let decimalQuantity = orderItem[propertyName]
+        const quantities = OrderItem.getQuantities(
+            orderItem,
+            decimalQuantity
+        );
         const inputPropertyName = propertyName + 'Input';
-        const percentagePropertyName = propertyName + 'Percentage';
-        let inputStr = String(orderItem[inputPropertyName]);
-        if (orderItem[inputPropertyName] !== undefined) {
-            let format = QuantityInterpreter.getFormat(inputStr);
-            if (format === "unit") {
-                orderItem[propertyName] = QuantityInterpreter.getQty(inputStr);
-            } else if (format === "nb") {
-                let qty = QuantityInterpreter.getQty(inputStr)
-                if (orderItem.qtyInBox !== null && orderItem.qtyInBox > 1) {
-                    qty = qty / orderItem.qtyInBox;
-                }
-                orderItem[propertyName] = qty;
-            } else {
-                orderItem[propertyName] = QuantityInterpreter.convertFractionToDecimal(
-                    QuantityInterpreter.getQty(inputStr),
-                    orderItem
-                )
-            }
-        }
+        orderItem[inputPropertyName] = quantities.inFormatQuantity;
+        orderItem[propertyName] = quantities.decimalQuantity;
+    },
+    getQuantities: function (orderItem, decimalQuantity) {
+        let inFormatQuantity;
+        let percentageQuantity = 100;
         const productFormat = QuantityInterpreter.getFormat(orderItem.format);
         if (productFormat === "unit") {
-            orderItem[inputPropertyName] = orderItem[propertyName];
+            inFormatQuantity = decimalQuantity;
         } else {
-            orderItem[inputPropertyName] = QuantityInterpreter.convertDecimalToFraction(
-                orderItem[propertyName],
+            inFormatQuantity = QuantityInterpreter.convertDecimalToFraction(
+                decimalQuantity,
                 orderItem
             ) + " " + productFormat;
-            orderItem[percentagePropertyName] = Math.round(orderItem[propertyName] * 100);
-            let hint;
-            if (orderItem[propertyName] % 1 === 0) {
-                hint = orderItem[propertyName];
-                if (hint === null) {
-                    hint = "0"
-                }
-                hint += "x";
-            } else {
-                hint = (percentagePropertyName <= 0 ? "" : orderItem[percentagePropertyName] + "%");
-            }
-            orderItem[propertyName + 'Hint'] = hint
+            percentageQuantity = Math.round(decimalQuantity * 100);
+        }
+        return {
+            decimalQuantity,
+            inFormatQuantity,
+            percentageQuantity
         }
     }
 }
