@@ -413,8 +413,11 @@
             <v-col cols="12" class="pa-0">
               {{ $t('product:format') }}:
               {{ itemToChangeQuantity.format }}
+              <v-divider vertical :thickness="2" color="primary" class="ml-1 mr-1"></v-divider>
+              {{ $t('product:maker') }}:
+              {{ itemToChangeQuantity.maker }}
             </v-col>
-            <v-col cols="12" class="pa-0">
+            <v-col cols="12" class="pl-0 pr-0">
               <span v-if="quantityChangeIsForExpected">
                 {{ $t('product:expectedCostUnitPrice') }}:
                 {{ $filters.currency(itemToChangeQuantity.expectedUnitPriceAfterRebate) }}
@@ -424,19 +427,25 @@
                 {{ $filters.currency(itemToChangeQuantity.unitPriceAfterRebate) }}
               </span>
             </v-col>
-            <v-col cols="12" class="pa-0">
-              {{ $t('product:maker') }}:
-              {{ itemToChangeQuantity.maker }}
-            </v-col>
           </v-row>
         </v-card-text>
         <v-card-text>
           <v-text-field
+              v-if="quantityChangeIsForExpected"
               v-model="itemToChangeQuantity.expectedQuantityInput"
               :placeholder="$t('quantityShort')"
               @keydown.enter.prevent="confirmQuantityChange"
-              v-if="canChangeExpectedQuantity"
-              :hint="itemToChangeQuantity.expectedQuantityHint"
+              :hint="itemToChangeQuantityHint"
+              :persistent-hint="true"
+              clearable
+              ref="changeQuantityTextField"
+          ></v-text-field>
+          <v-text-field
+              v-else
+              v-model="itemToChangeQuantity.quantityInput"
+              :placeholder="$t('quantityShort')"
+              @keydown.enter.prevent="confirmQuantityChange"
+              :hint="itemToChangeQuantityHint"
               :persistent-hint="true"
               clearable
               ref="changeQuantityTextField"
@@ -445,7 +454,7 @@
         <v-card-text class="small font-weight-bold">
           <span v-if="quantityChangeIsForExpected">
             {{ $t('product:expectedTotal') }}:
-            {{ $filters.currency(itemToChangeQuantity.expectedTotalAfterRebateWithTaxes)}}
+            {{ $filters.currency(itemToChangeQuantity.expectedTotalAfterRebateWithTaxes) }}
           </span>
           <span v-else>
             {{ $t('product:total') }}:
@@ -636,7 +645,9 @@ export default {
       confirmQuantityChange: "Quantité non sauvegardée",
       yesIwant: "Oui j'en veux",
       noKeep: "Non, garder",
-      modifiedQuantityToConfirm: null
+      modifiedQuantityToConfirm: null,
+      itemToChangeQuantityHint: "",
+      quantityHintPrefix:"Quantité en décimale ou en"
     };
     I18n.i18next.addResources("fr", "productTable", text);
     I18n.i18next.addResources("en", "productTable", text);
@@ -926,6 +937,8 @@ export default {
     enterChangeQuantityFlow: async function (item, isForExpected) {
       this.itemToChangeQuantity = item;
       this.quantityChangeIsForExpected = isForExpected;
+      const unit = QuantityInterpreter.getFormat(item.format).toUpperCase();
+      this.itemToChangeQuantityHint = this.$t('productTable:quantityHintPrefix') + " " + unit;
       this.changeQuantityDialog = true;
       await this.$nextTick();
       this.$refs.changeQuantityTextField.focus();
