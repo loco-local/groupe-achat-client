@@ -105,7 +105,7 @@
           {{ $t('quantity:sameError') }}
         </span>
       </v-alert>
-      <v-card-actions>
+      <v-card-actions class="">
         <v-btn color="primary"
                @click="confirmQuantityChange"
                :loading="confirmQuantityLoading"
@@ -158,6 +158,9 @@ export default {
       this.itemToChangeQuantity = item;
       const quantityPropertyName = isForExpected ? "expectedQuantityInput" : "quantityInput";
       this.newQuantity = item[quantityPropertyName];
+      if (this.newQuantity === undefined) {
+        this.newQuantity = ""
+      }
       this.quantityChangeIsForExpected = isForExpected;
       this.calculateQuantitiesAndTotalForQuantityChange();
       this.itemToChangeFormat = QuantityInterpreter.getFormat(item.format).toUpperCase();
@@ -251,6 +254,9 @@ export default {
     },
     getDecimalQuantityForQuantityInput: function (quantityInput, orderItem) {
       let decimalQuantity = 0;
+      if (quantityInput.trim() === "") {
+        return decimalQuantity;
+      }
       let format = QuantityInterpreter.getFormat(quantityInput);
       if (format === "unit") {
         decimalQuantity = QuantityInterpreter.getQty(quantityInput);
