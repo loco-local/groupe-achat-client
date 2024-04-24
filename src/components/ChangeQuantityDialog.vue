@@ -147,7 +147,7 @@ export default {
       hintNbInBox: "Aussi, pour commander, par exemple, 2 unités dans une boîte, vous pouvez écrire 2x.",
       hintExample: 'Exemple "1", "0.5", "2,5" ou "5',
       quantityHintPrefix: "Quantité en entier, décimale ou en",
-      quantity: "Quantity"
+      quantity: "Quantité"
     }
     I18n.i18next.addResources("fr", "quantity", text);
     I18n.i18next.addResources("en", "quantity", text);
@@ -164,6 +164,7 @@ export default {
       showErrorAlert: false,
       wrongInputFormat: "",
       productFormat: "",
+      itemToChangeQuantityHint:""
     }
   },
   methods: {

@@ -26,6 +26,9 @@ const QuantityInterpreter = {
         if (lowerCase.indexOf("x") > -1) {
             return "nb"
         }
+        if (lowerCase.indexOf("ml") > -1) {
+            return "ml"
+        }
         if (lowerCase.indexOf("l") > -1) {
             return "L"
         }
