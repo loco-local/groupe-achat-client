@@ -50,7 +50,8 @@ export default {
       productsNotAvailable: "Indisponibles",
       newProducts: "Nouveaux",
       priceUpdatedProducts: "Prix mis à jour",
-      productsNothingChanged: "Rien de changé"
+      productsNothingChanged: "Rien de changé",
+      invalidFormat: "Format invalide, ne peut ajouter ou mettre à jour"
     };
     I18n.i18next.addResources("fr", "import", text);
     I18n.i18next.addResources("en", "import", text);

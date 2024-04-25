@@ -41,8 +41,7 @@ export default {
     productsFile: async function () {
       this.isProductsFileLoading = true;
       let formData = new FormData();
-      const file = this.productsFile[0];
-      formData.append('file', file, file.name);
+      formData.append('file', this.productsFile, this.productsFile.name);
       const uploadData = await ProductUploadService.uploadSatauProducts(formData);
       this.$refs.import.setProducts(
           uploadData.formattedData,

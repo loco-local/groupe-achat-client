@@ -142,6 +142,21 @@
       </v-expansion-panel>
       <v-expansion-panel>
         <v-expansion-panel-title>
+          {{ $t('import:invalidFormat') }}
+          <strong class="ml-2">{{ wrongFormatProducts.length }}</strong>
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <ProductsTable
+              :products="wrongFormatProducts"
+              v-if="!isLoading"
+              :canToggleAvailability="false"
+              :showExpectedCostUnitPrice="true"
+              :hideExpectedUnitPrice="true"
+          ></ProductsTable>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-title>
           {{ $t('import:newProducts') }}
           <strong class="ml-2">{{ newProducts.length }}</strong>
         </v-expansion-panel-title>
@@ -193,6 +208,7 @@
 <script>
 import ProductUploadService from "@/service/ProductUploadService";
 import {defineAsyncComponent} from "vue";
+
 export default {
   name: "ImportDetails",
   components: {
@@ -205,6 +221,7 @@ export default {
       newProducts: [],
       updatePriceProducts: [],
       productsToDisable: [],
+      wrongFormatProducts: [],
       doNothingProducts: [],
       uploadUuid: null,
       propertiesAssociation: null,
@@ -240,6 +257,8 @@ export default {
     },
     _productArrayForAction: function (action) {
       switch (action) {
+        case "wrongFormat":
+          return this.wrongFormatProducts
         case "create":
           return this.newProducts
         case "updatePrice":
@@ -258,7 +277,7 @@ export default {
       this.haveAssociationsChanged = false;
       this.isChangingAssociation = false
       this.uploadUuid = uploadUuid;
-      if(propertiesAssociation){
+      if (propertiesAssociation) {
         this.propertiesAssociation = propertiesAssociation.associations.associations;
         this.allProperties = Object.keys(rawDataTenFirst[0]);
         this.rawDataTenFirst = rawDataTenFirst.slice(1, 9);

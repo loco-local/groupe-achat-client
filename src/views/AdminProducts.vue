@@ -135,25 +135,23 @@
                     </v-list-item>
                   </v-autocomplete>
                 </v-col>
-                <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                >
-                  <v-text-field
-                      v-model="editedProduct.format"
-                      :label="$t('product:format')"
-                  ></v-text-field>
-                </v-col>
-                <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                >
+                <v-col cols="12">
                   <v-text-field
                       v-model="editedProduct.qtyInBox"
                       :label="$t('product:qtyInBox')"
                       type="number"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                    cols="12"
+                >
+                  <v-text-field
+                      v-model="editedProduct.format"
+                      :label="$t('product:format')"
+                      :rules="[isFormatValid]"
+                      :hint="$t('productsAdmin:formatHint')"
+                      persistent-hint
+                      class="bigger-hint"
                   ></v-text-field>
                 </v-col>
                 <v-col
@@ -353,6 +351,7 @@ import Product from "@/Product";
 import BuildUniquePropertySetsInProducts from "@/BuildUniquePropertySetsInProducts";
 import PageWrap from '@/components/PageWrap'
 import {defineAsyncComponent} from "vue";
+import QuantityInterpreter from "../QuantityInterpreter";
 
 export default {
   name: "AdminProducts",
@@ -378,7 +377,9 @@ export default {
       newMaker: "nouveau fabriquant",
       categoryInexistent: "Catégorie inexistante",
       makerInexistent: "Fabriquant inexistant",
-      providerInexistent: "Fournisseur inexistant"
+      providerInexistent: "Fournisseur inexistant",
+      formatHint: "Les formats autorisés sont kg, g, lbs, l, ml.",
+      invalidFormat: "Format invalide. Les formats autorisés sont kg, g, lbs, l, ml."
     };
     I18n.i18next.addResources("fr", "productsAdmin", text);
     I18n.i18next.addResources("en", "productsAdmin", text);
@@ -414,6 +415,9 @@ export default {
     }
   },
   methods: {
+    isFormatValid: function (value) {
+      return QuantityInterpreter.isFormatValid(value) || this.$t('productsAdmin:invalidFormat');
+    },
     selectNewMaker: async function () {
       this.makers.push(this.makerSearchText);
       this.editedProduct.maker = this.makerSearchText;
