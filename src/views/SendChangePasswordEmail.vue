@@ -1,6 +1,6 @@
 <template>
-  <v-row justify="center" class="pt-16 pb-16">
-    <v-col cols="12" class="col-md-6 col-lg-4 pt-16 text-left">
+  <PageWrap width="small">
+    <div>
       <h2>{{ $t('forgotP:title') }}</h2>
       <v-alert color="primary" type="success" icon="check_circle" :value="true" v-if="emailSent">
         {{ $t('forgotP:sent') }}
@@ -23,7 +23,6 @@
       <v-alert v-if="emailDoesNotExist" icon="priority_high" value="true" color="error" class="bg-error" theme="dark">
         {{ $t('forgotP:courrielInexistant') }}
       </v-alert>
-
       <v-btn
           @click="send"
           theme="dark"
@@ -32,8 +31,8 @@
       >
         {{ $t('forgotP:send') }}
       </v-btn>
-    </v-col>
-  </v-row>
+    </div>
+  </PageWrap>
 </template>
 
 <script>
@@ -41,9 +40,11 @@ import i18n from '@/i18n'
 import Rules from '@/Rules'
 import AuthenticateService from "@/service/AuthenticateService";
 import RedirectIfWrongPage from "@/RedirectIfWrongPage";
+import PageWrap from '@/components/PageWrap'
 
 export default {
   name: 'SendChangePasswordEmail',
+  components: {PageWrap},
   data: function () {
     i18n.i18next.addResources('fr', 'forgotP', {
       title: 'Envoi du courriel pour modifier son mot de passe',

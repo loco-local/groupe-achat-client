@@ -1,5 +1,5 @@
 <template>
-  <PageWrap>
+  <PageWrap width="small">
     <v-row
         align="center"
         justify="center"
@@ -8,7 +8,7 @@
         'pt-8 pb-8' : $vuetify.display.mdAndUp
       }"
     >
-      <v-col cols="12" md="10" lg="9" xl="6" class="text-left">
+      <v-col cols="12" class="text-left">
         <v-form ref="loginForm">
           <v-alert
               v-model="wrongLogin"

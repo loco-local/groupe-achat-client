@@ -20,6 +20,7 @@
         <v-alert
             variant="outlined"
             type="success"
+            color="primary"
         >
           {{ $t('register:completed') }}.
         </v-alert>
@@ -118,7 +119,7 @@
             </v-form>
           </v-card-text>
           <v-card-actions>
-            <v-btn color="primary" size="large" @click="register" :loading="registerLoading" :disabled="registerLoading">
+            <v-btn color="primary" size="large" @click="register" :loading="registerLoading" :disabled="registerLoading" variant="elevated">
               {{ $t('register:register') }}
             </v-btn>
           </v-card-actions>

@@ -1,5 +1,5 @@
 <template>
-  <PageWrap class="vh-center">
+  <PageWrap class="text-center">
     <v-btn to="/connexion" size="x-large" color="primary" v-if="$store.state.user === null">
       {{ $t('login') }}
     </v-btn>

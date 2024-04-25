@@ -4,7 +4,7 @@
         color="white"
     >
       <div class="d-flex align-center ml-4">
-        <router-link to="/">
+        <router-link to="/" >
           <v-img
               alt="Logo Groupe d'achat"
               class="shrink mr-2"
@@ -23,15 +23,14 @@
           Groupe d'achat
         </router-link>
       </v-toolbar-title>
-      <v-spacer></v-spacer>
       <span v-if="$store.state.user !== null && $vuetify.display.mdAndUp" class="text-h6 mr-8 font-weight-regular">
                 {{ $store.state.user.firstname }}
                 {{ $store.state.user.lastname }}
               </span>
-      <v-btn variant="text" to="/connexion" v-if="$store.state.user === null">
+      <v-btn variant="text" to="/connexion" v-if="$store.state.user === null" :size="$vuetify.display.smAndDown ? 'x-small':'default'">
         {{$t('app:connect')}}
       </v-btn>
-      <v-btn variant="text" to="/loco-local/inscription" v-if="$store.state.user === null">
+      <v-btn variant="text" to="/loco-local/inscription" v-if="$store.state.user === null" :size="$vuetify.display.smAndDown ? 'x-small':'default'">
         {{$t('app:register')}}
       </v-btn>
       <v-menu
