@@ -28,6 +28,12 @@
                 {{ $store.state.user.firstname }}
                 {{ $store.state.user.lastname }}
               </span>
+      <v-btn variant="text" to="/connexion" v-if="$store.state.user === null">
+        {{$t('app:connect')}}
+      </v-btn>
+      <v-btn variant="text" to="/loco-local/inscription" v-if="$store.state.user === null">
+        {{$t('app:register')}}
+      </v-btn>
       <v-menu
           location="bottom left"
           v-if="$store.state.user !== null"
@@ -144,7 +150,9 @@ export default {
       logout: "Déconnecter",
       groupOrder: "Commandes",
       yourGroup: "Votre groupe",
-      members: "Membres"
+      members: "Membres",
+      connect: "Se connecter",
+      register: "S'inscrire"
     };
     I18n.i18next.addResources("fr", "app", text);
     I18n.i18next.addResources("en", "app", text);

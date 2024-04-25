@@ -3,8 +3,8 @@
       align="center"
       justify="center"
       :class="{
-        'pl-4 pr-4 mb-12': $vuetify.breakpoint.smAndDown,
-        'pt-8 pb-8' : $vuetify.breakpoint.mdAndUp
+        'pl-4 pr-4 mb-12': $vuetify.display.smAndDown,
+        'pt-8 pb-8' : $vuetify.display.mdAndUp
       }"
   >
 
