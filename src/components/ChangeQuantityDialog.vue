@@ -44,7 +44,6 @@
       </v-card-text>
       <v-card-text>
         <v-text-field
-            v-if="quantityChangeIsForExpected"
             v-model="newQuantity"
             :placeholder="$t('quantity:quantity')"
             @keydown.enter.prevent="confirmQuantityChange"
