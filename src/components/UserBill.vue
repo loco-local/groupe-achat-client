@@ -46,12 +46,8 @@
           :hide-category="true"
           @quantityUpdate="updateQuantity"
           ref="userBillItemsTable"
+          :totals="quantityUpdater.getTotals()"
       ></ProductsTable>
-      <v-row>
-        <v-col cols="12" class="text-right text-h5 mt-8 pr-8">
-          Total: {{ $filters.currency(orderTotal) }}
-        </v-col>
-      </v-row>
       <v-row v-if="buyGroupOrder.howToPay !== null">
         <v-col cols="12" class="text-left text-body-1 mt-8 pl-8">
           <v-card variant="outlined">
@@ -101,8 +97,8 @@ export default {
       userOrder: null,
       orderItems: null,
       buyGroupOrder: null,
-      orderTotal: null,
-      isLoading: true
+      isLoading: true,
+      quantityUpdater: null
     }
   },
   mounted: async function () {
@@ -114,12 +110,9 @@ export default {
     );
     if (this.orderItems.length) {
       const memberOrder = this.orderItems[0].MemberOrder;
-      this.orderTotal = memberOrder.total;
       if (this.orderTotal === null || this.orderTotal === undefined) {
         this.orderTotal = memberOrder.expectedTotal;
       }
-    } else {
-      this.orderTotal = 0;
     }
     this.buyGroupOrder = await BuyGroupOrderService.getById(
         this.buyGroupOrderId,
@@ -133,10 +126,10 @@ export default {
         this.orderItems
     )
     this.isLoading = false;
-    this.quantityUpdater.setProductsTableRef(this.$refs.userBillItemsTable)
   },
   methods: {
     updateQuantity: function (updatedItem) {
+      this.quantityUpdater.setProductsTableRef(this.$refs.userBillItemsTable)
       this.quantityUpdater.update(updatedItem);
     }
   }

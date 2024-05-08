@@ -569,10 +569,9 @@ export default {
           this.memberOrdersQuantities
       )
       this.isLoading = false;
-      await this.$nextTick();
-      this.quantityUpdater.setProductsTableRef(this.$refs.productsTable)
     },
     updateOrderQuantity: async function (updatedProduct) {
+      this.quantityUpdater.setProductsTableRef(this.$refs.productsTable)
       await this.quantityUpdater.update(
           updatedProduct,
           this.memberId,
