@@ -3,12 +3,12 @@
     <v-card-text v-if="isLoading">
       <v-progress-circular indeterminate :size="80" :width="2"></v-progress-circular>
     </v-card-text>
-    <v-card-text v-if="!isLoading && !userOrdersItems.length">
+    <v-card-text v-if="!isLoading && !orderItems.length">
       {{ $t('groupOrder:noUserOrder') }}
     </v-card-text>
-    <v-card-text v-if="!isLoading && userOrdersItems.length">
+    <v-card-text v-if="!isLoading && orderItems.length">
       <ProductsTable
-          :products="userOrdersItems || []"
+          :products="orderItems || []"
           :hasQuantity="true"
           :hasExpectedQuantity="true"
           :canChangeQuantity="true"
@@ -19,7 +19,7 @@
           :showExpectedCostUnitPrice="true"
           :showCostUnitPrice="true"
           @costUnitPriceUpdate="updateCostUnitPrice"
-          @quantityUpdate="quantityUpdater.update"
+          @quantityUpdate="updateQuantity"
           :showUnitPrice="true"
           :hide-expected-unit-price="true"
           :show-expected-unit-price-after-rebate="true"
@@ -49,8 +49,7 @@ export default {
   data: function () {
     return {
       isLoading: true,
-      userOrdersItems: null,
-      quantityUpdater: null
+      orderItems: null
     }
   },
   mounted: async function () {
@@ -63,23 +62,26 @@ export default {
         allMemberOrders
     );
     const allMembersQuantities = this.memberOrdersQuantities.buildQuantities();
-    this.userOrdersItems = await BuyGroupOrderService.listMemberOrderItems(
+    this.orderItems = await BuyGroupOrderService.listMemberOrderItems(
         this.buyGroupId,
         this.buyGroupOrderId
     );
-    this.userOrdersItems.forEach((memberOrderItem) => {
+    this.orderItems.forEach((memberOrderItem) => {
       if (allMembersQuantities[memberOrderItem.ProductId]) {
         memberOrderItem.allMembersQuantity = allMembersQuantities[memberOrderItem.ProductId]
       }
     })
     this.quantityUpdater = QuantityUpdater.buildForFinalQuantity(
-        this.memberOrdersQuantities,
-        this.userOrdersItems,
-        this.$refs.allOrderItemsTable
+        this.orderItems,
+        this.memberOrdersQuantities
     )
     this.isLoading = false;
   },
   methods: {
+    updateQuantity: async function (updatedItem) {
+      this.quantityUpdater.setProductsTableRef(this.$refs.allOrderItemsTable);
+      await this.quantityUpdater.update(updatedItem);
+    },
     updateCostUnitPrice: async function (updatedItem) {
       const prices = await MemberOrderService.setCostUnitPrice(
           updatedItem.MemberOrderId,

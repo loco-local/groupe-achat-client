@@ -565,15 +565,18 @@ export default {
       this.buildOrderItemsAsProducts()
       const quantityUpdater = this.isAdminModificationFlow ? QuantityUpdater.buildForFinalQuantity : QuantityUpdater.buildForExpectedQuantity
       this.quantityUpdater = quantityUpdater(
-          this.memberOrdersQuantities,
           this.orderItems,
-          this.$refs.productsTable
+          this.memberOrdersQuantities
       )
       this.isLoading = false;
+      await this.$nextTick();
+      this.quantityUpdater.setProductsTableRef(this.$refs.productsTable)
     },
     updateOrderQuantity: async function (updatedProduct) {
       await this.quantityUpdater.update(
-          updatedProduct
+          updatedProduct,
+          this.memberId,
+          this.userOrderId
       )
       this.buildItemsToDivide();
       this.buildOrderItemsAsProducts();

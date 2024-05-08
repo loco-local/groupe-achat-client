@@ -2,30 +2,31 @@ import MemberOrderService from "@/service/MemberOrderService";
 import OrderItem from "@/OrderItem";
 
 const api = {
-    buildForFinalQuantity: function (memberOrdersQuantities, userOrdersItems, table) {
-        return new QuantityUpdater(memberOrdersQuantities, userOrdersItems, true, table)
+    buildForFinalQuantity: function (orderItems, memberOrdersQuantities) {
+        return new QuantityUpdater(orderItems, memberOrdersQuantities, true)
     },
-    buildForExpectedQuantity: function (memberOrdersQuantities, userOrdersItems, table) {
-        return new QuantityUpdater(memberOrdersQuantities, userOrdersItems, false, table)
+    buildForExpectedQuantity: function (orderItems, memberOrdersQuantities) {
+        return new QuantityUpdater(orderItems, memberOrdersQuantities, false)
     }
 }
 
-function QuantityUpdater(memberOrdersQuantities, orderItems, isForFinalQuantity, table) {
-    this.memberOrdersQuantities = memberOrdersQuantities;
+function QuantityUpdater(orderItems, memberOrdersQuantities, isForFinalQuantity) {
     this.orderItems = orderItems;
+    this.memberOrdersQuantities = memberOrdersQuantities;
     this.isForFinalQuantity = isForFinalQuantity;
-    this.table = table;
     this.rebuildTotals();
 }
 
-QuantityUpdater.prototype.update = async function (updatedProduct) {
+QuantityUpdater.prototype.update = async function (updatedProduct, memberId, orderId) {
+    orderId = orderId || updatedProduct.MemberOrderId;
+    const updatedProductId = updatedProduct.ProductId || updatedProduct.id
     let orderItem = this.orderItems.filter((orderItem) => {
-        return orderItem.ProductId === updatedProduct.id;
+        return orderItem.ProductId === updatedProductId;
     });
     const isNewItem = !orderItem.length;
     if (isNewItem) {
         orderItem = {...updatedProduct};
-        orderItem.ProductId = updatedProduct.id;
+        orderItem.ProductId = updatedProductId;
         if (this.isForFinalQuantity) {
             orderItem.quantity = 0;
         } else {
@@ -42,14 +43,14 @@ QuantityUpdater.prototype.update = async function (updatedProduct) {
     let prices;
     if (this.isForFinalQuantity) {
         prices = await MemberOrderService.setQuantity(
-            updatedProduct.MemberOrderId,
-            updatedProduct.id,
+            orderId,
+            updatedProductId,
             orderItem.quantity
         )
     } else {
         prices = await MemberOrderService.setExpectedQuantity(
-            updatedProduct.MemberOrderId,
-            updatedProduct.id,
+            orderId,
+            updatedProductId,
             orderItem.expectedQuantity
         )
     }
@@ -78,16 +79,20 @@ QuantityUpdater.prototype.update = async function (updatedProduct) {
             orderItem
         )
     }
-    orderItem.MemberOrder = {
-        MemberId: this.member.id
+    if (orderItem.MemberOrder === undefined || orderItem.MemberOrder === null) {
+        orderItem.MemberOrder = {
+            MemberId: memberId
+        }
     }
-    this.memberOrdersQuantities.updateMemberOrder(orderItem);
-    this.memberOrdersQuantities.buildQuantities();
-    updatedProduct.allMembersQuantity = this.memberOrdersQuantities.getAllMembersQuantityForProductId(updatedProduct.id);
+    if (this.memberOrdersQuantities) {
+        this.memberOrdersQuantities.updateMemberOrder(orderItem);
+        this.memberOrdersQuantities.buildQuantities();
+        updatedProduct.allMembersQuantity = this.memberOrdersQuantities.getAllMembersQuantityForProductId(updatedProduct.id);
+    }
     this.rebuildTotals();
-    this.buildItemsToDivide();
-    this.buildOrderItemsAsProducts();
-    await this.table.showQuantityChangedSuccess();
+    if (this.productsTableRef !== null) {
+        await this.productsTableRef.showQuantityChangedSuccess();
+    }
 }
 
 QuantityUpdater.prototype.rebuildTotals = function () {
@@ -112,4 +117,8 @@ QuantityUpdater.prototype.rebuildTotals = function () {
 QuantityUpdater.prototype.getTotals = function () {
     return this.orderTotals;
 }
+QuantityUpdater.prototype.setProductsTableRef = function (productsTableRef) {
+    this.productsTableRef = productsTableRef;
+}
+
 export default api;
