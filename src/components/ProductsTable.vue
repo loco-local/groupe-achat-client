@@ -286,7 +286,9 @@
       </template>
       <template v-slot:body.append>
         <td :colspan="headers.length - 1" v-if="totals !== null">
-          <v-row class="text-left mb-4">
+          <v-row class="text-left mb-4" :class="{
+            'ml-6' : $vuetify.display.mdAndUp
+          }">
             <v-col cols="12">
               <v-row>
                 <v-col cols="8"></v-col>
@@ -829,7 +831,7 @@ export default {
     enterChangeQuantityFlow: async function (item, isForExpected) {
       this.$refs.quantityChangeDialog.show(item, isForExpected)
     },
-    updateQuantity: async function(item){
+    updateQuantity: async function (item) {
       await this.$emit('quantityUpdate', item)
     },
     applySearch: function () {

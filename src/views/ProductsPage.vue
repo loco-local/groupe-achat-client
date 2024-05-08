@@ -122,7 +122,7 @@
                     :hideProvider="$vuetify.display.smAndDown"
                     @quantityUpdate="updateOrderQuantity"
                     ref="summaryProductsTable"
-                    :totals="orderTotals"
+                    :totals="quantityUpdater.getTotals()"
                 ></ProductsTable>
               </v-card-text>
               <v-card-text v-if="orderItems.length === 0 && !isLoading">
@@ -342,6 +342,7 @@ import MemberOrdersQuantity from "@/MemberOrdersQuantity";
 import PageWrap from '@/components/PageWrap'
 import {defineAsyncComponent} from "vue";
 import VueScrollTo from "vue-scrollto";
+import QuantityUpdater from "@/QuantityUpdater";
 
 export default {
   name: "ProductsPage",
@@ -395,14 +396,14 @@ export default {
       hasExpectedQuantity: false,
       isAdminModificationFlow: false,
       showAllMembersQuantity: true,
-      orderTotals: null,
       relevantOrder: null,
       quantityTipDialog: false,
       tipsDialog: false,
       yourOrderRoutePath: "",
       toDivideRoutePath: "",
       allProductsRoutePath: "",
-      allSectionsRoutePath: ""
+      allSectionsRoutePath: "",
+      quantityUpdater: null
     }
   },
   mounted: async function () {
@@ -459,25 +460,6 @@ export default {
     },
     searchItem: function (item) {
       this.$refs.productsTable.searchItem(item);
-    },
-    rebuildTotal: function (orderItems) {
-      this.orderTotals = orderItems.reduce((totals, orderItem) => {
-        let orderItemTotal = (orderItem.totalAfterRebateWithTaxes === null || orderItem.totalAfterRebateWithTaxes === undefined) ?
-            orderItem.expectedTotalAfterRebateWithTaxes : orderItem.totalAfterRebateWithTaxes;
-        orderItem.total = orderItemTotal = parseFloat(orderItemTotal);
-        let orderItemTotalBeforeTaxes = (orderItem.totalAfterRebate === null || orderItem.totalAfterRebate === undefined) ?
-            orderItem.expectedTotalAfterRebate : orderItem.totalAfterRebate;
-        totals.total = parseFloat((orderItemTotal || 0.0) + totals.total);
-        totals.subTotal = parseFloat((orderItemTotalBeforeTaxes || 0.0) + totals.subTotal);
-        totals.tps = parseFloat((orderItem.tps || 0.0) + totals.tps);
-        totals.tvq = parseFloat((orderItem.tvq || 0.0) + totals.tvq);
-        return totals;
-      }, {
-        subTotal: 0.0,
-        tps: 0.0,
-        tvq: 0.0,
-        total: 0.0,
-      })
     },
     setBuyGroup: async function (buyGroup, latestOrder) {
       this.relevantOrder = buyGroup.relevantOrder;
@@ -579,80 +561,22 @@ export default {
           return (b.expectedQuantity || 0) - (a.expectedQuantity || 0);
         }
       });
-      this.rebuildTotal(this.orderItems);
       this.buildItemsToDivide();
       this.buildOrderItemsAsProducts()
+      const quantityUpdater = this.isAdminModificationFlow ? QuantityUpdater.buildForFinalQuantity : QuantityUpdater.buildForExpectedQuantity
+      this.quantityUpdater = quantityUpdater(
+          this.memberOrdersQuantities,
+          this.orderItems,
+          this.$refs.productsTable
+      )
       this.isLoading = false;
     },
     updateOrderQuantity: async function (updatedProduct) {
-      let orderItem = this.orderItems.filter((orderItem) => {
-        return orderItem.ProductId === updatedProduct.id;
-      });
-      const isNewItem = !orderItem.length;
-      if (isNewItem) {
-        orderItem = {...updatedProduct};
-        orderItem.ProductId = updatedProduct.id;
-        if (this.isAdminModificationFlow) {
-          orderItem.quantity = 0;
-        } else {
-          orderItem.expectedQuantity = 0;
-        }
-      } else {
-        orderItem = orderItem[0];
-      }
-      if (this.isAdminModificationFlow) {
-        orderItem.quantity = updatedProduct.quantity;
-      } else {
-        orderItem.expectedQuantity = updatedProduct.expectedQuantity;
-      }
-      let prices;
-      if (this.isAdminModificationFlow) {
-        prices = await MemberOrderService.setQuantity(
-            this.userOrderId,
-            updatedProduct.id,
-            orderItem.quantity
-        )
-      } else {
-        prices = await MemberOrderService.setExpectedQuantity(
-            this.userOrderId,
-            updatedProduct.id,
-            orderItem.expectedQuantity
-        )
-      }
-      orderItem.tps = updatedProduct.tps = parseFloat(prices.tps)
-      orderItem.tvq = updatedProduct.tvq = parseFloat(prices.tvq)
-      if (this.isAdminModificationFlow) {
-        orderItem.totalAfterRebateWithTaxes = updatedProduct.totalAfterRebateWithTaxes = parseFloat(prices.totalAfterRebateWithTaxes);
-        orderItem.totalAfterRebate = updatedProduct.totalAfterRebate = parseFloat(prices.totalAfterRebate);
-        updatedProduct.quantity = prices.quantity;
-        updatedProduct.costUnitPrice = prices.costUnitPrice;
-        updatedProduct.unitPrice = prices.unitPrice;
-        updatedProduct.unitPriceAfterRebate = prices.unitPriceAfterRebate;
-      } else {
-        orderItem.expectedTotalAfterRebateWithTaxes = updatedProduct.expectedTotalAfterRebateWithTaxes = parseFloat(prices.expectedTotalAfterRebateWithTaxes);
-        orderItem.expectedTotalAfterRebate = updatedProduct.expectedTotalAfterRebate = parseFloat(prices.expectedTotalAfterRebate);
-        updatedProduct.expectedQuantity = orderItem.expectedQuantity = prices.expectedQuantity;
-      }
-      OrderItem.defineQuantitiesFraction(updatedProduct)
-      orderItem.expectedQuantityInput = updatedProduct.expectedQuantityInput;
-      orderItem.quantityInput = updatedProduct.quantityInput;
-      updatedProduct.tps = prices.tps;
-      updatedProduct.tvq = prices.tvq;
-      if (isNewItem) {
-        this.orderItems.push(
-            orderItem
-        )
-      }
-      orderItem.MemberOrder = {
-        MemberId: this.member.id
-      }
-      this.memberOrdersQuantities.updateMemberOrder(orderItem);
-      this.buildAllMembersQuantities();
-      updatedProduct.allMembersQuantity = this.memberOrdersQuantities.getAllMembersQuantityForProductId(updatedProduct.id);
-      this.rebuildTotal(this.orderItems);
+      await this.quantityUpdater.update(
+          updatedProduct
+      )
       this.buildItemsToDivide();
       this.buildOrderItemsAsProducts();
-      await this.$refs.productsTable.showQuantityChangedSuccess();
     }
   }
 }

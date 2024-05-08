@@ -163,7 +163,7 @@ export default {
       showErrorAlert: false,
       wrongInputFormat: "",
       productFormat: "",
-      itemToChangeQuantityHint:""
+      itemToChangeQuantityHint: ""
     }
   },
   methods: {
@@ -186,7 +186,10 @@ export default {
       this.changeQuantityDialog = true;
       if (this.$vuetify.display.mdAndUp) {
         await this.$nextTick();
-        this.$refs.changeQuantityTextField.focus();
+        setTimeout(
+            this.$refs.changeQuantityTextField.focus,
+            1
+        )
       }
     },
     quantityClear: function () {

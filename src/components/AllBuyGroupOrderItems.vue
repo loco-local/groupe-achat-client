@@ -19,7 +19,7 @@
           :showExpectedCostUnitPrice="true"
           :showCostUnitPrice="true"
           @costUnitPriceUpdate="updateCostUnitPrice"
-          @quantityUpdate="updateOrderQuantity"
+          @quantityUpdate="quantityUpdater.update"
           :showUnitPrice="true"
           :hide-expected-unit-price="true"
           :show-expected-unit-price-after-rebate="true"
@@ -38,6 +38,8 @@ import BuyGroupOrderService from "@/service/BuyGroupOrderService";
 import MemberOrderService from "@/service/MemberOrderService";
 import MemberOrdersQuantity from "@/MemberOrdersQuantity";
 import {defineAsyncComponent} from "vue";
+import QuantityUpdater from "@/QuantityUpdater";
+
 export default {
   name: "AllBuyGroupOrderItems",
   props: ['buyGroupId', 'buyGroupOrderId'],
@@ -47,7 +49,8 @@ export default {
   data: function () {
     return {
       isLoading: true,
-      userOrdersItems: null
+      userOrdersItems: null,
+      quantityUpdater: null
     }
   },
   mounted: async function () {
@@ -69,6 +72,11 @@ export default {
         memberOrderItem.allMembersQuantity = allMembersQuantities[memberOrderItem.ProductId]
       }
     })
+    this.quantityUpdater = QuantityUpdater.buildForFinalQuantity(
+        this.memberOrdersQuantities,
+        this.userOrdersItems,
+        this.$refs.allOrderItemsTable
+    )
     this.isLoading = false;
   },
   methods: {
@@ -83,24 +91,6 @@ export default {
       updatedItem.tvq = prices.tvq;
       updatedItem.unitPrice = prices.unitPrice;
       await this.$refs.allOrderItemsTable.showCostUnitPriceChangedSuccess();
-    },
-    updateOrderQuantity: async function (updatedItem) {
-      const prices = await MemberOrderService.setQuantity(
-          updatedItem.MemberOrderId,
-          updatedItem.ProductId,
-          updatedItem.quantity
-      )
-      updatedItem.totalAfterRebateWithTaxes = prices.totalAfterRebateWithTaxes;
-      updatedItem.tps = prices.tps;
-      updatedItem.tvq = prices.tvq;
-      this.memberOrdersQuantities.updateMemberOrder(updatedItem);
-      this.memberOrdersQuantities.buildQuantities();
-      this.userOrdersItems.forEach((orderItem) => {
-        if (orderItem.ProductId === updatedItem.ProductId) {
-          orderItem.allMembersQuantity = this.memberOrdersQuantities.getAllMembersQuantityForProductId(orderItem.ProductId);
-        }
-      })
-      await this.$refs.allOrderItemsTable.showQuantityChangedSuccess();
     }
   }
 }
