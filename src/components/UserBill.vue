@@ -6,12 +6,6 @@
     <v-card-text v-if="!isLoading && !orderItems.length">
       {{ $t('userBill:noItems') }}
     </v-card-text>
-    <v-card-actions v-if="$store.state.user.status === 'admin'" class="mt-7 ml-6">
-      <v-btn :to="'/'+buyGroupPath+'/commande-membre/'+userId">
-        <v-icon start>edit</v-icon>
-        {{ $t('modify') }}
-      </v-btn>
-    </v-card-actions>
     <v-card-text class="pb-0">
       <v-alert
           border="bottom"
@@ -32,7 +26,15 @@
         </p>
       </v-alert>
     </v-card-text>
-    <v-card-text v-if="!isLoading && orderItems.length">
+    <v-card-actions v-if="$store.state.user.status === 'admin'" class="mt-7 ml-6 pb-0">
+      <v-row>
+        <v-col cols="12">
+          <AddProduct :buy-group-id="buyGroupId" :sale-percentage="salePercentage" :rebates="rebates"
+                      @quantityUpdate="updateQuantity"></AddProduct>
+        </v-col>
+      </v-row>
+    </v-card-actions>
+    <v-card-text v-if="!isLoading && orderItems.length" class="pt-0">
       <ProductsTable
           :products="orderItems || []"
           :hasQuantity="true"
@@ -47,6 +49,7 @@
           @quantityUpdate="updateQuantity"
           ref="userBillItemsTable"
           :totals="quantityUpdater.getTotals()"
+          :canChangeQuantity="$store.state.user.status === 'admin'"
       ></ProductsTable>
       <v-row v-if="buyGroupOrder.howToPay !== null">
         <v-col cols="12" class="text-left text-body-1 mt-8 pl-8">
@@ -75,11 +78,13 @@ import BuyGroupOrderService from "@/service/BuyGroupOrderService";
 import I18n from "@/i18n";
 import {defineAsyncComponent} from "vue";
 import QuantityUpdater from "../QuantityUpdater";
+import AddProduct from "./AddProduct.vue";
 
 export default {
   name: "UserBill",
   props: ['buyGroupId', 'buyGroupOrderId', 'buyGroupPath', 'userId'],
   components: {
+    AddProduct,
     ProductsTable: defineAsyncComponent(() => import('@/components/ProductsTable'))
   },
   data: function () {
@@ -89,16 +94,17 @@ export default {
       download: "Télécharger",
       subjectToChange: "Les prix et les quantités peuvent changer.",
       subjectToChange2: "Un membre du groupe d'achat vous contactera lorsque le montant final sera déterminé et qu'il sera le moment de payer.",
-      subjectToChange3: "La manière de payer est indiquée dans le bas de cette page."
+      subjectToChange3: "La manière de payer est indiquée dans le bas de cette page.",
     }
     I18n.i18next.addResources("fr", "userBill", text);
     I18n.i18next.addResources("en", "userBill", text);
     return {
-      userOrder: null,
       orderItems: null,
       buyGroupOrder: null,
       isLoading: true,
-      quantityUpdater: null
+      quantityUpdater: null,
+      salePercentage: null,
+      rebates: null
     }
   },
   mounted: async function () {
@@ -109,15 +115,17 @@ export default {
         this.userId
     );
     if (this.orderItems.length) {
-      const memberOrder = this.orderItems[0].MemberOrder;
+      this.memberOrder = this.orderItems[0].MemberOrder;
+      this.rebates = this.memberOrder.Member.rebates;
       if (this.orderTotal === null || this.orderTotal === undefined) {
-        this.orderTotal = memberOrder.expectedTotal;
+        this.orderTotal = this.memberOrder.expectedTotal;
       }
     }
     this.buyGroupOrder = await BuyGroupOrderService.getById(
         this.buyGroupOrderId,
         this.buyGroupId
     );
+    this.salePercentage = this.buyGroupOrder.salePercentage
     this.$emit('dataDefined', {
       items: this.orderItems,
       buyGroupOrder: this.buyGroupOrder
@@ -130,8 +138,12 @@ export default {
   methods: {
     updateQuantity: function (updatedItem) {
       this.quantityUpdater.setProductsTableRef(this.$refs.userBillItemsTable)
-      this.quantityUpdater.update(updatedItem);
-    }
+      this.quantityUpdater.update(
+          updatedItem,
+          this.memberOrder.Member.id,
+          this.memberOrder.id
+      );
+    },
   }
 }
 </script>

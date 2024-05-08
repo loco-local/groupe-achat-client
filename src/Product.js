@@ -4,19 +4,18 @@ import ProductTranslation from "@/ProductTranslation";
 ProductTranslation.setup();
 const Product = {
     format: function (product, salePercentage, rebates) {
+        const unitPrices = Product.calculateUnitPrices(
+            product.expectedCostUnitPrice,
+            salePercentage,
+            rebates
+        );
         if (product.expectedUnitPrice === undefined) {
-            if (product.isAdminRelated) {
-                product.unitPrice = product.expectedUnitPrice = product.expectedCostUnitPrice;
-                product.unitPriceAfterRebate = product.expectedUnitPriceAfterRebate = product.expectedCostUnitPrice;
-            } else {
-                const unitPrices = Product.calculateUnitPrices(
-                    product.expectedCostUnitPrice,
-                    salePercentage,
-                    rebates
-                );
-                product.expectedUnitPrice = unitPrices.unitPrice;
-                product.expectedUnitPriceAfterRebate = unitPrices.unitPriceAfterRebate;
-            }
+            product.expectedUnitPrice = unitPrices.unitPrice;
+            product.expectedUnitPriceAfterRebate = unitPrices.unitPriceAfterRebate;
+        }
+        if (product.unitPrice === undefined) {
+            product.unitPrice = unitPrices.unitPrice;
+            product.unitPriceAfterRebate = unitPrices.unitPriceAfterRebate;
         }
         if (product.expectedCostUnitPrice) {
             product.expectedCostUnitPrice = product.expectedCostUnitPrice.toFixed(2);

@@ -109,7 +109,7 @@
         <span class="text-body-1">
           {{ $t('membersBill:billLinkCopied') }}
         </span>
-      <template v-slot:action="{ attrs }">
+      <template v-slot:actions="{ attrs }">
         <v-btn
             color="white"
             variant="text"
