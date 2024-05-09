@@ -23,6 +23,8 @@
                 :hideSearch="true"
                 :onlyShowCostTotal="true"
                 :prevent-search-flickr="false"
+                :hide-categories-filter="true"
+                :hide-category="true"
             ></ProductsTable>
           </v-expansion-panel-text>
         </v-expansion-panel>
@@ -43,6 +45,8 @@
           :hideSearch="true"
           :onlyShowCostTotal="true"
           :prevent-search-flickr="false"
+          :hide-categories-filter="true"
+          :hide-category="true"
       ></ProductsTable>
       <v-row>
         <v-col cols="12" class="text-right text-h5 mt-8 pr-8">

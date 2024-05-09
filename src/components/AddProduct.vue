@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="12" md="6">
         <v-autocomplete
-            :label="$t('addItem:allProducts')"
+            :label="$t('addItem:addProduct')"
             :items="allProducts"
             :item-props="itemProps"
             @update:modelValue="addItem"
@@ -25,7 +25,7 @@ export default {
   props: ['buyGroupId', 'salePercentage', 'rebates'],
   data: function () {
     const text = {
-      allProducts: "Tous les produits"
+      addProduct: "Ajouter un produit"
     }
     I18n.i18next.addResources("fr", "addItem", text);
     I18n.i18next.addResources("en", "addItem", text);
