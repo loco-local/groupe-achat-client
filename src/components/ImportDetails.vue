@@ -282,6 +282,19 @@ export default {
         this.allProperties = Object.keys(rawDataTenFirst[0]);
         this.rawDataTenFirst = rawDataTenFirst.slice(1, 9);
       }
+    },
+    clear: function () {
+      this.propertiesAssociation = null;
+      this.haveAssociationsChanged = false;
+      this.isChangingAssociation = false;
+      this.rawDataTenFirst = [];
+      this.allProperties = [];
+      this.uploadUuid = null;
+      this.newProducts = [];
+      this.updatePriceProducts = [];
+      this.productsToDisable = [];
+      this.wrongFormatProducts = [];
+      this.doNothingProducts = [];
     }
   }
 }

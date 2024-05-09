@@ -39,6 +39,10 @@ export default {
   methods: {},
   watch: {
     productsFile: async function () {
+      if (this.productsFile === null) {
+        this.$refs.import.clear();
+        return;
+      }
       this.isProductsFileLoading = true;
       let formData = new FormData();
       formData.append('file', this.productsFile, this.productsFile.name);

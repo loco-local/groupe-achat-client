@@ -811,7 +811,8 @@ export default {
             this.products
         );
         return sets.categories.filter((category) => {
-          if (category === null || category === undefined) {
+          const categoryIsString = typeof category === 'string' || category instanceof String
+          if (category === null || category === undefined || !categoryIsString) {
             return false;
           }
           return category.trim() !== ""
