@@ -18,12 +18,10 @@
           :showTaxes="true"
           :showExpectedCostUnitPrice="true"
           :showCostUnitPrice="true"
-          @costUnitPriceUpdate="updateCostUnitPrice"
           @quantityUpdate="updateQuantity"
           :showUnitPrice="true"
           :hide-expected-unit-price="true"
           :show-expected-unit-price-after-rebate="true"
-          :canEditCostUnitPrice="true"
           :showAllMembersQuantity="true"
           :hideCategory="true"
           :hideCategoriesFilter="true"
@@ -35,7 +33,6 @@
 
 <script>
 import BuyGroupOrderService from "@/service/BuyGroupOrderService";
-import MemberOrderService from "@/service/MemberOrderService";
 import MemberOrdersQuantity from "@/MemberOrdersQuantity";
 import {defineAsyncComponent} from "vue";
 import QuantityUpdater from "@/QuantityUpdater";
@@ -81,18 +78,6 @@ export default {
     updateQuantity: async function (updatedItem) {
       this.quantityUpdater.setProductsTableRef(this.$refs.allOrderItemsTable);
       await this.quantityUpdater.update(updatedItem);
-    },
-    updateCostUnitPrice: async function (updatedItem) {
-      const prices = await MemberOrderService.setCostUnitPrice(
-          updatedItem.MemberOrderId,
-          updatedItem.ProductId,
-          updatedItem.costUnitPrice
-      );
-      updatedItem.totalAfterRebateWithTaxes = prices.totalAfterRebateWithTaxes;
-      updatedItem.tps = prices.tps;
-      updatedItem.tvq = prices.tvq;
-      updatedItem.unitPrice = prices.unitPrice;
-      await this.$refs.allOrderItemsTable.showCostUnitPriceChangedSuccess();
     }
   }
 }

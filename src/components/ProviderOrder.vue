@@ -47,6 +47,8 @@
           :prevent-search-flickr="false"
           :hide-categories-filter="true"
           :hide-category="true"
+          :canEditCostUnitPrice="true"
+          @costUnitPriceUpdate="updateCostUnitPrice"
       ></ProductsTable>
       <v-row>
         <v-col cols="12" class="text-right text-h5 mt-8 pr-8">
@@ -62,6 +64,7 @@ import ProviderOrders from "@/ProviderOrders";
 import BuyGroupOrderService from "@/service/BuyGroupOrderService";
 import I18n from "@/i18n";
 import {defineAsyncComponent} from "vue";
+import MemberOrderService from "@/service/MemberOrderService";
 
 export default {
   name: "ProviderOrder",
@@ -99,6 +102,20 @@ export default {
     this.trimmedProviderItems = trimmedOrderItemsByProvider.providerOrders[this.providerName];
     this.$emit('itemsDefined', orderItemsByProvider);
     this.isLoading = false;
+  },
+  methods:{
+    updateCostUnitPrice: async function (updatedItem) {
+      const prices = await MemberOrderService.setCostUnitPrice(
+          updatedItem.MemberOrderId,
+          updatedItem.ProductId,
+          updatedItem.costUnitPrice
+      );
+      updatedItem.totalAfterRebateWithTaxes = prices.totalAfterRebateWithTaxes;
+      updatedItem.tps = prices.tps;
+      updatedItem.tvq = prices.tvq;
+      updatedItem.unitPrice = prices.unitPrice;
+      await this.$refs.allOrderItemsTable.showCostUnitPriceChangedSuccess();
+    }
   }
 }
 </script>
