@@ -2,6 +2,7 @@ import Service from "@/service/Service";
 import {endOfDay, startOfDay} from 'date-fns'
 import OrderItem from "@/OrderItem";
 import GroupOrder from "@/GroupOrder";
+import QuantityInterpreter from "../QuantityInterpreter";
 
 
 const BuyGroupOrderService = {
@@ -68,6 +69,12 @@ const BuyGroupOrderService = {
             if (orderItem.qtyInBox === null) {
                 orderItem.qtyInBox = 1;
             }
+            orderItem.formatUnit = QuantityInterpreter.getFormat(orderItem.format);
+            orderItem.pricePerUnit = QuantityInterpreter.calculatePricePerUnit(
+                orderItem.unitPrice,
+                orderItem.qtyInBox,
+                orderItem.format
+            );
             OrderItem.defineQuantitiesFraction(orderItem);
             orderItem.previousExpectedQuantityInput = orderItem.expectedQuantityInput;
             orderItem.previousQuantityInput = orderItem.quantityInput;

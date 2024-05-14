@@ -1,5 +1,6 @@
 import I18n from "@/i18n";
 import ProductTranslation from "@/ProductTranslation";
+import QuantityInterpreter from "./QuantityInterpreter";
 
 ProductTranslation.setup();
 const Product = {
@@ -28,6 +29,12 @@ const Product = {
             product.category = t("product:noCategory")
         }
         product.quantity = product.expectedQuantity;
+        product.formatUnit = QuantityInterpreter.getFormat(product.format);
+        product.pricePerUnit = QuantityInterpreter.calculatePricePerUnit(
+            unitPrices.unitPriceAfterRebate,
+            product.qtyInBox,
+            product.format
+        );
         product.expectedQuantityPercentage = 0;
         return product;
     },

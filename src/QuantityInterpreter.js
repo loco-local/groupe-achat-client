@@ -2,6 +2,9 @@ const qtyRegex = /([1-9]{1}[0-9]{0,}(\.[0-9]{0,2})?|0(\.[0-9]{0,2})?|\.[0-9]{1,2
 
 const QuantityInterpreter = {
     getQty: function (str) {
+        if (str === null) {
+            return 1;
+        }
         let qty = str.replaceAll(",", ".").match(qtyRegex);
         if (qty === null) {
             return 1;
@@ -10,7 +13,7 @@ const QuantityInterpreter = {
         return parseFloat(qty.trim());
     },
     allowedFormats: ['kg', 'g', 'lbs', 'ml', 'l'],
-    isFormatValid: function(value){
+    isFormatValid: function (value) {
         if (!value) {
             return true;
         }
@@ -50,11 +53,11 @@ const QuantityInterpreter = {
         return quantity % 1 === 0;
     },
     convertDecimalToFraction: function (decimal, orderItem) {
-        if(orderItem.format === null){
+        if (orderItem.format === null) {
             return 1;
         }
         let qtyInBox = orderItem.qtyInBox;
-        if(qtyInBox === null || qtyInBox === undefined){
+        if (qtyInBox === null || qtyInBox === undefined) {
             qtyInBox = 1;
         }
         const total = QuantityInterpreter.getQty(orderItem.format) * qtyInBox;
@@ -63,6 +66,9 @@ const QuantityInterpreter = {
     convertFractionToDecimal: function (fraction, orderItem) {
         const total = QuantityInterpreter.getQty(orderItem.format) * orderItem.qtyInBox;
         return fraction / total;
+    },
+    calculatePricePerUnit: function (wholePrice, qtyInBox, format) {
+        return wholePrice / (qtyInBox * QuantityInterpreter.getQty(format))
     },
     _roundNumber(number, decimal_digit) {
         let powerOften = Math.pow(10, decimal_digit);

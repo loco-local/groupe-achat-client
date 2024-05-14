@@ -13,7 +13,6 @@
         </div>
         <v-icon icon="close" @click="changeQuantityDialog = false" variant="text"></v-icon>
       </v-card-title>
-      <v-divider class=""></v-divider>
       <v-card-text>
         <v-row class="small text-medium-emphasis ps-2">
           <v-col cols="12" class="pa-0">
@@ -30,7 +29,7 @@
           <v-col cols="12" class="pl-0 pr-0 pb-0">
             {{ itemToChangeQuantity.maker }}
           </v-col>
-          <v-col cols="12" class="pl-0 pr-0">
+          <v-col cols="12" class="pl-0 pr-0 pb-0">
               <span v-if="quantityChangeIsForExpected">
                 {{ $t('product:expectedCostUnitPrice') }}:
                 {{ $filters.currency(itemToChangeQuantity.expectedUnitPriceAfterRebate) }}
@@ -40,8 +39,14 @@
                 {{ $filters.currency(itemToChangeQuantity.unitPriceAfterRebate) }}
               </span>
           </v-col>
+          <v-col cols="12" class="pl-0 pr-0 pb-0">
+            {{ $filters.currency(itemToChangeQuantity.pricePerUnit) }}
+            {{ $t('quantity:per') }}
+            {{ itemToChangeQuantity.formatUnit.toUpperCase()}}
+          </v-col>
         </v-row>
       </v-card-text>
+      <v-divider class=""></v-divider>
       <v-card-text>
         <v-text-field
             v-model="newQuantity"
@@ -146,7 +151,8 @@ export default {
       hintNbInBox: "Aussi, pour commander, par exemple, 2 unités dans une boîte, vous pouvez écrire 2x.",
       hintExample: 'Exemple "1", "0.5", "2,5" ou "5',
       quantityHintPrefix: "Quantité en entier, décimale ou en",
-      quantity: "Quantité"
+      quantity: "Quantité",
+      per: "par"
     }
     I18n.i18next.addResources("fr", "quantity", text);
     I18n.i18next.addResources("en", "quantity", text);
