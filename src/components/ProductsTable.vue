@@ -128,15 +128,20 @@
         </div>
       </template>
       <template v-slot:item.allMembersQuantity="{ item }" v-if="showAllMembersQuantity">
-        <a v-if="item.allMembersQuantity !== undefined && item.allMembersQuantity.remainingFraction > 0" @click.prevent="enterDivideDetails(item.name, item.allMembersQuantity)" href="">
-          <span class="">
-            Il reste
+        <a v-if="item.allMembersQuantity !== undefined && item.allMembersQuantity.total !== 0 && (item.allMembersQuantity.orderItems.length > 1 || item.allMembersQuantity.remainingFraction > 0)"
+           @click.prevent="enterDivideDetails(item.name, item.allMembersQuantity, item.format)" href="">
+          <span v-if="item.allMembersQuantity.remainingFraction <= 0">
+            {{ $t('productTable:complete') }}
           </span>
-          <br>
-          <span class="">
-<!--            {{ item.allMembersQuantity.total }}-->
-            {{ item.allMembersQuantity.remainingFraction }}
-            {{ item.allMembersQuantity.format }}
+          <span v-else>
+            <span class="">
+            {{ $t('productTable:remainingQty') }}
+            </span>
+            <br>
+            <span class="">
+              {{ item.allMembersQuantity.remainingFraction }}
+              {{ item.allMembersQuantity.format }}
+            </span>
           </span>
         </a>
         <span v-else>
@@ -550,7 +555,9 @@ export default {
       costPrice: "Prix Coûtant",
       confirmQuantityChange: "Quantité non sauvegardée",
       yesIwant: "Oui j'en veux",
-      noKeep: "Non, garder"
+      noKeep: "Non, garder",
+      remainingQty: "Il reste",
+      complete: "complet"
     };
     I18n.i18next.addResources("fr", "productTable", text);
     I18n.i18next.addResources("en", "productTable", text);
@@ -831,10 +838,11 @@ export default {
     }
   },
   methods: {
-    enterDivideDetails: function(itemName, allMembersQuantity){
+    enterDivideDetails: function (itemName, allMembersQuantity, itemFormat) {
       this.$refs.divideInfoDialog.enter(
           itemName,
-          allMembersQuantity
+          allMembersQuantity,
+          itemFormat
       );
     },
     enterChangeQuantityFlow: async function (item, isForExpected) {

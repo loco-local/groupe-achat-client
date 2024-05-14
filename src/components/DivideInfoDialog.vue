@@ -12,9 +12,17 @@
         </div>
       </v-card-title>
       <v-card-text>
+        <v-row class="small text-medium-emphasis ps-2">
+          <v-col cols="12" class="pa-0">
+            {{ itemFormat }}
+          </v-col>
+        </v-row>
+      </v-card-text>
+      <v-divider></v-divider>
+      <v-card-text>
         <v-skeleton-loader v-if="isLoading" type="list-item-two-line"></v-skeleton-loader>
         <v-list v-if="!isLoading">
-          <div v-for="orderItem in allMembersQuantity.orderItems" :key="orderItem.id">
+          <div v-for="(orderItem, index) in allMembersQuantity.orderItems" :key="orderItem.id">
             <v-list-item>
               <v-list-item-title>
                 {{ orderItem.member.fullname }}
@@ -22,21 +30,21 @@
               <v-list-item-subtitle>
                 {{ orderItem.quantityInFraction }}
                 <span class="text-uppercase">
-                  {{orderItem.formatUnit}}
+                  {{ orderItem.formatUnit }}
                 </span>
               </v-list-item-subtitle>
             </v-list-item>
-            <v-divider class="mt-2"></v-divider>
+            <v-divider class="mt-2 mb-2" v-if="index < allMembersQuantity.orderItems.length - 1"></v-divider>
           </div>
         </v-list>
       </v-card-text>
+      <v-card-text class="text-center text-grey pt-0 pb-0 text-h6">
+        {{ $t('productTable:remainingQty') }}
+        {{ allMembersQuantity.remainingFraction }}
+        {{ allMembersQuantity.format }}
+        {{ $t('divide:toShare') }}
+      </v-card-text>
       <v-card-actions>
-        <v-btn color="primary">
-<!--               @click="confirmQuantityChange"-->
-<!--               :loading="confirmQuantityLoading"-->
-          {{ $t('confirm') }}
-<!--          {{ newQuantities.inFormatQuantity }}-->
-        </v-btn>
         <v-spacer></v-spacer>
         <v-btn @click="dialog = false">
           {{ $t('close') }}
@@ -50,24 +58,32 @@
 import {defineComponent} from 'vue'
 import MemberService from "../service/MemberService";
 import QuantityInterpreter from "../QuantityInterpreter";
+import I18n from "@/i18n";
 
 export default defineComponent({
   name: "DivideInfoDialog",
   data: function () {
+    const text = {
+      toShare: "à partager"
+    }
+    I18n.i18next.addResources("fr", "divide", text);
+    I18n.i18next.addResources("en", "divide", text);
     return {
       itemName: "",
+      itemFormat: "",
       allMembersQuantity: [],
       dialog: false,
       isLoading: false,
     }
   },
   methods: {
-    enter: async function (itemName, allMembersQuantity) {
+    enter: async function (itemName, allMembersQuantity, itemFormat) {
       this.dialog = true
       this.itemName = itemName;
+      this.itemFormat = itemFormat;
       this.allMembersQuantity = allMembersQuantity;
       this.isLoading = true;
-      await Promise.all(allMembersQuantity.orderItems.map(async (orderItem) => {
+      await Promise.all(this.allMembersQuantity.orderItems.map(async (orderItem) => {
         orderItem.quantityInFraction = QuantityInterpreter.convertDecimalToFraction(
             orderItem.quantity, orderItem.item
         )
@@ -78,6 +94,9 @@ export default defineComponent({
         orderItem.member = await MemberService.getPublicForId(orderItem.item.MemberOrder.MemberId)
         return orderItem;
       }))
+      this.allMembersQuantity.orderItems = this.allMembersQuantity.orderItems.sort((a, b) => {
+        return a.member.fullname.localeCompare(b.member.fullname);
+      })
       this.isLoading = false;
     }
   }
