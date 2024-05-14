@@ -128,8 +128,9 @@
         </div>
       </template>
       <template v-slot:item.allMembersQuantity="{ item }" v-if="showAllMembersQuantity">
-        <a v-if="item.allMembersQuantity !== undefined && item.allMembersQuantity.total !== 0 && (item.allMembersQuantity.orderItems.length > 1 || item.allMembersQuantity.remainingFraction > 0)"
-           @click.prevent="enterDivideDetails(item.name, item.allMembersQuantity, item.format)" href="">
+        <v-btn variant="text" color="primary" v-if="item.allMembersQuantity !== undefined && item.allMembersQuantity.total !== 0 && (item.allMembersQuantity.orderItems.length > 1 || item.allMembersQuantity.remainingFraction > 0)"
+           @click.prevent="enterDivideDetails(item.name, item.allMembersQuantity, item.format)"
+        >
           <span v-if="item.allMembersQuantity.remainingFraction <= 0">
             {{ $t('productTable:complete') }}
           </span>
@@ -143,7 +144,8 @@
               {{ item.allMembersQuantity.format }}
             </span>
           </span>
-        </a>
+          <v-icon class="ml-2" size="x-large">people</v-icon>
+        </v-btn>
         <span v-else>
           <v-divider></v-divider>
         </span>
