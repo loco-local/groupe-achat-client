@@ -128,8 +128,9 @@
         </div>
       </template>
       <template v-slot:item.allMembersQuantity="{ item }" v-if="showAllMembersQuantity">
-        <v-btn variant="text" color="primary" v-if="item.allMembersQuantity !== undefined && item.allMembersQuantity.total !== 0 && (item.allMembersQuantity.orderItems.length > 1 || item.allMembersQuantity.remainingFraction > 0)"
-           @click.prevent="enterDivideDetails(item.name, item.allMembersQuantity, item.format)"
+        <v-btn variant="text" color="primary"
+               v-if="item.allMembersQuantity !== undefined && item.allMembersQuantity.total !== 0 && (item.allMembersQuantity.orderItems.length > 1 || item.allMembersQuantity.remainingFraction > 0)"
+               @click.prevent="enterDivideDetails(item, item.allMembersQuantity)"
         >
           <span v-if="item.allMembersQuantity.remainingFraction <= 0">
             {{ $t('productTable:complete') }}
@@ -388,7 +389,7 @@
       </template>
     </v-snackbar>
     <QuantityChangeDialog ref="quantityChangeDialog" @quantityUpdate="updateQuantity"></QuantityChangeDialog>
-    <DivideInfoDialog ref="divideInfoDialog"></DivideInfoDialog>
+    <DivideInfoDialog ref="divideInfoDialog" @quantityUpdate="updateQuantity"></DivideInfoDialog>
   </div>
 </template>
 
@@ -559,7 +560,7 @@ export default {
       yesIwant: "Oui j'en veux",
       noKeep: "Non, garder",
       remainingQty: "Il reste",
-      complete: "complet"
+      complete: "complète"
     };
     I18n.i18next.addResources("fr", "productTable", text);
     I18n.i18next.addResources("en", "productTable", text);
@@ -840,11 +841,10 @@ export default {
     }
   },
   methods: {
-    enterDivideDetails: function (itemName, allMembersQuantity, itemFormat) {
+    enterDivideDetails: function (item, allMembersQuantity) {
       this.$refs.divideInfoDialog.enter(
-          itemName,
-          allMembersQuantity,
-          itemFormat
+          item,
+          allMembersQuantity
       );
     },
     enterChangeQuantityFlow: async function (item, isForExpected) {

@@ -39,6 +39,7 @@ MemberOrdersQuantity.prototype.buildQuantities = function () {
             remainingFraction: QuantityInterpreter.convertDecimalToFraction(
                 remainingDecimal, quantity.memberOrderItem
             ),
+            remainingDecimal,
             format: format,
             orderItems: quantity.orderItems
         }

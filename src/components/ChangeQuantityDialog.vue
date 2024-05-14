@@ -2,51 +2,7 @@
   <v-dialog v-model="changeQuantityDialog" v-if="changeQuantityDialog" width="600"
             :fullscreen="$vuetify.display.smAndDown">
     <v-card>
-      <v-card-title class="d-flex justify-space-between align-center">
-        <div class="text-medium-emphasis ps-2"
-             :class="{
-                  'text-h6': $vuetify.display.mdAndUp,
-                  'text-body-2 font-weight-bold': $vuetify.display.smAndDown
-               }"
-        >
-          {{ itemToChangeQuantity.name }}
-        </div>
-        <v-icon icon="close" @click="changeQuantityDialog = false" variant="text"></v-icon>
-      </v-card-title>
-      <v-card-text>
-        <v-row class="small text-medium-emphasis ps-2">
-          <v-col cols="12" class="pa-0">
-            {{ itemToChangeQuantity.format }}
-            <v-divider vertical :thickness="2" color="primary" class="ml-1 mr-1"
-                       v-if="itemToChangeQuantity.qtyInBox > 1"></v-divider>
-            <span v-if="itemToChangeQuantity.qtyInBox > 1">
-              <strong>
-                {{ itemToChangeQuantity.qtyInBox }}x
-              </strong>
-              {{ $t('quantity:inBox') }}
-            </span>
-          </v-col>
-          <v-col cols="12" class="pl-0 pr-0 pb-0">
-            {{ itemToChangeQuantity.maker }}
-          </v-col>
-          <v-col cols="12" class="pl-0 pr-0 pb-0">
-              <span v-if="quantityChangeIsForExpected">
-                {{ $t('product:expectedCostUnitPrice') }}:
-                {{ $filters.currency(itemToChangeQuantity.expectedUnitPriceAfterRebate) }}
-              </span>
-            <span v-else>
-                {{ $t('product:costUnitPrice') }}:
-                {{ $filters.currency(itemToChangeQuantity.unitPriceAfterRebate) }}
-              </span>
-          </v-col>
-          <v-col cols="12" class="pl-0 pr-0 pb-0">
-            {{ $filters.currency(itemToChangeQuantity.pricePerUnit) }}
-            {{ $t('quantity:per') }}
-            {{ itemToChangeQuantity.formatUnit.toUpperCase()}}
-          </v-col>
-        </v-row>
-      </v-card-text>
-      <v-divider class=""></v-divider>
+      <ProductCardHeader @close="changeQuantityDialog = false" :product="itemToChangeQuantity" :isForExpected="quantityChangeIsForExpected"></ProductCardHeader>
       <v-card-text>
         <v-text-field
             v-model="newQuantity"
@@ -137,9 +93,11 @@
 import QuantityInterpreter from "@/QuantityInterpreter";
 import OrderItem from "@/OrderItem";
 import I18n from "@/i18n";
+import ProductCardHeader from "./ProductCardHeader.vue";
 
 export default {
   name: "QuantityChangeDialog",
+  components: {ProductCardHeader},
   data: function () {
     const text = {
       cannotBeChanged: "Ne peut confirmer la quantité.",

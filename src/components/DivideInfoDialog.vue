@@ -1,24 +1,7 @@
 <template>
   <v-dialog v-model="dialog" width="600">
     <v-card>
-      <v-card-title class="d-flex justify-space-between align-center">
-        <div class="text-medium-emphasis ps-2"
-             :class="{
-                  'text-h6': $vuetify.display.mdAndUp,
-                  'text-body-2 font-weight-bold': $vuetify.display.smAndDown
-               }"
-        >
-          {{ itemName }}
-        </div>
-      </v-card-title>
-      <v-card-text>
-        <v-row class="small text-medium-emphasis ps-2">
-          <v-col cols="12" class="pa-0">
-            {{ itemFormat }}
-          </v-col>
-        </v-row>
-      </v-card-text>
-      <v-divider></v-divider>
+      <ProductCardHeader @close="dialog = false" :product="item" :isForExpected="true"></ProductCardHeader>
       <v-card-text>
         <v-skeleton-loader v-if="isLoading" type="list-item-two-line"></v-skeleton-loader>
         <v-list v-if="!isLoading">
@@ -45,6 +28,11 @@
         {{ $t('divide:toShare') }}
       </v-card-text>
       <v-card-actions>
+        <v-btn color="primary"
+               @click="takeRemaining"
+        >
+          {{ $t('divide:take') }} {{ remainingToTakeInFormat}} {{ item.formatUnit }}
+        </v-btn>
         <v-spacer></v-spacer>
         <v-btn @click="dialog = false">
           {{ $t('close') }}
@@ -59,30 +47,41 @@ import {defineComponent} from 'vue'
 import MemberService from "../service/MemberService";
 import QuantityInterpreter from "../QuantityInterpreter";
 import I18n from "@/i18n";
+import ProductCardHeader from "./ProductCardHeader.vue";
 
 export default defineComponent({
   name: "DivideInfoDialog",
+  components: {ProductCardHeader},
   data: function () {
     const text = {
-      toShare: "à partager"
+      toShare: "à partager",
+      take: "Prendre"
     }
     I18n.i18next.addResources("fr", "divide", text);
     I18n.i18next.addResources("en", "divide", text);
     return {
-      itemName: "",
-      itemFormat: "",
+      item: null,
       allMembersQuantity: [],
+      remainingToTakeInFormat: 0,
       dialog: false,
-      isLoading: false,
+      isLoading: false
     }
   },
   methods: {
-    enter: async function (itemName, allMembersQuantity, itemFormat) {
+    takeRemaining: function () {
+      this.item.expectedQuantity = this.remainingInDecimal;
+      this.$emit('quantityUpdate', this.item)
+      this.dialog = false;
+    },
+    enter: async function (item, allMembersQuantity) {
       this.dialog = true
-      this.itemName = itemName;
-      this.itemFormat = itemFormat;
+      this.item = item
       this.allMembersQuantity = allMembersQuantity;
       this.isLoading = true;
+      this.remainingInDecimal = parseFloat(item.expectedQuantity) + parseFloat(allMembersQuantity.remainingDecimal);
+      this.remainingToTakeInFormat = QuantityInterpreter.convertDecimalToFraction(
+          this.remainingInDecimal, item
+      );
       await Promise.all(this.allMembersQuantity.orderItems.map(async (orderItem) => {
         orderItem.quantityInFraction = QuantityInterpreter.convertDecimalToFraction(
             orderItem.quantity, orderItem.item
