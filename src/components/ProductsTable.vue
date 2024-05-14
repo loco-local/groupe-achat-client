@@ -128,7 +128,7 @@
         </div>
       </template>
       <template v-slot:item.allMembersQuantity="{ item }" v-if="showAllMembersQuantity">
-        <span v-if="item.allMembersQuantity !== undefined && item.allMembersQuantity.remainingFraction > 0">
+        <a v-if="item.allMembersQuantity !== undefined && item.allMembersQuantity.remainingFraction > 0" @click.prevent="enterDivideDetails(item.name, item.allMembersQuantity)" href="">
           <span class="">
             Il reste
           </span>
@@ -138,7 +138,7 @@
             {{ item.allMembersQuantity.remainingFraction }}
             {{ item.allMembersQuantity.format }}
           </span>
-        </span>
+        </a>
         <span v-else>
           <v-divider></v-divider>
         </span>
@@ -381,6 +381,7 @@
       </template>
     </v-snackbar>
     <QuantityChangeDialog ref="quantityChangeDialog" @quantityUpdate="updateQuantity"></QuantityChangeDialog>
+    <DivideInfoDialog ref="divideInfoDialog"></DivideInfoDialog>
   </div>
 </template>
 
@@ -393,11 +394,12 @@ import BuildUniquePropertySetsInProducts from "@/BuildUniquePropertySetsInProduc
 import Search from "@/Search";
 import OrderToCsv from "@/OrderToCsv";
 import QuantityChangeDialog from "@/components/ChangeQuantityDialog.vue";
+import DivideInfoDialog from "./DivideInfoDialog.vue";
 
 const ENTER_KEY_CODE = 13;
 export default {
   name: "ProductsTable",
-  components: {QuantityChangeDialog},
+  components: {DivideInfoDialog, QuantityChangeDialog},
   props: {
     title: {
       type: String,
@@ -829,6 +831,12 @@ export default {
     }
   },
   methods: {
+    enterDivideDetails: function(itemName, allMembersQuantity){
+      this.$refs.divideInfoDialog.enter(
+          itemName,
+          allMembersQuantity
+      );
+    },
     enterChangeQuantityFlow: async function (item, isForExpected) {
       this.$refs.quantityChangeDialog.show(item, isForExpected)
     },

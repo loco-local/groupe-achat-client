@@ -15,6 +15,10 @@ const MemberService = {
             return Member.format(response.data);
         }
     },
+    getPublicForId: async function (memberId) {
+        const response = await Service.api().get("/members/" + memberId)
+        return Member.format(response.data);
+    },
     update: async function (memberId, member) {
         return Service.api().put("/members/" + memberId, member);
     },

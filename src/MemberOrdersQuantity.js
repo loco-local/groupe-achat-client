@@ -9,7 +9,8 @@ MemberOrdersQuantity.prototype.buildQuantities = function () {
         if (totals[memberOrderItem.ProductId] === undefined) {
             totals[memberOrderItem.ProductId] = {
                 total: 0,
-                memberOrderItem: memberOrderItem
+                memberOrderItem: memberOrderItem,
+                orderItems: []
             };
         }
         let quantity;
@@ -17,6 +18,10 @@ MemberOrdersQuantity.prototype.buildQuantities = function () {
         if (quantity === null || quantity === undefined) {
             quantity = memberOrderItem.expectedQuantity
         }
+        totals[memberOrderItem.ProductId].orderItems.push({
+            quantity: quantity,
+            item: memberOrderItem
+        });
         totals[memberOrderItem.ProductId].total = parseFloat(quantity) + parseFloat(totals[memberOrderItem.ProductId].total);
         return totals;
     }, {})
@@ -34,7 +39,8 @@ MemberOrdersQuantity.prototype.buildQuantities = function () {
             remainingFraction: QuantityInterpreter.convertDecimalToFraction(
                 remainingDecimal, quantity.memberOrderItem
             ),
-            format: format
+            format: format,
+            orderItems: quantity.orderItems
         }
         return quantities;
     }, {});
