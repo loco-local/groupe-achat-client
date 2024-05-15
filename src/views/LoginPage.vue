@@ -33,7 +33,9 @@
               :rules="[Rules.required]"
               required
               :label="$t('login:password')"
-              type="password"
+              :type="showPassword ? 'text' : 'password'"
+              :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+              @click:append="showPassword = !showPassword"
           ></v-text-field>
           <v-btn
               color="primary"
@@ -93,8 +95,9 @@ export default {
       Rules: Rules,
       user: {
         email: "",
-        password: ""
+        password: "",
       },
+      showPassword: false
     };
   },
   mounted() {

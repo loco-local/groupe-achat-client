@@ -12,13 +12,17 @@
                   v-model="newPassword"
                   :label="$t('password:newPassword')"
                   :rules="[Rules.min8Char, Rules.required]"
-                  type="password"
+                  :type="showPassword1 ? 'text' : 'password'"
+                  :append-icon="showPassword1 ? 'visibility' : 'visibility_off'"
+                  @click:append="showPassword1 = !showPassword1"
               ></v-text-field>
               <v-text-field
                   v-model="repeatPassword"
                   :label="$t('password:repeat')"
                   :rules="[Rules.min8Char, Rules.required]"
-                  type="password"
+                  :type="showPassword2 ? 'text' : 'password'"
+                  :append-icon="showPassword2 ? 'visibility' : 'visibility_off'"
+                  @click:append="showPassword2 = !showPassword2"
               ></v-text-field>
               <v-btn
                   color="primary"
@@ -72,6 +76,8 @@ export default {
       changePasswordSuccess: false,
       changePasswordError: false,
       waiting: false,
+      showPassword1: false,
+      showPassword2: false
     };
   },
   mounted: async function () {

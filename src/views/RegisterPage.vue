@@ -111,9 +111,9 @@
                 >
                   <v-text-field
                       v-model="editedMember.password"
-                      :type="showPassword ? 'text' : 'password'"
                       :label="$t('member:password')"
                       :rules="[rules.required]"
+                      :type="showPassword ? 'text' : 'password'"
                       :append-icon="showPassword ? 'visibility' : 'visibility_off'"
                       @click:append="showPassword = !showPassword"
                   ></v-text-field>
