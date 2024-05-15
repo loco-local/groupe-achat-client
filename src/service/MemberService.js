@@ -16,7 +16,7 @@ const MemberService = {
         }
     },
     getPublicForId: async function (memberId) {
-        const response = await Service.api().get("/members/" + memberId)
+        const response = await Service.api().get("/members/" + memberId + "/public")
         return Member.format(response.data);
     },
     update: async function (memberId, member) {

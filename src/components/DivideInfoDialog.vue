@@ -30,8 +30,9 @@
       <v-card-actions>
         <v-btn color="primary"
                @click="takeRemaining"
+               v-if="remainingToTakeInDecimal > userQuantity"
         >
-          {{ $t('divide:take') }} {{ remainingToTakeInFormat}} {{ item.formatUnit }}
+          {{ $t('divide:take') }} {{ remainingToTakeInFormat }} {{ item.formatUnit }}
         </v-btn>
         <v-spacer></v-spacer>
         <v-btn @click="dialog = false">
@@ -62,14 +63,16 @@ export default defineComponent({
     return {
       item: null,
       allMembersQuantity: [],
+      remainingToTakeInDecimal: 0,
       remainingToTakeInFormat: 0,
+      userQuantity: 0,
       dialog: false,
       isLoading: false
     }
   },
   methods: {
     takeRemaining: function () {
-      this.item.expectedQuantity = this.remainingInDecimal;
+      this.item.expectedQuantity = this.remainingToTakeInDecimal;
       this.$emit('quantityUpdate', this.item)
       this.dialog = false;
     },
@@ -78,9 +81,13 @@ export default defineComponent({
       this.item = item
       this.allMembersQuantity = allMembersQuantity;
       this.isLoading = true;
-      this.remainingInDecimal = parseFloat(item.expectedQuantity) + parseFloat(allMembersQuantity.remainingDecimal);
+      this.userQuantity = item.expectedQuantity;
+      if (this.userQuantity === undefined) {
+        this.userQuantity = 0;
+      }
+      this.remainingToTakeInDecimal = parseFloat(this.userQuantity) + parseFloat(allMembersQuantity.remainingDecimal);
       this.remainingToTakeInFormat = QuantityInterpreter.convertDecimalToFraction(
-          this.remainingInDecimal, item
+          this.remainingToTakeInDecimal, item
       );
       await Promise.all(this.allMembersQuantity.orderItems.map(async (orderItem) => {
         orderItem.quantityInFraction = QuantityInterpreter.convertDecimalToFraction(

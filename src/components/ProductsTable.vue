@@ -129,10 +129,11 @@
       </template>
       <template v-slot:item.allMembersQuantity="{ item }" v-if="showAllMembersQuantity">
         <v-btn variant="text" color="primary"
+               :size="item.allMembersQuantity.remainingFraction <= 0 ? 'small' : 'default'"
                v-if="item.allMembersQuantity !== undefined && item.allMembersQuantity.total !== 0 && (item.allMembersQuantity.orderItems.length > 1 || item.allMembersQuantity.remainingFraction > 0)"
                @click.prevent="enterDivideDetails(item, item.allMembersQuantity)"
         >
-          <span v-if="item.allMembersQuantity.remainingFraction <= 0">
+          <span v-if="item.allMembersQuantity.remainingFraction <= 0" class="">
             {{ $t('productTable:complete') }}
           </span>
           <span v-else>
@@ -560,7 +561,7 @@ export default {
       yesIwant: "Oui j'en veux",
       noKeep: "Non, garder",
       remainingQty: "Il reste",
-      complete: "complète"
+      complete: "caisses complètes"
     };
     I18n.i18next.addResources("fr", "productTable", text);
     I18n.i18next.addResources("en", "productTable", text);
