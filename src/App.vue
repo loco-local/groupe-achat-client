@@ -15,22 +15,24 @@
           />
         </router-link>
       </div>
-      <v-toolbar-title class="pt-2 pb-2" :class="{
-        'text-subtitle-1 ml-0' : $vuetify.display.smAndDown,
+      <span class="pt-2 pb-2" :class="{
+        'text-caption ml-0 font-weight-bold pr-0 mr-0' : $vuetify.display.smAndDown,
         'text-h5 ml-2': $vuetify.display.mdAndUp
-      }">
+      }"
+      >
         <router-link to="/" style="text-decoration: none; color: inherit;">
           Groupe d'achat
         </router-link>
-      </v-toolbar-title>
+      </span>
+      <v-spacer></v-spacer>
       <span v-if="$store.state.user !== null && $vuetify.display.mdAndUp" class="text-h6 mr-8 font-weight-regular">
                 {{ $store.state.user.firstname }}
                 {{ $store.state.user.lastname }}
               </span>
-      <v-btn variant="text" to="/connexion" v-if="$store.state.user === null" :size="$vuetify.display.smAndDown ? 'x-small':'default'">
+      <v-btn variant="text" to="/connexion" v-if="$store.state.user === null" :size="$vuetify.display.smAndDown ? 'x-small':'default'" class="ml-2">
         {{$t('app:connect')}}
       </v-btn>
-      <v-btn variant="text" to="/loco-local/inscription" v-if="$store.state.user === null" :size="$vuetify.display.smAndDown ? 'x-small':'default'">
+      <v-btn variant="text" to="/loco-local/inscription" v-if="$store.state.user === null" :size="$vuetify.display.smAndDown ? 'x-small':'default'"  class="ml-0 mr-2">
         {{$t('app:register')}}
       </v-btn>
       <v-menu

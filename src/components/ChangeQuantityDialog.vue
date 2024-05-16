@@ -8,7 +8,7 @@
             v-model="newQuantity"
             :placeholder="$t('quantity:quantity')"
             @keydown.enter.prevent="confirmQuantityChange"
-            @keyup="quantityChangeKeyup"
+            @keyup="quantityChangeKeyup($event)"
             :hint="itemToChangeQuantityHint"
             :persistent-hint="true"
             clearable
@@ -160,7 +160,10 @@ export default {
       this.newQuantity = "0";
       this.calculateQuantitiesAndTotalForQuantityChange();
     },
-    quantityChangeKeyup: function () {
+    quantityChangeKeyup: function ($event) {
+      if($event.key === "Enter"){
+        return;
+      }
       this.showErrorAlert = false;
       const isValidQuantity = this.isNewQuantityValidForProduct(
           this.newQuantity,

@@ -113,6 +113,9 @@
                       v-model="editedMember.password"
                       :label="$t('member:password')"
                       :rules="[rules.required]"
+                      :type="showPassword ? 'text' : 'password'"
+                      :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+                      @click:append="showPassword = !showPassword"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -178,7 +181,8 @@ export default {
       registerLoading: false,
       buyGroup: null,
       isPendingRegistrationFlow: false,
-      emailExistsSnackbar: false
+      emailExistsSnackbar: false,
+      showPassword: false
     }
   },
   mounted: async function () {

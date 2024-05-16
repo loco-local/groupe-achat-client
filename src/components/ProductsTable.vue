@@ -134,7 +134,9 @@
                @click.prevent="enterDivideDetails(item, item.allMembersQuantity)"
         >
           <span v-if="item.allMembersQuantity.remainingFraction <= 0" class="">
-            {{ $t('productTable:complete') }}
+            {{ $t('productTable:complete1') }}
+            <br>
+            {{ $t('productTable:complete2') }}
           </span>
           <span v-else>
             <span class="">
@@ -561,7 +563,8 @@ export default {
       yesIwant: "Oui j'en veux",
       noKeep: "Non, garder",
       remainingQty: "Il reste",
-      complete: "caisses complètes"
+      complete1: "caisses",
+      complete2: "complètes"
     };
     I18n.i18next.addResources("fr", "productTable", text);
     I18n.i18next.addResources("en", "productTable", text);
