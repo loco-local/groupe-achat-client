@@ -62,11 +62,11 @@
       </v-col>
       <v-col cols="12" v-if="memberId !== null && !isLoading && (!relevantOrder || relevantOrder.status !== 'CURRENT')"
              class="mt-8">
-        <v-alert class="text-body-1 text-center"
+        <v-alert class="text-center"
                  color="warning"
                  border="start"
         >
-          <span class="text-black text-h6 text-medium-emphasis">
+          <span class="text-grey text-h6 text-medium-emphasis font-weight-regular">
             {{ $t('groupOrderStatus:cannotOrderAtTheMoment') }}.
           </span>
         </v-alert>
