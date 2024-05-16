@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col cols="12" class="vh-center text-center">
-      <v-card max-width="400" border>
+      <v-card max-width="400" flat>
         <v-card-text v-if="isLoading">
           <v-progress-circular indeterminate :size="80" :width="2"></v-progress-circular>
         </v-card-text>
@@ -15,7 +15,7 @@
               {{ $filters.dayNoYearDate(buyGroup.relevantOrder.startDate)}} {{ $t('to') }}
               {{ $filters.dayDate(buyGroup.relevantOrder.endDate)}}
             </v-card-subtitle>
-            <v-card>
+            <v-card v-if="false">
               <v-card-text class="text-body-1">
                 <strong>
                   {{ buyGroup.relevantOrder.salePercentage }}%
@@ -54,6 +54,9 @@
           </div>
         </div>
       </v-card>
+    </v-col>
+    <v-col cols="12">
+      <v-divider></v-divider>
     </v-col>
   </v-row>
 </template>

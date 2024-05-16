@@ -55,7 +55,7 @@
                       v-if="!isMemberLoading"
     ></GroupOrderStatus>
     <v-row>
-      <v-col v-if="!isLoading && products.length === 0" cols="12" class="text-h6">
+      <v-col v-if="!isLoading && products.length === 0" cols="12" class="text-h6 text-medium-emphasiss">
         <v-sheet class="text-grey mb-4">
           {{ $t('products:noResults') }}
         </v-sheet>
@@ -125,7 +125,7 @@
                     :totals="quantityUpdater.getTotals()"
                 ></ProductsTable>
               </v-card-text>
-              <v-card-text v-if="orderItems.length === 0 && !isLoading">
+              <v-card-text v-if="orderItems.length === 0 && !isLoading" class="text-h6 text-medium-emphasis">
                 {{ $t('products:noOrderItems') }}
               </v-card-text>
               <v-card-text v-if="isLoading" class="text-left">
@@ -134,10 +134,17 @@
             </v-card>
             <v-card class="mt-8"
                     v-if="shouldShowSection('ProductsPageToDivide')"
+                    flat
             >
-              <v-card-title>
-                {{ $t('products:toDivide') }}
+              <v-card-title class="d-flex justify-space-between align-center">
+                <div class="text-h5 text-medium-emphasis ps-2">
+                  {{ $t('products:toDivide') }}
+                </div>
               </v-card-title>
+              <v-divider class="mb-2"></v-divider>
+              <v-card-text v-if="itemsToDivide.length === 0 && !isLoading" class="text-h6 text-medium-emphasis">
+                {{ $t('products:noProductsToDivide') }}
+              </v-card-text>
               <v-card-text class="text-body-1" v-if="itemsToDivide.length > 0"
                            :class="{
                               'pa-0' : $vuetify.display.smAndDown
@@ -167,9 +174,6 @@
                     ref="summaryProductsTable"
                 ></ProductsTable>
               </v-card-text>
-              <v-card-text v-if="itemsToDivide.length === 0 && !isLoading">
-                {{ $t('products:noProductsToDivide') }}
-              </v-card-text>
               <v-card-text v-if="isLoading" class="text-left">
                 <v-progress-circular indeterminate :size="45" :width="2"></v-progress-circular>
               </v-card-text>
@@ -191,11 +195,13 @@
           <v-col cols="12" :class="{
             'pa-0': $vuetify.display.smAndDown
           }">
-            <v-divider class="mb-6" v-if="allSectionsRoutePath === $route.path"></v-divider>
             <v-card flat class="pb-0 mb-0">
-              <v-card-title class="pb-0 mb-0">
-                {{ $t('products:allProducts') }}
+              <v-card-title class="d-flex justify-space-between align-center">
+                <div class="text-h5 text-medium-emphasis ps-2">
+                  {{ $t('products:allProducts') }}
+                </div>
               </v-card-title>
+              <v-divider class="mb-2"></v-divider>
             </v-card>
             <ProductsTable
                 :products="products || []"
