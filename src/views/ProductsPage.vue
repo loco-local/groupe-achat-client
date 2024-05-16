@@ -66,7 +66,7 @@
                  color="warning"
                  border="start"
         >
-          <span class="text-black text-body-1">
+          <span class="text-black text-h6 text-medium-emphasis">
             {{ $t('groupOrderStatus:cannotOrderAtTheMoment') }}.
           </span>
         </v-alert>
