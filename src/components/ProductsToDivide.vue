@@ -64,6 +64,7 @@
               :hideExpectedUnitPrice="true"
               :showMemberId="true"
               @quantityUpdate="updateOrderQuantity"
+              ref="toDivideTable"
           >
             <template v-slot:footer>
               <v-row>
@@ -113,9 +114,9 @@ import OrderItem from "@/OrderItem";
 import Search from "@/Search";
 import MemberOrdersQuantity from "@/MemberOrdersQuantity";
 import ProductsTable from "@/components/ProductsTable.vue";
-import MemberOrderService from "@/service/MemberOrderService";
 import Member from "@/Member";
 import ProductsToDivideToCsv from "@/ProductsToDivideToCsv";
+import QuantityUpdater from "../QuantityUpdater";
 
 export default {
   name: "ProductsToDivide",
@@ -179,6 +180,10 @@ export default {
         this.orderItems
     );
     this.remainingQuantities = this.memberOrdersQuantities.buildQuantities();
+    this.quantityUpdater = QuantityUpdater.buildForFinalQuantity(
+        this.orderItems,
+        this.memberOrdersQuantities
+    )
     this.isLoading = false;
   },
   computed: {
@@ -266,18 +271,26 @@ export default {
       itemsInProduct.push(orderItem)
     },
     updateOrderQuantity: async function (updatedItem) {
-      const prices = await MemberOrderService.setQuantity(
-          updatedItem.MemberOrderId,
-          updatedItem.ProductId,
-          updatedItem.quantity
-      )
-      updatedItem.totalAfterRebateWithTaxes = prices.totalAfterRebateWithTaxes;
-      updatedItem.quantity = prices.quantity;
-      updatedItem.tps = prices.tps;
-      updatedItem.tvq = prices.tvq;
-      updatedItem.id = prices.id;
-      this.memberOrdersQuantities.updateMemberOrder(updatedItem);
-      this.remainingQuantities = this.memberOrdersQuantities.buildQuantities();
+      // const prices = await MemberOrderService.setQuantity(
+      //     updatedItem.MemberOrderId,
+      //     updatedItem.ProductId,
+      //     updatedItem.quantity
+      // )
+      // updatedItem.totalAfterRebateWithTaxes = prices.totalAfterRebateWithTaxes;
+      // updatedItem.quantity = prices.quantity;
+      // updatedItem.tps = prices.tps;
+      // updatedItem.tvq = prices.tvq;
+      // updatedItem.id = prices.id;
+      // this.memberOrdersQuantities.updateMemberOrder(updatedItem);
+      // this.remainingQuantities = this.memberOrdersQuantities.buildQuantities();
+      this.quantityUpdater.setProductsTableRef(this.$refs.toDivideTable[0]);
+      console.log(updatedItem)
+      await this.quantityUpdater.update(
+          updatedItem,
+          updatedItem.MemberOrder.MemberId,
+          updatedItem.MemberOrder.id
+      );
+      this.remainingQuantities = this.memberOrdersQuantities.quantities;
     }
   }
 }

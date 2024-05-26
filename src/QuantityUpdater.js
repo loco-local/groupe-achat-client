@@ -22,7 +22,12 @@ QuantityUpdater.prototype.update = async function (updatedProduct, memberId, ord
     const updatedProductId = updatedProduct.ProductId || updatedProduct.id
     let orderItem = this.orderItems.filter((orderItem) => {
         return orderItem.ProductId === updatedProductId;
-    });
+    }).filter((orderItem) => {
+        if (orderItem.MemberOrderId === undefined || orderItem.MemberOrderId === null) {
+            return true;
+        }
+        return orderItem.MemberOrderId === orderId;
+    })
     const isNewItem = !orderItem.length;
     if (isNewItem) {
         orderItem = {...updatedProduct};
