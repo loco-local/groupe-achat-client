@@ -36,7 +36,7 @@
                 {{ $filters.currency(product.unitPriceAfterRebate) }}
               </span>
         </v-col>
-        <v-col cols="12" class="pl-0 pr-0 pb-0">
+        <v-col cols="12" class="pl-0 pr-0 pb-0" v-if="product.formatUnit">
           {{ $filters.currency(product.pricePerUnit) }}
           {{ $t('quantity:per') }}
           {{ product.formatUnit.toUpperCase()}}

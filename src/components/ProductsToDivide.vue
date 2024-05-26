@@ -41,7 +41,13 @@
           </strong>
           {{ productsToDivide[productId][0].format }}
         </v-card-title>
-        <v-chip variant="outlined" class="mr-4 mb-4 text-h6 font-weight-regular text-left ml-4" label
+        <v-card-subtitle class="text-body-1">
+          <strong>
+            {{ Math.floor(remainingQuantities[productId].total) }}
+          </strong>
+          {{ $t('divide:completed') }}
+        </v-card-subtitle>
+        <v-chip variant="outlined" class="mt-4 mr-4 mb-4 text-h6 font-weight-regular text-left ml-4" label
                 color="red"
                 v-if="remainingQuantities[productId].remainingFraction > 0"
         >
@@ -133,7 +139,8 @@ export default {
       addMember: "Membre à ajouter",
       filterForMember: "Membre",
       memberAlreadyHasProduct: "Ce membre ne peut être ajouté, il a déjà ce produit",
-      showOnlyProductsWithRemainingQuantities: "Afficher seulement les produits qui ont des quantités restantes à diviser"
+      showOnlyProductsWithRemainingQuantities: "Afficher seulement les produits qui ont des quantités restantes à diviser",
+      completed: "caisse(s) complète(s)"
     };
     I18n.i18next.addResources("fr", "divide", text);
     I18n.i18next.addResources("en", "divide", text);
@@ -247,6 +254,7 @@ export default {
         format: itemsInProduct[0].format,
         name: itemsInProduct[0].name,
         expectedUnitPrice: itemsInProduct[0].expectedUnitPrice,
+        unitPriceAfterRebate: itemsInProduct[0].unitPriceAfterRebate,
         category: itemsInProduct[0].category,
         internalCode: itemsInProduct[0].internalCode,
         maker: itemsInProduct[0].maker,
