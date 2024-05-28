@@ -253,11 +253,13 @@
             type="number"
             v-model="item.costUnitPrice"
             :placeholder="$t('product:unitPrice')"
-            @keydown="enterKeyDownAction($event, item, changeCostUnitPrice)"
+            @keydown.enter.prevent="changeCostUnitPrice($event, item)"
             @blur="changeCostUnitPrice($event, item)"
             v-if="canEditCostUnitPrice"
             suffix="$"
             hide-details
+            :loading="item.isCostUnitPriceLoading"
+            :disabled="item.isCostUnitPriceLoading"
             style="width:115px;"
         ></v-text-field>
         <span v-else>{{ $filters.currency(item.costUnitPrice) }}</span>
@@ -376,7 +378,7 @@
     <v-snackbar
         v-model="costUnitPriceUpdateSnackbar"
         location="top"
-        :timeout="7000"
+        :timeout="14000"
     >
         <span class="text-body-1">
           {{ $t('productTable:costUnitPriceUpdated') }}
@@ -407,7 +409,6 @@ import OrderToCsv from "@/OrderToCsv";
 import QuantityChangeDialog from "@/components/ChangeQuantityDialog.vue";
 import DivideInfoDialog from "./DivideInfoDialog.vue";
 
-const ENTER_KEY_CODE = 13;
 export default {
   name: "ProductsTable",
   components: {DivideInfoDialog, QuantityChangeDialog},
@@ -545,7 +546,7 @@ export default {
       noProducts: "Pas de produits",
       quantityUpdated: "Quantité mise à jour",
       quantityUnchanged: "La quantité est la même et n'a pas été mise à jour.",
-      costUnitPriceUpdated: "Prix coûtant mis à jour",
+      costUnitPriceUpdated: "Prix coûtant mis à jour dans toutes les factures où il se trouve. Le prix a été également mis à jour pour les prochaines commandes.",
       categoriesFilter: "Catégories",
       displayAllIfNoCategory: "Tous les produits s'affichent si rien n'est sélectionné",
       searchPlaceholder: "Produit",
@@ -866,13 +867,11 @@ export default {
     searchIgnoreAccents(value, search) {
       return Search.matches(value, search);
     },
-    enterKeyDownAction: function (event, entity, action) {
-      if (event.keyCode === ENTER_KEY_CODE) {
-        action(event, entity);
-      }
-    }
-    ,
     async changeCostUnitPrice(event, product) {
+      if (product.isCostUnitPriceLoading === true) {
+        return;
+      }
+      product.isCostUnitPriceLoading = true;
       if (isNaN(product.costUnitPrice)) {
         return;
       }
@@ -897,7 +896,8 @@ export default {
         this.quantityUnchangedSnackbar = true;
       }, timeout)
     },
-    showCostUnitPriceChangedSuccess: async function () {
+    showCostUnitPriceChangedSuccess: async function (item) {
+      item.isCostUnitPriceLoading = false;
       const timeout = this.costUnitPriceUpdateSnackbar ? 500 : 0;
       this.costUnitPriceUpdateSnackbar = false;
       await this.$nextTick();

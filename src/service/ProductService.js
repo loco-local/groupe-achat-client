@@ -71,5 +71,13 @@ export default {
             '/products/' + product.id,
             product
         )
+    },
+    updateCostUnitPrice: async function (productId, costUnitPrice) {
+        return await Service.api().put(
+            '/products/' + productId + '/costUnitPrice',
+            {
+                costUnitPrice
+            }
+        )
     }
 }

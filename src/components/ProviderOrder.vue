@@ -48,6 +48,7 @@
           :hide-categories-filter="true"
           :hide-category="true"
           :canEditCostUnitPrice="true"
+          ref="providerOrderTable"
           @costUnitPriceUpdate="updateCostUnitPrice"
       ></ProductsTable>
       <v-row>
@@ -64,7 +65,8 @@ import ProviderOrders from "@/ProviderOrders";
 import BuyGroupOrderService from "@/service/BuyGroupOrderService";
 import I18n from "@/i18n";
 import {defineAsyncComponent} from "vue";
-import MemberOrderService from "@/service/MemberOrderService";
+import MemberOrderService from "../service/MemberOrderService";
+import ProductService from "../service/ProductService";
 
 export default {
   name: "ProviderOrder",
@@ -88,33 +90,39 @@ export default {
   },
   mounted: async function () {
     this.isLoading = true;
-    const memberOrdersItems = await BuyGroupOrderService.listMemberOrderItems(
+    this.memberOrdersItems = await BuyGroupOrderService.listMemberOrderItems(
         this.buyGroupId,
         this.buyGroupOrderId
     );
-    const orderItemsByProvider = ProviderOrders.groupOrderItemsByProviders(memberOrdersItems);
+    const orderItemsByProvider = ProviderOrders.groupOrderItemsByProviders(this.memberOrdersItems);
     this.providerItems = orderItemsByProvider.providerOrders[this.providerName];
     this.orderTotal = orderItemsByProvider.providerTotals[this.providerName];
     let trimmedOrderItemsByProvider = ProviderOrders.groupOrderItemsByProviders(
-        memberOrdersItems,
+        this.memberOrdersItems,
         true
     );
     this.trimmedProviderItems = trimmedOrderItemsByProvider.providerOrders[this.providerName];
     this.$emit('itemsDefined', orderItemsByProvider);
     this.isLoading = false;
   },
-  methods:{
+  methods: {
     updateCostUnitPrice: async function (updatedItem) {
-      const prices = await MemberOrderService.setCostUnitPrice(
-          updatedItem.MemberOrderId,
-          updatedItem.ProductId,
+      const productId = updatedItem.ProductId;
+      await ProductService.updateCostUnitPrice(
+          productId,
           updatedItem.costUnitPrice
-      );
-      updatedItem.totalAfterRebateWithTaxes = prices.totalAfterRebateWithTaxes;
-      updatedItem.tps = prices.tps;
-      updatedItem.tvq = prices.tvq;
-      updatedItem.unitPrice = prices.unitPrice;
-      await this.$refs.allOrderItemsTable.showCostUnitPriceChangedSuccess();
+      )
+      const orderItemsOfProduct = this.memberOrdersItems.filter((orderItem) => {
+        return orderItem.ProductId === productId
+      })
+      for (const orderItem of orderItemsOfProduct) {
+        await MemberOrderService.setCostUnitPrice(
+            orderItem.MemberOrderId,
+            productId,
+            updatedItem.costUnitPrice
+        );
+      }
+      await this.$refs.providerOrderTable.showCostUnitPriceChangedSuccess(updatedItem);
     }
   }
 }
