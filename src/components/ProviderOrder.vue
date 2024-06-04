@@ -1,63 +1,111 @@
 <template>
-  <v-card>
-    <v-card-text v-if="!isLoading && trimmedProviderItems.length > 0">
-      <v-expansion-panels variant="popout" dark>
-        <v-expansion-panel>
-          <v-expansion-panel-title class="text-body-1" color="primary">
-            {{ $t('providerOrder:changedQtys1') }}
-            {{ trimmedProviderItems.length }}
-            {{ $t('providerOrder:changedQtys2') }}
-          </v-expansion-panel-title>
-          <v-expansion-panel-text>
-            <ProductsTable
-                :products="trimmedProviderItems || []"
-                :hasQuantity="true"
-                :hasExpectedQuantity="false"
-                :showDecimalQuantityNotFractions="true"
-                :showCostUnitPrice="true"
-                :showUnitPrice="false"
-                :showExpectedCostUnitPrice="false"
-                :canToggleAvailability="false"
-                :hideExpectedUnitPrice="true"
-                :show-taxes="true"
-                :hideSearch="true"
-                :onlyShowCostTotal="true"
-                :prevent-search-flickr="false"
-                :hide-categories-filter="true"
-                :hide-category="true"
-            ></ProductsTable>
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-      </v-expansion-panels>
-    </v-card-text>
-    <v-card-text v-if="!isLoading && providerItems.length">
-      <ProductsTable
-          :products="providerItems || []"
-          :hasQuantity="true"
-          :hasExpectedQuantity="false"
-          :showDecimalQuantityNotFractions="true"
-          :showCostUnitPrice="true"
-          :showUnitPrice="false"
-          :showExpectedCostUnitPrice="false"
-          :canToggleAvailability="false"
-          :hideExpectedUnitPrice="true"
-          :show-taxes="true"
-          :hideSearch="true"
-          :onlyShowCostTotal="true"
-          :prevent-search-flickr="false"
-          :hide-categories-filter="true"
-          :hide-category="true"
-          :canEditCostUnitPrice="true"
-          ref="providerOrderTable"
-          @costUnitPriceUpdate="updateCostUnitPrice"
-      ></ProductsTable>
-      <v-row>
-        <v-col cols="12" class="text-right text-h5 mt-8 pr-8">
-          Total: {{ $filters.currency(orderTotal) }}
-        </v-col>
-      </v-row>
-    </v-card-text>
-  </v-card>
+  <div>
+    <v-card>
+      <v-card-text v-if="!isLoading && trimmedProviderItems.length > 0">
+        <v-expansion-panels variant="popout" dark>
+          <v-expansion-panel>
+            <v-expansion-panel-title class="text-body-1" color="primary">
+              {{ $t('providerOrder:changedQtys1') }}
+              {{ trimmedProviderItems.length }}
+              {{ $t('providerOrder:changedQtys2') }}
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <ProductsTable
+                  :products="trimmedProviderItems || []"
+                  :hasQuantity="true"
+                  :hasExpectedQuantity="false"
+                  :showDecimalQuantityNotFractions="true"
+                  :showCostUnitPrice="true"
+                  :showUnitPrice="false"
+                  :showExpectedCostUnitPrice="false"
+                  :canToggleAvailability="false"
+                  :hideExpectedUnitPrice="true"
+                  :show-taxes="true"
+                  :hideSearch="true"
+                  :onlyShowCostTotal="true"
+                  :prevent-search-flickr="false"
+                  :hide-categories-filter="true"
+                  :hide-category="true"
+              ></ProductsTable>
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </v-card-text>
+      <v-card-text v-if="!isLoading && providerItems.length">
+        <ProductsTable
+            :products="providerItems || []"
+            :hasQuantity="true"
+            :hasExpectedQuantity="false"
+            :showDecimalQuantityNotFractions="true"
+            :showCostUnitPrice="true"
+            :showUnitPrice="false"
+            :showExpectedCostUnitPrice="false"
+            :canToggleAvailability="false"
+            :hideExpectedUnitPrice="true"
+            :show-taxes="true"
+            :hideSearch="true"
+            :onlyShowCostTotal="true"
+            :prevent-search-flickr="false"
+            :hide-categories-filter="true"
+            :hide-category="true"
+            :canEditCostUnitPrice="true"
+            ref="providerOrderTable"
+            @costUnitPriceUpdate="updateCostUnitPrice"
+            @modify="enterIsBackOrderFlow"
+        ></ProductsTable>
+        <v-row>
+          <v-col cols="12" class="text-right text-h5 mt-8 pr-8">
+            Total: {{ $filters.currency(orderTotal) }}
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
+    <v-dialog
+        v-model="isBackOrderDialog"
+        max-width="600px"
+        v-if="editedItem !== null"
+    >
+      <v-card class="">
+        <v-card-title class="d-flex justify-space-between align-center">
+          <div class="text-h5 text-medium-emphasis ps-2">
+            {{ editedItem.name }}
+          </div>
+          <v-icon icon="close" @click="isBackOrderDialog = false" variant="text"></v-icon>
+        </v-card-title>
+        <v-divider class="mb-4"></v-divider>
+        <v-alert
+            color="warning"
+            variant="outlined"
+            class="ml-2 mr-2"
+        >
+          <p class="text-h6 font-weight-regular text-black">
+            <span class="font-italic">
+              {{$t('providerOrder:productBackOrderInfo1')}},
+            </span>
+            {{$t('providerOrder:productBackOrderInfo2')}}
+          </p>
+        </v-alert>
+        <v-card-actions class="my-2 d-flex justify-end">
+          <v-btn
+              color="error"
+              @click="setProductAsBackOrder"
+              :loading="isSaveBackOrderLoading"
+              :disabled="isSaveBackOrderLoading"
+          >
+            {{ $t('providerOrder:productIsBackOrder') }}
+            <!--            <v-icon end>close</v-icon>-->
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+              variant="text"
+              @click="isBackOrderDialog = false"
+          >
+            {{ $t('cancel') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <script>
@@ -77,7 +125,10 @@ export default {
   data: function () {
     const text = {
       changedQtys1: "Voir les",
-      changedQtys2: "produits dont la quantité commandée est réduite parce que les caisses à diviser ne sont pas complètes"
+      changedQtys2: "produits dont la quantité commandée est réduite parce que les caisses à diviser ne sont pas complètes",
+      productIsBackOrder: "Définir comme backorder",
+      productBackOrderInfo1 : "Définir comme backorder",
+      productBackOrderInfo2: "mettra la quantité finale à zéro dans toutes les factures où ce produit est commandé."
     };
     I18n.i18next.addResources("fr", "providerOrder", text);
     I18n.i18next.addResources("en", "providerOrder", text);
@@ -85,7 +136,10 @@ export default {
       providerItems: null,
       trimmedProviderItems: [],
       orderTotal: null,
-      isLoading: true
+      isLoading: true,
+      isBackOrderDialog: false,
+      editedItem: null,
+      isSaveBackOrderLoading: false
     }
   },
   mounted: async function () {
@@ -106,6 +160,29 @@ export default {
     this.isLoading = false;
   },
   methods: {
+    setProductAsBackOrder: async function () {
+      this.isSaveBackOrderLoading = true;
+      const orderItemsOfProduct = this.memberOrdersItems.filter((orderItem) => {
+        return orderItem.ProductId === this.editedItem.ProductId
+      })
+      for (const orderItem of orderItemsOfProduct) {
+        await MemberOrderService.setQuantity(
+            orderItem.MemberOrderId,
+            this.editedItem.ProductId,
+            0
+        );
+      }
+      const providerItem = this.providerItems.filter((orderItem) => {
+        return orderItem.ProductId === this.editedItem.ProductId
+      })
+      providerItem[0].quantity = 0;
+      this.isSaveBackOrderLoading = false;
+      this.isBackOrderDialog = false;
+    },
+    enterIsBackOrderFlow: function (item) {
+      this.editedItem = item;
+      this.isBackOrderDialog = true;
+    },
     updateCostUnitPrice: async function (updatedItem) {
       const productId = updatedItem.ProductId;
       await ProductService.updateCostUnitPrice(
