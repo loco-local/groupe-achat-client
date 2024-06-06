@@ -6,6 +6,10 @@
     <v-card-text v-if="!isLoading && !orderItems.length">
       {{ $t('userBill:noItems') }}
     </v-card-text>
+    <v-card-text v-if="print && memberOrder !== null" class="text-h6">
+      {{memberOrder.Member.firstname}}
+      {{memberOrder.Member.lastname}}
+    </v-card-text>
     <v-card-text class="pb-0">
       <v-alert
           border="bottom"
@@ -35,10 +39,6 @@
         </v-col>
       </v-row>
     </v-card-actions>
-    <v-card-text v-if="print && memberOrder !== null" class="text-h6">
-      {{memberOrder.Member.firstname}}
-      {{memberOrder.Member.lastname}}
-    </v-card-text>
     <v-card-text v-if="!isLoading && orderItems.length" class="pt-0">
       <ProductsTable
           :products="orderItems || []"

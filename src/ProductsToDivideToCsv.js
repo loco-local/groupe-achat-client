@@ -4,6 +4,7 @@ import I18n from "@/i18n";
 const text = {
     shareComplete: "Caisse Complète",
     remain: "Il reste",
+    toShare: "à partager",
     filename: "caisses-à-diviser-groupe-achat"
 }
 I18n.i18next.addResources("fr", "divideToCsv", text);
@@ -18,12 +19,11 @@ const ProductsToDivideToCsv = {
             let product = orders[0]
             let productRow = [product.description + " " + product.format + " " + product.maker + " " + product.provider]
             data.push(productRow)
-            let remainingText = t('divideToCsv:shareComplete');
+            data.push(
+                [Math.floor(remainingQuantities[productId].total) + " " + t('divide:completed')]
+            )
             const remainingFraction = remainingQuantities[productId].remainingFraction;
-            if (remainingFraction > 0) {
-                remainingText = t('divideToCsv:remain') + " " + remainingFraction + " " + remainingQuantities[productId].format;
-            }
-            data.push([remainingText])
+            data.push([t('divideToCsv:remain') + " " + remainingFraction + " " + remainingQuantities[productId].format + " " + t('divideToCsv:toShare')])
             orders.forEach((order) => {
                 data.push([
                     order.personFullname + " (" + order.MemberOrderId + ")",
