@@ -14,19 +14,20 @@
           elevation="2"
           color="info"
           class="ml-6 mr-6 info-accent-4"
+          variant="outlined"
       >
-        <p class="text-body-1">
+        <p class="text-body-1 text-black">
           {{ $t('userBill:subjectToChange') }}
         </p>
-        <p class="text-body-1">
+        <p class="text-body-1 text-black">
           {{ $t('userBill:subjectToChange2') }}
         </p>
-        <p class="text-body-1">
+        <p class="text-body-1 text-black">
           {{ $t('userBill:subjectToChange3') }}
         </p>
       </v-alert>
     </v-card-text>
-    <v-card-actions v-if="$store.state.user.status === 'admin'" class="mt-7 ml-6 pb-0">
+    <v-card-actions v-if="!print && $store.state.user.status === 'admin'" class="mt-7 ml-6 pb-0">
       <v-row>
         <v-col cols="12">
           <AddProduct :buy-group-id="buyGroupId" :sale-percentage="salePercentage" :rebates="rebates"
@@ -34,12 +35,16 @@
         </v-col>
       </v-row>
     </v-card-actions>
+    <v-card-text v-if="print && memberOrder !== null" class="text-h6">
+      {{memberOrder.Member.firstname}}
+      {{memberOrder.Member.lastname}}
+    </v-card-text>
     <v-card-text v-if="!isLoading && orderItems.length" class="pt-0">
       <ProductsTable
           :products="orderItems || []"
           :hasQuantity="true"
-          :hasExpectedQuantity="true"
-          :showUnitPrice="true"
+          :hasExpectedQuantity="!print"
+          :showUnitPrice="!print"
           :canToggleAvailability="false"
           :show-taxes="true"
           :hideSearch="true"
@@ -49,7 +54,9 @@
           @quantityUpdate="updateQuantity"
           ref="userBillItemsTable"
           :totals="quantityUpdater.getTotals()"
-          :canChangeQuantity="$store.state.user.status === 'admin'"
+          :hideProvider="print"
+          :hideExpectedUnitPrice="print"
+          :canChangeQuantity="!print && $store.state.user.status === 'admin'"
       ></ProductsTable>
       <v-row v-if="buyGroupOrder.howToPay !== null">
         <v-col cols="12" class="text-left text-body-1 mt-8 pl-8">
@@ -82,7 +89,7 @@ import AddProduct from "./AddProduct.vue";
 
 export default {
   name: "UserBill",
-  props: ['buyGroupId', 'buyGroupOrderId', 'buyGroupPath', 'userId'],
+  props: ['buyGroupId', 'buyGroupOrderId', 'buyGroupPath', 'userId', 'print'],
   components: {
     AddProduct,
     ProductsTable: defineAsyncComponent(() => import('@/components/ProductsTable'))
@@ -104,7 +111,8 @@ export default {
       isLoading: true,
       quantityUpdater: null,
       salePercentage: null,
-      rebates: null
+      rebates: null,
+      memberOrder:null
     }
   },
   mounted: async function () {

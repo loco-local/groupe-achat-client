@@ -2,6 +2,10 @@
   <v-app>
     <v-app-bar
         color="white"
+        class="d-print-none"
+        :class="{
+          'd-none' : $route.name === 'UserBillPrint'
+        }"
     >
       <div class="d-flex align-center ml-4">
         <router-link to="/" >
@@ -115,6 +119,9 @@
     <v-footer
         class="bg-black font-weight-medium"
         height="40"
+        :class="{
+          'd-none' : $route.name === 'UserBillPrint'
+        }"
     >
       <v-row justify="center" no-gutters>
         {{ new Date().getFullYear() }} —

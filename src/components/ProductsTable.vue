@@ -158,7 +158,7 @@
         <div v-if="showDecimalQuantityNotFractions">
           <span class="text-no-wrap">{{ item.quantity.toFixed(2) }}</span>
         </div>
-        <div v-else class="vh-center">
+        <div v-if="!showDecimalQuantityNotFractions && canChangeQuantity" class="vh-center">
           <v-btn v-if="item.quantityInput === undefined"
                  icon="add"
                  color="primary"
@@ -178,6 +178,9 @@
             <br>
             <small class="" v-if="item.quantityPercentage">{{ item.quantityPercentage }}%</small>
           </div>
+        </div>
+        <div v-if="!showDecimalQuantityNotFractions && !canChangeQuantity">
+          <span class="text-no-wrap">{{ item.quantityInput }}</span>
         </div>
       </template>
       <template v-slot:item.expectedTotalAfterRebateWithTaxes="{ item }">

@@ -57,9 +57,9 @@
             <div v-for="userOrder in filteredUserOrders" :key="userOrder.id">
               <v-list-item>
                 <template v-slot:append>
-                  <v-btn variant="text" @click="downloadReceipt(userOrder.Member.id)" size="large">
-                    <v-icon size="large">file_download</v-icon>
-                  </v-btn>
+<!--                  <v-btn variant="text" @click="downloadReceipt(userOrder.Member.id)" size="large">-->
+<!--                    <v-icon size="large">file_download</v-icon>-->
+<!--                  </v-btn>-->
                   <v-btn
                       variant="text"
                       size="large"
@@ -70,6 +70,9 @@
                   </v-btn>
                   <v-btn size="large" @click="viewReceipt(userOrder.Member.id)" variant="text">
                     <v-icon size="large">preview</v-icon>
+                  </v-btn>
+                  <v-btn size="large" target="_blank" :to="`/groupe/${buyGroupId}/commande/${buyGroupOrderId}/factures-membres/${userOrder.Member.id}/print`" variant="text">
+                    <v-icon size="large">print</v-icon>
                   </v-btn>
                 </template>
 

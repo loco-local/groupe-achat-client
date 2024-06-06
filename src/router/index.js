@@ -82,6 +82,11 @@ const routes = [
         component: () => import('../views/GroupOrder')
     },
     {
+        path: '/groupe/:buyGroupId/commande/:orderId/factures-membres/:userId/print',
+        name: 'UserBillPrint',
+        component: () => import('../views/UserBillPrint.vue')
+    },
+    {
         path: '/groupe/:buyGroupId/commande/:orderId/commandes-fournisseurs',
         name: 'GroupOrderProvidersOrders',
         component: () => import('../views/GroupOrder')
