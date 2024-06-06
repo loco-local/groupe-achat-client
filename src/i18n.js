@@ -71,7 +71,8 @@ export default {
                         mustBeLowerOrEqualTo: "Doit être plus petit ou égal à",
                         mustBeHigherOrEqualTo: "Doit être égal ou plus grand que",
                         so: "Donc",
-                        at: "at"
+                        at: "at",
+                        noResults: "Pas de résultats"
                     }
                 },
                 fr: {
@@ -130,7 +131,8 @@ export default {
                         mustBeLowerOrEqualTo: "Doit être plus petit ou égal à",
                         mustBeHigherOrEqualTo: "Doit être égal ou plus grand que",
                         so: "Donc",
-                        at: "à"
+                        at: "à",
+                        noResults: "Pas de résultats"
                     }
                 }
             }

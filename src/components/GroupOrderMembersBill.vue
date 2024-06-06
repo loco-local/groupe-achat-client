@@ -38,8 +38,23 @@
           </v-btn>
         </v-col>
         <v-col cols="12" class="vh-center">
+          <v-text-field
+              prepend-inner-icon="search"
+              :label="$t('membersBill:searchPlaceholder')"
+              single-line
+              hide-details
+              v-model="searchText"
+              class="mx-4"
+              clearable
+              variant="outlined"
+              rounded
+              bg-color="primary"
+              max-width="475"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="12" class="vh-center">
           <v-list width="475">
-            <div v-for="userOrder in userOrders" :key="userOrder.id">
+            <div v-for="userOrder in filteredUserOrders" :key="userOrder.id">
               <v-list-item>
                 <template v-slot:append>
                   <v-btn variant="text" @click="downloadReceipt(userOrder.Member.id)" size="large">
@@ -74,6 +89,9 @@
               <v-divider class="mt-2"></v-divider>
             </div>
           </v-list>
+        </v-col>
+        <v-col cols="12" v-if="filteredUserOrders.length === 0" class="text-h6 text-grey">
+          {{$t('noResults')}}
         </v-col>
       </v-row>
     </v-card-text>
@@ -131,6 +149,7 @@ import LoadingFlow from "@/LoadingFlow";
 import OrderToCsv from "@/OrderToCsv";
 import Member from "@/Member";
 import BillsTotalCSV from "@/BillsTotalCSV";
+import Search from "../Search";
 
 export default {
   name: "GroupOrderMemberBills",
@@ -144,7 +163,8 @@ export default {
       totalToBill: "Total à facturer",
       downloadAllBills: "Télécharger toutes les factures",
       downloadBillsTotal: "Télécharger le résumé des factures",
-      billLinkCopied: "Le lien de la facture a été copié"
+      billLinkCopied: "Le lien de la facture a été copié",
+      searchPlaceholder: "Chercher le nom d'une personne"
     };
     I18n.i18next.addResources("fr", "membersBill", text);
     I18n.i18next.addResources("en", "membersBill", text);
@@ -154,7 +174,8 @@ export default {
       userBillModal: false,
       emailCopySnackbar: false,
       billLinkCopySnackbar: false,
-      totalToBill: 0
+      totalToBill: 0,
+      searchText: ""
     }
   },
   mounted: async function () {
@@ -242,6 +263,22 @@ export default {
       }
       this.$refs.userBillDialog.enter(memberId);
       LoadingFlow.leave();
+    }
+  },
+  computed: {
+    filteredUserOrders: function () {
+      if (this.userOrders === undefined) {
+        return []
+      }
+      if (this.searchText === null) {
+        return this.userOrders;
+      }
+      return this.userOrders.filter((order) => {
+        return Search.matchesAnyValues([
+          order.Member.firstname,
+          order.Member.lastname
+        ], this.searchText);
+      })
     }
   }
 }
