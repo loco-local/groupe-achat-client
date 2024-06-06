@@ -242,7 +242,7 @@ export default {
     },
     getDecimalQuantityForQuantityInput: function (quantityInput, orderItem) {
       let decimalQuantity = 0;
-      if (quantityInput.trim() === "") {
+      if (String(quantityInput).trim() === "") {
         return decimalQuantity;
       }
       let format = QuantityInterpreter.getFormat(quantityInput);

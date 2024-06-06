@@ -5,7 +5,7 @@ const QuantityInterpreter = {
         if (str === null) {
             return 1;
         }
-        let qty = str.replaceAll(",", ".").match(qtyRegex);
+        let qty = String(str).replaceAll(",", ".").match(qtyRegex);
         if (qty === null) {
             return 1;
         }
@@ -28,7 +28,7 @@ const QuantityInterpreter = {
         if (str === null) {
             return "unit";
         }
-        const lowerCase = str.toLowerCase();
+        const lowerCase = String(str).toLowerCase();
         if (lowerCase.indexOf("kg") > -1) {
             return "kg"
         }
