@@ -220,6 +220,7 @@
                 :hideInternalCode="$vuetify.display.smAndDown"
                 :hideMaker="$vuetify.display.smAndDown"
                 :hideProvider="$vuetify.display.smAndDown"
+                :disable-sort-by-name="true"
                 @quantityUpdate="updateOrderQuantity"
                 ref="productsTable"
             ></ProductsTable>

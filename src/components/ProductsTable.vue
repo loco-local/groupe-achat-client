@@ -1,9 +1,9 @@
 <template>
   <div :style="minHeightStyle">
     <v-data-table
+        :sort-by="sortBy"
         :headers="headers"
         :items="filteredProducts"
-        :options="tableOptions"
         :no-data-text="$t('productTable:noProducts')"
         :no-results-text="$t('productTable:noProducts')"
         class="elevation-1 mt-8 productsTable text-body-1"
@@ -543,6 +543,10 @@ export default {
     hideProvider: {
       type: Boolean,
       default: false
+    },
+    disableSortByName:{
+      type: Boolean,
+      default: false
     }
   },
   data: function () {
@@ -794,19 +798,14 @@ export default {
       }
       return header;
     })
-    const tableOptions = {
-      sortBy: ['name'],
-      sortDesc: [true],
-      page: 1
-    };
-    if (this.canChangeQuantity || this.hasQuantity || this.canChangeExpectedQuantity || this.hasExpectedQuantity) {
-      tableOptions.sortBy = [];
+    let sortBy = [{ key: 'name', order:'asc'}]
+    if (this.disableSortByName) {
+      sortBy = [];
     }
     return {
       selected: [],
       searchText: null,
       searchTextConfirmed: null,
-      tableOptions: tableOptions,
       headers: headers,
       showEditButton: new Boolean(this.$attrs && this.$attrs.onModify).valueOf(),
       quantityUpdateSnackbar: false,
@@ -816,7 +815,8 @@ export default {
       chosenCategory: undefined,
       minHeightStyle: this.preventSearchFlickr ? "min-height: 1000px;" : "",
       categoriesPanel: 'categories',
-      nbItemsPerPage: 50
+      nbItemsPerPage: 50,
+      sortBy: sortBy,
     }
   },
   mounted: function () {
