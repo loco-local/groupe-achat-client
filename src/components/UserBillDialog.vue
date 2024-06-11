@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" v-if="show" fullscreen>
+  <v-dialog v-model="show" v-if="show" fullscreen :persistent="closable === false">
     <v-card>
       <v-toolbar
           dark
@@ -57,9 +57,15 @@
 import MemberService from "@/service/MemberService";
 import OrderToCsv from "@/OrderToCsv";
 import {defineAsyncComponent} from "vue";
+
 export default {
   name: "UserBillDialog",
-  props: ['buyGroupId', 'buyGroupOrderId', 'buyGroupPath', 'closable'],
+  props: [
+    'buyGroupId',
+    'buyGroupOrderId',
+    'buyGroupPath',
+    'closable'
+  ],
   components: {
     UserBill: defineAsyncComponent(() => import('@/components/UserBill'))
   },

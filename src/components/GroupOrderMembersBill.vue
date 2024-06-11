@@ -63,8 +63,7 @@
                   <v-btn
                       variant="text"
                       size="large"
-                      v-clipboard="getBillUrlOfMemberId(userOrder.Member.id)"
-                      v-clipboard:success="copyBillLinkSuccess"
+                      @click="copyBillUrlOfMemberId(userOrder.Member.id)"
                   >
                     <v-icon size="large">content_copy</v-icon>
                   </v-btn>
@@ -208,8 +207,12 @@ export default {
     this.isLoading = false;
   },
   methods: {
+    copyBillUrlOfMemberId: function(memberId){
+      navigator.clipboard.writeText(this.getBillUrlOfMemberId(memberId));
+      this.copyBillLinkSuccess();
+    },
     getBillUrlOfMemberId: function (memberId) {
-      return new URL(this.$route.path + '/' + memberId, window.location.origin).href;
+      return new URL(this.$route.path + '/' + memberId + '/page', window.location.origin).href;
     },
     copyEmailsSuccess: function () {
       this.emailCopySnackbar = true;
