@@ -3,39 +3,71 @@
     <v-card-text v-if="isLoading">
       <v-progress-circular indeterminate :size="80" :width="2"></v-progress-circular>
     </v-card-text>
-    <v-card-title class="vh-center">
-      {{ $t('membersBill:totalToBill') }}
-    </v-card-title>
-    <v-card-subtitle class="vh-center text-h6">
-      {{ $filters.currency(totalToBill) }}
-    </v-card-subtitle>
+
+    <v-row class="vh-center mt-2 mb-2">
+      <v-col cols="4">
+        <v-table width="200" class="text-h6" color="primary" density="default">
+          <tbody>
+          <tr>
+            <td class="">{{ $t('membersBill:totalToBill')  }}</td>
+            <td class="">{{ $filters.currency(totalToBill) }}</td>
+          </tr>
+          <tr>
+            <td class="">
+              {{ $t('membersBill:nbBills') }}
+            </td>
+            <td class="">
+              {{ nbBills }}
+            </td>
+          </tr>
+          </tbody>
+        </v-table>
+      </v-col>
+    </v-row>
     <v-card-text v-if="!isLoading && !userOrders.length">
       {{ $t('membersBill:noBills') }}
     </v-card-text>
     <v-card-text v-if="!isLoading && userOrders.length" class="vh-center">
       <v-row>
         <v-col cols="12">
-          <v-btn @click="downloadAllReceipts">
-            <v-icon start>file_download</v-icon>
-            {{ $t('membersBill:downloadAllBills') }}
-          </v-btn>
-        </v-col>
-        <v-col cols="12">
-          <v-btn
-              v-clipboard="emailsOfParticipants()"
-              v-clipboard:success="copyEmailsSuccess"
-          >
-            <v-icon start>
-              content_copy
-            </v-icon>
-            {{ $t('membersBill:emailOfParticipatingMembers') }}
-          </v-btn>
-        </v-col>
-        <v-col cols="12">
-          <v-btn @click="downloadBillsTotal">
-            <v-icon start>account_balance</v-icon>
-            {{ $t('membersBill:downloadBillsTotal') }}
-          </v-btn>
+          <v-menu>
+            <template v-slot:activator="{ props }">
+              <v-btn
+                  color="primary"
+                  v-bind="props"
+                  variant="outlined"
+              >
+                Menu
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item @click="downloadAllReceipts">
+                <template v-slot:prepend>
+                  <v-icon>file_download</v-icon>
+                </template>
+                <v-list-item-title>
+                  {{ $t('membersBill:downloadAllBills') }}
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item v-clipboard="emailsOfParticipants()"
+                           v-clipboard:success="copyEmailsSuccess">
+                <template v-slot:prepend>
+                  <v-icon>content_copy</v-icon>
+                </template>
+                <v-list-item-title>
+                  {{ $t('membersBill:emailOfParticipatingMembers') }}
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="downloadBillsTotal">
+                <template v-slot:prepend>
+                  <v-icon>account_balance</v-icon>
+                </template>
+                <v-list-item-title>
+                  {{ $t('membersBill:downloadBillsTotal') }}
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </v-col>
         <v-col cols="12" class="vh-center">
           <v-text-field
@@ -57,9 +89,9 @@
             <div v-for="userOrder in filteredUserOrders" :key="userOrder.id">
               <v-list-item>
                 <template v-slot:append>
-<!--                  <v-btn variant="text" @click="downloadReceipt(userOrder.Member.id)" size="large">-->
-<!--                    <v-icon size="large">file_download</v-icon>-->
-<!--                  </v-btn>-->
+                  <!--                  <v-btn variant="text" @click="downloadReceipt(userOrder.Member.id)" size="large">-->
+                  <!--                    <v-icon size="large">file_download</v-icon>-->
+                  <!--                  </v-btn>-->
                   <v-btn
                       variant="text"
                       size="large"
@@ -70,7 +102,9 @@
                   <v-btn size="large" @click="viewReceipt(userOrder.Member.id)" variant="text">
                     <v-icon size="large">preview</v-icon>
                   </v-btn>
-                  <v-btn size="large" target="_blank" :to="`/groupe/${buyGroupId}/commande/${buyGroupOrderId}/factures-membres/${userOrder.Member.id}/print`" variant="text">
+                  <v-btn size="large" target="_blank"
+                         :to="`/groupe/${buyGroupId}/commande/${buyGroupOrderId}/factures-membres/${userOrder.Member.id}/print`"
+                         variant="text">
                     <v-icon size="large">print</v-icon>
                   </v-btn>
                 </template>
@@ -93,7 +127,7 @@
           </v-list>
         </v-col>
         <v-col cols="12" v-if="filteredUserOrders.length === 0" class="text-h6 text-grey">
-          {{$t('noResults')}}
+          {{ $t('noResults') }}
         </v-col>
       </v-row>
     </v-card-text>
@@ -163,6 +197,7 @@ export default {
       emailOfParticipatingMembers: "Copier courriels des membres participants",
       emailsCopied: "Les courriels sont copiés dans votre presse papier",
       totalToBill: "Total à facturer",
+      nbBills: "Nombre de factures",
       downloadAllBills: "Télécharger toutes les factures",
       downloadBillsTotal: "Télécharger le résumé des factures",
       billLinkCopied: "Le lien de la facture a été copié",
@@ -177,6 +212,7 @@ export default {
       emailCopySnackbar: false,
       billLinkCopySnackbar: false,
       totalToBill: 0,
+      nbBills: 0,
       searchText: ""
     }
   },
@@ -193,6 +229,7 @@ export default {
             b.Member
         );
       })
+      this.nbBills = this.userOrders.length;
       this.totalToBill = this.userOrders.reduce((sum, userOrder) => {
         let orderTotal = userOrder.total;
         if (orderTotal === null || orderTotal === undefined) {
@@ -207,7 +244,7 @@ export default {
     this.isLoading = false;
   },
   methods: {
-    copyBillUrlOfMemberId: function(memberId){
+    copyBillUrlOfMemberId: function (memberId) {
       navigator.clipboard.writeText(this.getBillUrlOfMemberId(memberId));
       this.copyBillLinkSuccess();
     },
