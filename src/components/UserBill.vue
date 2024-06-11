@@ -9,6 +9,10 @@
     <v-card-text v-if="print && memberOrder !== null" class="text-h6">
       {{memberOrder.Member.firstname}}
       {{memberOrder.Member.lastname}}
+      <v-btn class="float-right" variant="text" @click="doPrint" v-if="print">
+        <v-icon start>print</v-icon>
+        {{$t('print')}}
+      </v-btn>
     </v-card-text>
     <v-card-text class="pb-0">
       <v-alert
@@ -152,6 +156,9 @@ export default {
           this.memberOrder.id
       );
     },
+    doPrint: function(){
+      window.print();
+    }
   }
 }
 </script>

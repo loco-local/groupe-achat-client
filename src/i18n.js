@@ -73,7 +73,9 @@ export default {
                         so: "Donc",
                         at: "at",
                         noResults: "Pas de résultats",
-                        bill: "Bill"
+                        bill: "Bill",
+                        print: "Imprimer",
+                        printing: "Impression"
                     }
                 },
                 fr: {
@@ -134,7 +136,9 @@ export default {
                         so: "Donc",
                         at: "à",
                         noResults: "Pas de résultats",
-                        bill: "Facture"
+                        bill: "Facture",
+                        print: "Imprimer",
+                        printing: "Impression"
                     }
                 }
             }

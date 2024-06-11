@@ -25,6 +25,15 @@
           <v-btn
               theme="dark"
               variant="text"
+              :to="`/groupe/${buyGroupId}/commande/${buyGroupOrderId}/factures-membres/${userId}/print`"
+              :disabled="itemsLoading"
+          >
+            <v-icon start>print</v-icon>
+            {{ $t('printing') }}
+          </v-btn>
+          <v-btn
+              theme="dark"
+              variant="text"
               @click="exportToCsv"
               :disabled="itemsLoading"
           >
