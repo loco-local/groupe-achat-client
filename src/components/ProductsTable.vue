@@ -283,6 +283,12 @@
           {{ $t('no') }}
         </span>
       </template>
+      <template v-slot:item.personFullname="{item}">
+        <router-link :to="item.billPath" target="_blank">
+          <v-icon size="x-small">open_in_new</v-icon>
+          {{item.personFullname}}
+        </router-link>
+      </template>
       <template v-slot:item.isAdminRelated="{ item }">
         <v-icon v-if="item.isAdminRelated">
           check
@@ -574,6 +580,13 @@ export default {
     I18n.i18next.addResources("en", "productTable", text);
     let headers = [
       {
+        title: this.$t('bill') + " " + this.$t('product:personName'),
+        sortable: true,
+        value: 'personFullname',
+        align: 'start',
+        show: this.showPersonName
+      },
+      {
         title: this.$t('productTable:quantity'),
         align: 'center',
         children: [
@@ -753,18 +766,11 @@ export default {
         show: this.showEditButton
       },
       {
-        title: "ID",
+        title: "ID Membre",
         sortable: true,
         value: 'MemberOrder.MemberId',
         align: 'start',
         show: this.showMemberId
-      },
-      {
-        title: this.$t('product:personName'),
-        sortable: true,
-        value: 'personFullname',
-        align: 'start',
-        show: this.showPersonName
       }
     ]
     headers = headers.map((header) => {

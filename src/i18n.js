@@ -72,7 +72,8 @@ export default {
                         mustBeHigherOrEqualTo: "Doit être égal ou plus grand que",
                         so: "Donc",
                         at: "at",
-                        noResults: "Pas de résultats"
+                        noResults: "Pas de résultats",
+                        bill: "Bill"
                     }
                 },
                 fr: {
@@ -132,7 +133,8 @@ export default {
                         mustBeHigherOrEqualTo: "Doit être égal ou plus grand que",
                         so: "Donc",
                         at: "à",
-                        noResults: "Pas de résultats"
+                        noResults: "Pas de résultats",
+                        bill: "Facture"
                     }
                 }
             }

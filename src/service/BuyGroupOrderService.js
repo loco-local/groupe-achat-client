@@ -25,7 +25,8 @@ const BuyGroupOrderService = {
     listMemberOrderItems: async function (buyGroupId, buyGroupOrderId) {
         const response = await Service.api().get("/buy-group/" + buyGroupId + "/orders/" + buyGroupOrderId + "/memberOrders/items");
         return BuyGroupOrderService._formattedOrderItems(
-            response.data
+            response.data,
+            buyGroupId
         );
     },
     listMemberOrdersItemsQuantities: async function (buyGroupId, buyGroupOrderId) {
@@ -37,10 +38,11 @@ const BuyGroupOrderService = {
             "/buy-group/" + buyGroupId + "/orders/" + buyGroupOrderId + "/member/" + memberId + " /order-items"
         );
         return BuyGroupOrderService._formattedOrderItems(
-            response.data
+            response.data,
+            buyGroupId
         );
     },
-    _formattedOrderItems: function (orderItems) {
+    _formattedOrderItems: function (orderItems, buyGroupId) {
         return orderItems.map((orderItem) => {
             orderItem.name = orderItem.description;
             orderItem.previousCostUnitPrice = orderItem.costUnitPrice;
@@ -53,6 +55,7 @@ const BuyGroupOrderService = {
             )
             if (orderItem.MemberOrder && orderItem.MemberOrder.Member) {
                 orderItem.personFullname = orderItem.MemberOrder.Member.firstname + " " + orderItem.MemberOrder.Member.lastname
+                orderItem.billPath = `/groupe/${buyGroupId}/commande/${orderItem.MemberOrder.BuyGroupOrderId}/factures-membres/${orderItem.MemberOrder.Member.id}`
             }
             if (orderItem.quantity === null) {
                 orderItem.quantity = orderItem.expectedQuantity;
