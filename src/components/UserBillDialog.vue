@@ -9,7 +9,7 @@
             icon
             theme="dark"
             @click="leave"
-            v-if="$store.state.user.status === 'admin'"
+            v-if="$store.state.user.status === 'admin' && closable !== false"
         >
           <v-icon>close</v-icon>
         </v-btn>
@@ -50,7 +50,7 @@ import OrderToCsv from "@/OrderToCsv";
 import {defineAsyncComponent} from "vue";
 export default {
   name: "UserBillDialog",
-  props: ['buyGroupId', 'buyGroupOrderId', 'buyGroupPath'],
+  props: ['buyGroupId', 'buyGroupOrderId', 'buyGroupPath', 'closable'],
   components: {
     UserBill: defineAsyncComponent(() => import('@/components/UserBill'))
   },

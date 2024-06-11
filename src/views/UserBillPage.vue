@@ -1,19 +1,23 @@
 <template>
-  <UserBill
+  <UserBillDialog
       :buyGroupId="$route.params.buyGroupId"
       :buyGroupOrderId="$route.params.orderId"
-      :userId="$route.params.userId"
       :print="true"
-  ></UserBill>
+      ref="UserBillDialog"
+      :closable="false"
+  ></UserBillDialog>
 </template>
 
 <script>
 import {defineComponent} from 'vue'
-import UserBill from "../components/UserBill.vue";
+import UserBillDialog from "@/components/UserBillDialog.vue";
 
 export default defineComponent({
   name: "UserBillPrint",
-  components: {UserBill}
+  components: {UserBillDialog},
+  mounted: function(){
+    this.$refs.UserBillDialog.enter(this.$route.params.userId)
+  }
 })
 </script>
 

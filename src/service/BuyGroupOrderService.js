@@ -55,7 +55,7 @@ const BuyGroupOrderService = {
             )
             if (orderItem.MemberOrder && orderItem.MemberOrder.Member) {
                 orderItem.personFullname = orderItem.MemberOrder.Member.firstname + " " + orderItem.MemberOrder.Member.lastname
-                orderItem.billPath = `/groupe/${buyGroupId}/commande/${orderItem.MemberOrder.BuyGroupOrderId}/factures-membres/${orderItem.MemberOrder.Member.id}`
+                orderItem.billPath = `/groupe/${buyGroupId}/commande/${orderItem.MemberOrder.BuyGroupOrderId}/factures-membres/${orderItem.MemberOrder.Member.id}/page`
             }
             if (orderItem.quantity === null) {
                 orderItem.quantity = orderItem.expectedQuantity;
