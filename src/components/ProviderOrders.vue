@@ -32,13 +32,13 @@
                     <v-icon size="large">preview</v-icon>
                   </v-btn>
                 </template>
-                  <v-list-item-title class="text-left ml-6">
-                    {{ providerName }}
-                  </v-list-item-title>
-                  <v-list-item-subtitle class="text-left ml-6">
-                    {{ $filters.currency(providerTotals[providerName]) }}
-                  </v-list-item-subtitle>
-                
+                <v-list-item-title class="text-left ml-6">
+                  {{ providerName }}
+                </v-list-item-title>
+                <v-list-item-subtitle class="text-left ml-6">
+                  {{ $filters.currency(providerTotals[providerName]) }}
+                </v-list-item-subtitle>
+
               </v-list-item>
               <v-divider class="mt-2"></v-divider>
             </div>
@@ -116,7 +116,9 @@ export default {
     },
     downloadProviderOrder: function (providerName) {
       OrderToCsv.exportForProviderOrder(
-          this.providerOrders[providerName],
+          this.providerOrders[providerName].filter((item) => {
+            return item.quantity > 0;
+          }),
           this.providerTotals[providerName]
       )
     },

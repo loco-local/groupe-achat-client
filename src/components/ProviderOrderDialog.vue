@@ -72,7 +72,9 @@ export default {
       this.show = false;
     },
     setItems: function (orderItemsByProvider) {
-      this.providerItems = orderItemsByProvider.providerOrders[this.providerName];
+      this.providerItems = orderItemsByProvider.providerOrders[this.providerName].filter((item) => {
+        return item.quantity > 0;
+      });
       this.total = orderItemsByProvider.providerTotals[this.providerName];
       this.itemsLoading = false;
     },

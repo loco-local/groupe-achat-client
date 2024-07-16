@@ -62,11 +62,11 @@
           </v-expansion-panels>
         </v-card-text>
         <v-card-text class="text-h6  ml-6">
-          {{$t('providerOrder:totalExcluded')}}: {{nbExcludedProducts}}
+          {{ $t('providerOrder:totalExcluded') }}: {{ nbExcludedProducts }}
         </v-card-text>
       </v-card>
       <v-divider class="mt-4 mb-4"></v-divider>
-      <v-card>
+      <v-card class="mb-8">
         <v-card-title>
           {{ $t('providerOrder:productsToOrder') }}
         </v-card-title>
@@ -92,9 +92,44 @@
               @costUnitPriceUpdate="updateCostUnitPrice"
               @modify="enterIsBackOrderFlow"
           ></ProductsTable>
-          <v-row>
-            <v-col cols="12" class="text-right text-h5 mt-8 pr-8">
-              Total: {{ $filters.currency(orderTotal) }}
+<!--          <v-row class="text-left text-body-1 font-weight-bold mt-8 ml-8 font-weight-regular">-->
+<!--            <v-col cols="12">-->
+<!--              {{ $t('providerOrder:totalPrice') }}: {{ $filters.currency(orderTotal) }}-->
+<!--            </v-col>-->
+<!--            <v-col cols="12" md="3" lg="2" xl="1">-->
+<!--              <v-divider></v-divider>-->
+<!--            </v-col>-->
+<!--            <v-col cols="12">-->
+<!--              {{ $t('providerOrder:nbItemsToOrder') }}: {{ nbItemsToOrder }}-->
+<!--            </v-col>-->
+<!--            <v-col cols="12" md="3" lg="2" xl="1">-->
+<!--              <v-divider></v-divider>-->
+<!--            </v-col>-->
+<!--            <v-col cols="12">-->
+<!--              {{ $t('providerOrder:nbDifferentProductsToOrder') }} : {{ nbDifferentProductsToOrder }}-->
+<!--            </v-col>-->
+<!--            <v-col cols="12" md="3" lg="2" xl="1">-->
+<!--              <v-divider></v-divider>-->
+<!--            </v-col>-->
+<!--          </v-row>-->
+          <v-row class="mt-2 mb-2">
+            <v-col cols="12" md="6" lg="4" xl="3">
+              <v-table width="200" class="text-h6 font-weight-regular" color="primary" density="default">
+                <tbody>
+                <tr>
+                  <td class="">{{ $t('providerOrder:totalPrice') }}</td>
+                  <td class="">{{ $filters.currency(orderTotal) }}</td>
+                </tr>
+                <tr>
+                  <td class="">{{ $t('providerOrder:nbDifferentProductsToOrder') }}</td>
+                  <td class="">{{nbDifferentProductsToOrder}}</td>
+                </tr>
+                <tr>
+                  <td class="">{{ $t('providerOrder:nbItemsToOrder') }}</td>
+                  <td class="">{{nbItemsToOrder}}</td>
+                </tr>
+                </tbody>
+              </v-table>
             </v-col>
           </v-row>
         </v-card-text>
@@ -171,7 +206,10 @@ export default {
       productsToOrder: "Produits à commander",
       productIsBackOrder: "Définir comme backorder",
       productBackOrderInfo1: "Définir comme backorder",
-      productBackOrderInfo2: "mettra la quantité finale à zéro dans toutes les factures où ce produit est commandé."
+      productBackOrderInfo2: "mettra la quantité finale à zéro dans toutes les factures où ce produit est commandé.",
+      nbDifferentProductsToOrder: "Produits différents",
+      nbItemsToOrder: "Caisses",
+      totalPrice: "Prix total"
     };
     I18n.i18next.addResources("fr", "providerOrder", text);
     I18n.i18next.addResources("en", "providerOrder", text);
@@ -253,9 +291,17 @@ export default {
       await this.$refs.providerOrderTable.showCostUnitPriceChangedSuccess(updatedItem);
     }
   },
-  computed:{
-    nbExcludedProducts: function(){
+  computed: {
+    nbExcludedProducts: function () {
       return this.incompleteQtyProviderItems.length + this.zeroQuantityItems.length;
+    },
+    nbDifferentProductsToOrder: function () {
+      return this.providerItems.length
+    },
+    nbItemsToOrder: function () {
+      return this.providerItems.reduce((sum, item) => {
+        return sum + item.quantity
+      }, 0)
     }
   }
 }
