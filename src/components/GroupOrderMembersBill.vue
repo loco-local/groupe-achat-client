@@ -9,7 +9,7 @@
         <v-table width="200" class="text-h6" color="primary" density="default">
           <tbody>
           <tr>
-            <td class="">{{ $t('membersBill:totalToBill')  }}</td>
+            <td class="">{{ $t('membersBill:totalToBill') }}</td>
             <td class="">{{ $filters.currency(totalToBill) }}</td>
           </tr>
           <tr>
@@ -41,6 +41,14 @@
               </v-btn>
             </template>
             <v-list>
+              <v-list-item @click="enterAddDialogFlow">
+                <template v-slot:prepend>
+                  <v-icon>add</v-icon>
+                </template>
+                <v-list-item-title>
+                  {{ $t('membersBill:addBill') }}
+                </v-list-item-title>
+              </v-list-item>
               <v-list-item @click="downloadAllReceipts">
                 <template v-slot:prepend>
                   <v-icon>file_download</v-icon>
@@ -174,6 +182,17 @@
         </v-btn>
       </template>
     </v-snackbar>
+    <v-dialog v-model="addBillDialog">
+      <v-card>
+        <v-card-title class="d-flex justify-space-between align-center">
+          <div class="text-h5 text-medium-emphasis ps-2">
+
+          </div>
+          <v-icon icon="close" @click="addBillDialog = false" variant="text"></v-icon>
+        </v-card-title>
+        <v-divider class="mb-4"></v-divider>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -201,7 +220,8 @@ export default {
       downloadAllBills: "Télécharger toutes les factures",
       downloadBillsTotal: "Télécharger le résumé des factures",
       billLinkCopied: "Le lien de la facture a été copié",
-      searchPlaceholder: "Chercher le nom d'une personne"
+      searchPlaceholder: "Chercher le nom d'une personne",
+      addBill: "Ajouter une facture"
     };
     I18n.i18next.addResources("fr", "membersBill", text);
     I18n.i18next.addResources("en", "membersBill", text);
@@ -213,7 +233,8 @@ export default {
       billLinkCopySnackbar: false,
       totalToBill: 0,
       nbBills: 0,
-      searchText: ""
+      searchText: "",
+      addBillDialog: false
     }
   },
   mounted: async function () {
@@ -244,6 +265,12 @@ export default {
     this.isLoading = false;
   },
   methods: {
+    enterAddDialogFlow: function () {
+      this.addBillDialog = true;
+    },
+    addBill: function () {
+
+    },
     copyBillUrlOfMemberId: function (memberId) {
       navigator.clipboard.writeText(this.getBillUrlOfMemberId(memberId));
       this.copyBillLinkSuccess();

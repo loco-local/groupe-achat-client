@@ -84,7 +84,7 @@ export default {
     return {
       buyGroup: null,
       latestOrder: null,
-      isLoading: true,
+      isLoading: true
     }
   },
   mounted: async function () {
