@@ -1,64 +1,104 @@
 <template>
   <div>
     <v-card>
-      <v-card-text v-if="!isLoading && trimmedProviderItems.length > 0">
-        <v-expansion-panels variant="popout" dark>
-          <v-expansion-panel>
-            <v-expansion-panel-title class="text-body-1" color="primary">
-              {{ $t('providerOrder:changedQtys1') }}
-              {{ trimmedProviderItems.length }}
-              {{ $t('providerOrder:changedQtys2') }}
-            </v-expansion-panel-title>
-            <v-expansion-panel-text>
-              <ProductsTable
-                  :products="trimmedProviderItems || []"
-                  :hasQuantity="true"
-                  :hasExpectedQuantity="false"
-                  :showDecimalQuantityNotFractions="true"
-                  :showCostUnitPrice="true"
-                  :showUnitPrice="false"
-                  :showExpectedCostUnitPrice="false"
-                  :canToggleAvailability="false"
-                  :hideExpectedUnitPrice="true"
-                  :show-taxes="true"
-                  :hideSearch="true"
-                  :onlyShowCostTotal="true"
-                  :prevent-search-flickr="false"
-                  :hide-categories-filter="true"
-                  :hide-category="true"
-              ></ProductsTable>
-            </v-expansion-panel-text>
-          </v-expansion-panel>
-        </v-expansion-panels>
-      </v-card-text>
-      <v-card-text v-if="!isLoading && providerItems.length">
-        <ProductsTable
-            :products="providerItems || []"
-            :hasQuantity="true"
-            :hasExpectedQuantity="false"
-            :showDecimalQuantityNotFractions="true"
-            :showCostUnitPrice="true"
-            :showUnitPrice="false"
-            :showExpectedCostUnitPrice="false"
-            :canToggleAvailability="false"
-            :hideExpectedUnitPrice="true"
-            :show-taxes="true"
-            :hideSearch="true"
-            :onlyShowCostTotal="true"
-            :prevent-search-flickr="false"
-            :hide-categories-filter="true"
-            :hide-category="true"
-            :canEditCostUnitPrice="true"
-            ref="providerOrderTable"
-            @costUnitPriceUpdate="updateCostUnitPrice"
-            @modify="enterIsBackOrderFlow"
-        ></ProductsTable>
-        <v-row>
-          <v-col cols="12" class="text-right text-h5 mt-8 pr-8">
-            Total: {{ $filters.currency(orderTotal) }}
-          </v-col>
-        </v-row>
-      </v-card-text>
+      <v-card v-if="!isLoading && nbExcludedProducts > 0" class="mt-4" variant="flat">
+        <v-card-title>
+          {{ $t('providerOrder:excludedProducts') }}
+        </v-card-title>
+        <v-card-text class="mt-4">
+          <v-expansion-panels variant="popout" dark>
+            <v-expansion-panel>
+              <v-expansion-panel-title class="text-body-1" color="primary">
+                {{ incompleteQtyProviderItems.length }}
+                <v-divider vertical class="ml-3 mr-3" :thickness="2"></v-divider>
+                {{ $t('providerOrder:changedQtys') }}
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <ProductsTable
+                    :products="incompleteQtyProviderItems || []"
+                    :hasQuantity="true"
+                    :hasExpectedQuantity="false"
+                    :showDecimalQuantityNotFractions="true"
+                    :showCostUnitPrice="true"
+                    :showUnitPrice="false"
+                    :showExpectedCostUnitPrice="false"
+                    :canToggleAvailability="false"
+                    :hideExpectedUnitPrice="true"
+                    :show-taxes="true"
+                    :hideSearch="true"
+                    :onlyShowCostTotal="true"
+                    :prevent-search-flickr="false"
+                    :hide-categories-filter="true"
+                    :hide-category="true"
+                ></ProductsTable>
+              </v-expansion-panel-text>
+            </v-expansion-panel>
+            <v-expansion-panel>
+              <v-expansion-panel-title class="text-body-1" color="primary">
+                {{ zeroQuantityItems.length }}
+                <v-divider vertical class="ml-3 mr-3" :thickness="2"></v-divider>
+                {{ $t('providerOrder:excludedForZeroFinalQuantity1') }}
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <ProductsTable
+                    :products="zeroQuantityItems || []"
+                    :hasQuantity="true"
+                    :hasExpectedQuantity="false"
+                    :showDecimalQuantityNotFractions="true"
+                    :showCostUnitPrice="true"
+                    :showUnitPrice="false"
+                    :showExpectedCostUnitPrice="false"
+                    :canToggleAvailability="false"
+                    :hideExpectedUnitPrice="true"
+                    :show-taxes="true"
+                    :hideSearch="true"
+                    :onlyShowCostTotal="true"
+                    :prevent-search-flickr="false"
+                    :hide-categories-filter="true"
+                    :hide-category="true"
+                ></ProductsTable>
+              </v-expansion-panel-text>
+            </v-expansion-panel>
+          </v-expansion-panels>
+        </v-card-text>
+        <v-card-text class="text-h6  ml-6">
+          {{$t('providerOrder:totalExcluded')}}: {{nbExcludedProducts}}
+        </v-card-text>
+      </v-card>
+      <v-divider class="mt-4 mb-4"></v-divider>
+      <v-card>
+        <v-card-title>
+          {{ $t('providerOrder:productsToOrder') }}
+        </v-card-title>
+        <v-card-text v-if="!isLoading && providerItems.length">
+          <ProductsTable
+              :products="providerItems || []"
+              :hasQuantity="true"
+              :hasExpectedQuantity="false"
+              :showDecimalQuantityNotFractions="true"
+              :showCostUnitPrice="true"
+              :showUnitPrice="false"
+              :showExpectedCostUnitPrice="false"
+              :canToggleAvailability="false"
+              :hideExpectedUnitPrice="true"
+              :show-taxes="true"
+              :hideSearch="true"
+              :onlyShowCostTotal="true"
+              :prevent-search-flickr="false"
+              :hide-categories-filter="true"
+              :hide-category="true"
+              :canEditCostUnitPrice="true"
+              ref="providerOrderTable"
+              @costUnitPriceUpdate="updateCostUnitPrice"
+              @modify="enterIsBackOrderFlow"
+          ></ProductsTable>
+          <v-row>
+            <v-col cols="12" class="text-right text-h5 mt-8 pr-8">
+              Total: {{ $filters.currency(orderTotal) }}
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-card>
     </v-card>
     <v-dialog
         v-model="isBackOrderDialog"
@@ -80,9 +120,9 @@
         >
           <p class="text-h6 font-weight-regular text-black">
             <span class="font-italic">
-              {{$t('providerOrder:productBackOrderInfo1')}},
+              {{ $t('providerOrder:productBackOrderInfo1') }},
             </span>
-            {{$t('providerOrder:productBackOrderInfo2')}}
+            {{ $t('providerOrder:productBackOrderInfo2') }}
           </p>
         </v-alert>
         <v-card-actions class="my-2 d-flex justify-end">
@@ -124,17 +164,21 @@ export default {
   },
   data: function () {
     const text = {
-      changedQtys1: "Voir les",
-      changedQtys2: "produits dont la quantité commandée est réduite parce que les caisses à diviser ne sont pas complètes",
+      excludedProducts: "Produits exclus de la commande",
+      changedQtys: "Caisses incomplètes",
+      excludedForZeroFinalQuantity1: "Quantité à zéro",
+      totalExcluded: "Total exclus",
+      productsToOrder: "Produits à commander",
       productIsBackOrder: "Définir comme backorder",
-      productBackOrderInfo1 : "Définir comme backorder",
+      productBackOrderInfo1: "Définir comme backorder",
       productBackOrderInfo2: "mettra la quantité finale à zéro dans toutes les factures où ce produit est commandé."
     };
     I18n.i18next.addResources("fr", "providerOrder", text);
     I18n.i18next.addResources("en", "providerOrder", text);
     return {
       providerItems: null,
-      trimmedProviderItems: [],
+      incompleteQtyProviderItems: [],
+      zeroQuantityItems: [],
       orderTotal: null,
       isLoading: true,
       isBackOrderDialog: false,
@@ -148,17 +192,21 @@ export default {
         this.buyGroupId,
         this.buyGroupOrderId
     );
-    console.log(this.memberOrdersItems)
     const orderItemsByProvider = ProviderOrders.groupOrderItemsByProviders(this.memberOrdersItems);
-    console.log(orderItemsByProvider)
-    this.providerItems = orderItemsByProvider.providerOrders[this.providerName];
-    console.log(this.providerItems)
+    this.zeroQuantityItems = [];
+    this.providerItems = orderItemsByProvider.providerOrders[this.providerName].filter((item) => {
+      if (item.quantity === 0) {
+        this.zeroQuantityItems.push(item)
+        return false;
+      }
+      return true;
+    })
     this.orderTotal = orderItemsByProvider.providerTotals[this.providerName];
-    let trimmedOrderItemsByProvider = ProviderOrders.groupOrderItemsByProviders(
+    let incompleteOrderItemsByProvider = ProviderOrders.groupOrderItemsByProviders(
         this.memberOrdersItems,
         true
     );
-    this.trimmedProviderItems = trimmedOrderItemsByProvider.providerOrders[this.providerName];
+    this.incompleteQtyProviderItems = incompleteOrderItemsByProvider.providerOrders[this.providerName];
     this.$emit('itemsDefined', orderItemsByProvider);
     this.isLoading = false;
   },
@@ -203,6 +251,11 @@ export default {
         );
       }
       await this.$refs.providerOrderTable.showCostUnitPriceChangedSuccess(updatedItem);
+    }
+  },
+  computed:{
+    nbExcludedProducts: function(){
+      return this.incompleteQtyProviderItems.length + this.zeroQuantityItems.length;
     }
   }
 }

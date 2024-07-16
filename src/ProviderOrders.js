@@ -2,8 +2,8 @@ import OrderItem from "@/OrderItem";
 import MemberOrdersQuantity from "@/MemberOrdersQuantity";
 
 const ProviderOrders = {
-    groupOrderItemsByProviders: function (memberOrdersItems, isTrimmedQtysOnly) {
-        isTrimmedQtysOnly = isTrimmedQtysOnly || false;
+    groupOrderItemsByProviders: function (memberOrdersItems, havingIncompleteQtyFilter) {
+        havingIncompleteQtyFilter = havingIncompleteQtyFilter || false;
         const memberOrdersQuantity = new MemberOrdersQuantity(memberOrdersItems).buildQuantities();
         const providerNames = [];
         const providerTotals = [];
@@ -16,27 +16,15 @@ const ProviderOrders = {
             const existingProduct = providerOrders[orderItem.provider].filter((existingOrderItem) => {
                 return existingOrderItem.ProductId === orderItem.ProductId
             });
-            if(orderItem.internalCode === "51580"){
-                console.log("existingProduct " + existingProduct + " " + orderItem.ProductId)
-            }
             let quantity = memberOrdersQuantity[orderItem.ProductId].total
-            if(orderItem.internalCode === "51580"){
-                console.log("quantity " + quantity)
-            }
-            if(orderItem.internalCode === "51580"){
-                console.log("memberOrdersQuantity[orderItem.ProductId].remainingFraction  " + memberOrdersQuantity[orderItem.ProductId].remainingFraction)
-            }
-            if (isTrimmedQtysOnly && memberOrdersQuantity[orderItem.ProductId].remainingFraction === 0) {
+            if (havingIncompleteQtyFilter && memberOrdersQuantity[orderItem.ProductId].remainingFraction === 0) {
                 return providerOrders;
             }
-            if (!isTrimmedQtysOnly) {
+            if (!havingIncompleteQtyFilter) {
                 const quantityFloored = Math.floor(quantity);
                 quantity = quantityFloored;
             }
-            if(orderItem.internalCode === "51580"){
-                console.log("existingProduct.length " + existingProduct.length)
-            }
-            if (existingProduct.length || quantity === 0) {
+            if (existingProduct.length) {
                 return providerOrders;
             }
             const aggregatedItem = {
@@ -61,8 +49,7 @@ const ProviderOrders = {
                 maker: orderItem.maker
             }
             aggregatedItem.costTotal = aggregatedItem.costUnitPrice * aggregatedItem.quantity + aggregatedItem.tps + aggregatedItem.tvq;
-            console.log("aggregatedItem " + aggregatedItem)
-            if (!existingProduct.length && aggregatedItem.quantity > 0) {
+            if (!existingProduct.length) {
                 providerTotals[aggregatedItem.provider] += aggregatedItem.costTotal;
                 providerOrders[aggregatedItem.provider].push(aggregatedItem);
             }
