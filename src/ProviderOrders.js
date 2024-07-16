@@ -16,13 +16,25 @@ const ProviderOrders = {
             const existingProduct = providerOrders[orderItem.provider].filter((existingOrderItem) => {
                 return existingOrderItem.ProductId === orderItem.ProductId
             });
+            if(orderItem.internalCode === "51580"){
+                console.log("existingProduct " + existingProduct + " " + orderItem.ProductId)
+            }
             let quantity = memberOrdersQuantity[orderItem.ProductId].total
+            if(orderItem.internalCode === "51580"){
+                console.log("quantity " + quantity)
+            }
+            if(orderItem.internalCode === "51580"){
+                console.log("memberOrdersQuantity[orderItem.ProductId].remainingFraction  " + memberOrdersQuantity[orderItem.ProductId].remainingFraction)
+            }
             if (isTrimmedQtysOnly && memberOrdersQuantity[orderItem.ProductId].remainingFraction === 0) {
                 return providerOrders;
             }
             if (!isTrimmedQtysOnly) {
                 const quantityFloored = Math.floor(quantity);
                 quantity = quantityFloored;
+            }
+            if(orderItem.internalCode === "51580"){
+                console.log("existingProduct.length " + existingProduct.length)
             }
             if (existingProduct.length || quantity === 0) {
                 return providerOrders;
@@ -49,6 +61,7 @@ const ProviderOrders = {
                 maker: orderItem.maker
             }
             aggregatedItem.costTotal = aggregatedItem.costUnitPrice * aggregatedItem.quantity + aggregatedItem.tps + aggregatedItem.tvq;
+            console.log("aggregatedItem " + aggregatedItem)
             if (!existingProduct.length && aggregatedItem.quantity > 0) {
                 providerTotals[aggregatedItem.provider] += aggregatedItem.costTotal;
                 providerOrders[aggregatedItem.provider].push(aggregatedItem);
