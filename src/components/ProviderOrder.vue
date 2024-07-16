@@ -148,8 +148,11 @@ export default {
         this.buyGroupId,
         this.buyGroupOrderId
     );
+    console.log(this.memberOrdersItems)
     const orderItemsByProvider = ProviderOrders.groupOrderItemsByProviders(this.memberOrdersItems);
+    console.log(orderItemsByProvider)
     this.providerItems = orderItemsByProvider.providerOrders[this.providerName];
+    console.log(this.providerItems)
     this.orderTotal = orderItemsByProvider.providerTotals[this.providerName];
     let trimmedOrderItemsByProvider = ProviderOrders.groupOrderItemsByProviders(
         this.memberOrdersItems,
